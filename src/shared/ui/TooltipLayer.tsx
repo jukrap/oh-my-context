@@ -49,7 +49,6 @@ export function TooltipLayer() {
   const targetRef = useRef<TooltipTarget | null>(null);
   const pendingTargetRef = useRef<TooltipTarget | null>(null);
   const showTimerRef = useRef<number | null>(null);
-  const hideTimerRef = useRef<number | null>(null);
   const [visible, setVisible] = useState(false);
   const [text, setText] = useState('');
   const [layout, setLayout] = useState<TooltipLayout>({
@@ -64,20 +63,13 @@ export function TooltipLayer() {
       window.clearTimeout(showTimerRef.current);
       showTimerRef.current = null;
     }
-    if (hideTimerRef.current !== null) {
-      window.clearTimeout(hideTimerRef.current);
-      hideTimerRef.current = null;
-    }
     pendingTargetRef.current = null;
     targetRef.current = null;
     setVisible(false);
+    setText('');
   }, []);
 
   const showTooltip = useCallback((target: TooltipTarget): void => {
-    if (hideTimerRef.current !== null) {
-      window.clearTimeout(hideTimerRef.current);
-      hideTimerRef.current = null;
-    }
     pendingTargetRef.current = null;
     targetRef.current = target;
     setText(target.text);
@@ -88,10 +80,6 @@ export function TooltipLayer() {
     (target: TooltipTarget, delayMs: number): void => {
       if (showTimerRef.current !== null) {
         window.clearTimeout(showTimerRef.current);
-      }
-      if (hideTimerRef.current !== null) {
-        window.clearTimeout(hideTimerRef.current);
-        hideTimerRef.current = null;
       }
 
       pendingTargetRef.current = target;
@@ -170,6 +158,9 @@ export function TooltipLayer() {
         return;
       }
 
+      targetRef.current = null;
+      setVisible(false);
+      setText('');
       scheduleShow(nextTarget, HOVER_SHOW_DELAY_MS);
     };
 
@@ -223,9 +214,6 @@ export function TooltipLayer() {
       document.removeEventListener('keydown', handleKeyDown, true);
       if (showTimerRef.current !== null) {
         window.clearTimeout(showTimerRef.current);
-      }
-      if (hideTimerRef.current !== null) {
-        window.clearTimeout(hideTimerRef.current);
       }
     };
   }, [hideTooltip, scheduleShow, showTooltip]);
