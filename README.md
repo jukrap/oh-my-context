@@ -6,6 +6,15 @@ Context Stack Editor for XML Prompts.
 
 Oh My Context! is a context-first editor for XML prompts. Build prompt trees, attach global include blocks, and export safely to XML/Markdown/JSON.
 
+## Why XML Prompts
+
+This tool is built for preparing prompts for AI systems with explicit structure.
+
+- XML-style sections can make boundaries clearer in complex prompts (rules, context, examples, output schema).
+- Clear structure often improves consistency and reduces accidental mixing of instructions.
+- XML is not always better than Markdown or plain text. For simple tasks, lighter formats may work equally well.
+- Treat format choice as a task-level decision and compare outputs for your model/workflow.
+
 ## Features
 
 - Vault: create, duplicate, delete, search, filter, and switch prompt documents
