@@ -103,6 +103,22 @@ export function EditorShell({
     language === 'ko'
       ? '좌우로 드래그해서 Preview / Export 너비를 조절합니다.'
       : 'Drag horizontally to resize Preview / Export width.';
+  const navHints =
+    language === 'ko'
+      ? {
+          vault: '문서 생성, 검색, 분류, 전환을 관리합니다.',
+          includes: '내보내기 시 자동으로 붙는 전역 Include 블록을 관리합니다.',
+          templates: 'v1 템플릿 기능 자리입니다.',
+          settings: '언어, 미리보기, 삭제 확인 등 워크스페이스 옵션을 관리합니다.',
+          includesLabel: '전역 포함',
+        }
+      : {
+          vault: 'Manage documents: create, search, filter and switch.',
+          includes: 'Manage global include blocks inserted automatically at export time.',
+          templates: 'Placeholder for v1 templates.',
+          settings: 'Manage workspace options such as language and preview defaults.',
+          includesLabel: t('navIncludes'),
+        };
 
   return (
     <div className="editor-shell">
@@ -117,6 +133,7 @@ export function EditorShell({
             onClick={() =>
               activeDrawer === '/vault' ? onCloseDrawer() : onOpenDrawer('/vault')
             }
+            tooltip={navHints.vault}
             tone={activeDrawer === '/vault' ? 'brand' : 'default'}
           >
             {t('navVault')}
@@ -127,9 +144,10 @@ export function EditorShell({
                 ? onCloseDrawer()
                 : onOpenDrawer('/includes')
             }
+            tooltip={navHints.includes}
             tone={activeDrawer === '/includes' ? 'brand' : 'default'}
           >
-            {t('navIncludes')}
+            {navHints.includesLabel}
           </Button>
           <Button
             onClick={() =>
@@ -137,6 +155,7 @@ export function EditorShell({
                 ? onCloseDrawer()
                 : onOpenDrawer('/templates')
             }
+            tooltip={navHints.templates}
             tone={activeDrawer === '/templates' ? 'brand' : 'default'}
           >
             {t('navTemplates')}
@@ -147,6 +166,7 @@ export function EditorShell({
                 ? onCloseDrawer()
                 : onOpenDrawer('/settings')
             }
+            tooltip={navHints.settings}
             tone={activeDrawer === '/settings' ? 'brand' : 'default'}
           >
             {t('navSettings')}

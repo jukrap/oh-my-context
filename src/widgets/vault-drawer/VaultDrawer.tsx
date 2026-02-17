@@ -19,7 +19,7 @@ interface VaultDrawerProps {
 }
 
 export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const documentsById = useAppStore((state) => state.documentsById);
   const documentOrder = useAppStore((state) => state.documentOrder);
   const activeDocumentId = useAppStore((state) => state.activeDocumentId);
@@ -61,10 +61,61 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
       .sort((a, b) => b.updatedAt - a.updatedAt);
   }, [documentOrder, documentsById, kindFilter, search, tagFilter]);
 
+  const hints = useMemo(() => {
+    if (language === 'ko') {
+      return {
+        create:
+          '이름, 종류, 태그를 입력해 새 프롬프트 문서를 생성합니다.',
+        filters:
+          '문서명/태그/종류로 빠르게 목록을 좁힙니다.',
+        documents:
+          '최근 수정 순으로 정렬된 문서 목록입니다.',
+        kind: '문서의 형식 분류입니다.',
+        tags: '검색과 그룹화를 위한 문서 라벨입니다.',
+        updatedAt: '문서가 마지막으로 저장된 시각입니다.',
+        open: '해당 문서를 편집 대상으로 전환합니다.',
+        rename: '문서 표시 이름을 수정합니다.',
+        duplicate: '문서를 복제해 새 문서로 만듭니다.',
+        delete: '문서를 삭제합니다. 설정에 따라 확인 창이 뜹니다.',
+      };
+    }
+
+    return {
+      create:
+        'Create a new prompt document with name, kind and tags.',
+      filters:
+        'Narrow documents quickly by name, tag and kind.',
+      documents: 'Documents sorted by most recently updated.',
+      kind: 'Document format category.',
+      tags: 'Document labels used for search and grouping.',
+      updatedAt: 'Last saved timestamp of this document.',
+      open: 'Switch this document as the active editor target.',
+      rename: 'Edit document display name.',
+      duplicate: 'Clone this document into a new one.',
+      delete:
+        'Delete this document. A confirmation may appear depending on settings.',
+    };
+  }, [language]);
+
+  const metaLabels =
+    language === 'ko'
+      ? {
+          kind: '종류',
+          tags: '태그',
+          updatedAt: '수정됨',
+        }
+      : {
+          kind: 'Kind',
+          tags: 'Tags',
+          updatedAt: 'Updated',
+        };
+
   return (
     <Drawer onClose={onClose} open={open} title={t('promptVault')}>
       <div className="drawer-group">
-        <h4>{t('create')}</h4>
+        <h4 className="omc-tooltip-hint" data-tooltip={hints.create}>
+          {t('create')}
+        </h4>
         <Input onChange={(event) => setNewName(event.target.value)} value={newName} />
         <select
           className="omc-select"
@@ -101,7 +152,9 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
       </div>
 
       <div className="drawer-group">
-        <h4>{t('filters')}</h4>
+        <h4 className="omc-tooltip-hint" data-tooltip={hints.filters}>
+          {t('filters')}
+        </h4>
         <Input
           onChange={(event) => setSearch(event.target.value)}
           placeholder={t('searchNameOrTags')}
@@ -129,7 +182,9 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
       </div>
 
       <div className="drawer-group">
-        <h4>{t('documents')}</h4>
+        <h4 className="omc-tooltip-hint" data-tooltip={hints.documents}>
+          {t('documents')}
+        </h4>
         <div className="vault-list">
           {filteredDocuments.map((document) => (
             <article
@@ -154,9 +209,23 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
                 <p className="vault-title">{document.name}</p>
               )}
 
-              <p className="vault-meta">{document.kind}</p>
-              <p className="vault-meta">{document.tags.join(', ') || t('noTags')}</p>
               <p className="vault-meta">
+                <strong className="omc-tooltip-hint" data-tooltip={hints.kind}>
+                  {metaLabels.kind}
+                </strong>
+                {`: ${document.kind}`}
+              </p>
+              <p className="vault-meta">
+                <strong className="omc-tooltip-hint" data-tooltip={hints.tags}>
+                  {metaLabels.tags}
+                </strong>
+                {`: ${document.tags.join(', ') || t('noTags')}`}
+              </p>
+              <p className="vault-meta">
+                <strong className="omc-tooltip-hint" data-tooltip={hints.updatedAt}>
+                  {metaLabels.updatedAt}
+                </strong>
+                {': '}
                 {t('updatedAt', {
                   time: new Date(document.updatedAt).toLocaleString(),
                 })}
@@ -168,6 +237,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
                     setActiveDocument(document.id);
                     onClose();
                   }}
+                  tooltip={hints.open}
                   tone="brand"
                 >
                   {t('open')}
@@ -177,11 +247,16 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
                     setEditingNameId(document.id);
                     setEditingName(document.name);
                   }}
+                  tooltip={hints.rename}
                   tone="ghost"
                 >
                   {t('rename')}
                 </Button>
-                <Button onClick={() => duplicateDocument(document.id)} tone="ghost">
+                <Button
+                  onClick={() => duplicateDocument(document.id)}
+                  tooltip={hints.duplicate}
+                  tone="ghost"
+                >
                   {t('duplicate')}
                 </Button>
                 <Button
@@ -196,6 +271,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
                     }
                     deleteDocument(document.id);
                   }}
+                  tooltip={hints.delete}
                   tone="danger"
                 >
                   {t('delete')}
