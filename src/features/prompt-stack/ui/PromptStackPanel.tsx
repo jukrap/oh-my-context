@@ -14,7 +14,7 @@ import {
 import { type KeyboardEvent, useMemo } from 'react';
 import { buildNodeVisibilitySet, flattenVisibleNodeIds } from '../../../entities/prompt-node/model/tree';
 import type { PromptNode } from '../../../entities/prompt-node/model/types';
-import { Button } from '../../../shared/ui/Button';
+import { useI18n } from '../../../shared/lib/i18n/useI18n';
 import { Input } from '../../../shared/ui/Input';
 import { Panel } from '../../../shared/ui/Panel';
 import { selectActiveDocument, useAppStore } from '../../../shared/model/store';
@@ -26,6 +26,7 @@ interface TreeListProps {
 }
 
 function SortableNodeRow({ node, depth }: { node: PromptNode; depth: number }) {
+  const { t } = useI18n();
   const selectedNodeId = useAppStore((state) => state.selectedNodeId);
   const setSelectedNodeId = useAppStore((state) => state.setSelectedNodeId);
   const addChildNode = useAppStore((state) => state.addChildNode);
@@ -45,13 +46,18 @@ function SortableNodeRow({ node, depth }: { node: PromptNode; depth: number }) {
     id: node.id,
   });
 
+  const metaText = t('nodeMeta', {
+    mode: node.contentMode,
+    children: node.children.length,
+    state: node.enabled ? t('stateEnabled') : t('stateDisabled'),
+  });
+
   return (
     <div
       ref={setNodeRef}
       className="stack-node-row"
       data-selected={selectedNodeId === node.id}
       style={{
-        paddingLeft: `${depth * 16 + 8}px`,
         transform: transform
           ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
           : undefined,
@@ -59,55 +65,88 @@ function SortableNodeRow({ node, depth }: { node: PromptNode; depth: number }) {
         opacity: isDragging ? 0.7 : 1,
       }}
     >
-      <button
-        className="stack-drag-handle"
-        type="button"
-        aria-label="Drag node"
-        {...attributes}
-        {...listeners}
-      >
-        ::
-      </button>
-
-      <input
-        aria-label="Enable node"
-        checked={node.enabled}
-        onChange={() => toggleNodeEnabled(node.id)}
-        type="checkbox"
+      <div
+        aria-hidden
+        className="stack-depth-strip"
+        style={{ width: `${depth * 16}px` }}
       />
+      <article className="stack-node-card" data-disabled={!node.enabled} data-selected={selectedNodeId === node.id}>
+        <div className="stack-node-main">
+          <div className="stack-node-main-left">
+            <button
+              className="stack-drag-handle"
+              type="button"
+              aria-label={t('dragNode')}
+              {...attributes}
+              {...listeners}
+            >
+              ::
+            </button>
 
-      {node.children.length > 0 ? (
-        <button
-          className="stack-collapse-toggle"
-          type="button"
-          onClick={() => toggleNodeCollapsed(node.id)}
-        >
-          {node.collapsed ? '+' : '-'}
-        </button>
-      ) : (
-        <span className="stack-collapse-placeholder" />
-      )}
+            <input
+              aria-label={t('enableNode')}
+              checked={node.enabled}
+              onChange={() => toggleNodeEnabled(node.id)}
+              type="checkbox"
+            />
 
-      <button
-        className="stack-node-label"
-        data-selected={selectedNodeId === node.id}
-        onClick={() => setSelectedNodeId(node.id)}
-        type="button"
-      >
-        &lt;{node.tagName}&gt;
-      </button>
+            {node.children.length > 0 ? (
+              <button
+                className="stack-collapse-toggle"
+                type="button"
+                aria-label={node.collapsed ? t('expandNode') : t('collapseNode')}
+                onClick={() => toggleNodeCollapsed(node.id)}
+              >
+                {node.collapsed ? '+' : '-'}
+              </button>
+            ) : (
+              <span className="stack-collapse-placeholder" />
+            )}
 
-      <div className="stack-node-actions">
-        <Button onClick={() => addChildNode(node.id)} tone="ghost">
-          Child
-        </Button>
-        <Button onClick={() => duplicateNode(node.id)} tone="ghost">
-          Duplicate
-        </Button>
-        <Button onClick={() => deleteNode(node.id)} tone="danger">
-          Delete
-        </Button>
-      </div>
+            <button
+              className="stack-node-label"
+              data-selected={selectedNodeId === node.id}
+              onClick={() => setSelectedNodeId(node.id)}
+              title={`<${node.tagName}>`}
+              type="button"
+            >
+              &lt;{node.tagName}&gt;
+            </button>
+          </div>
+
+          <div className="stack-node-actions">
+            <button
+              aria-label={t('addChild')}
+              className="stack-mini-action"
+              onClick={() => addChildNode(node.id)}
+              title={t('addChild')}
+              type="button"
+            >
+              +
+            </button>
+            <button
+              aria-label={t('duplicate')}
+              className="stack-mini-action"
+              onClick={() => duplicateNode(node.id)}
+              title={t('duplicate')}
+              type="button"
+            >
+              2x
+            </button>
+            <button
+              aria-label={t('delete')}
+              className="stack-mini-action danger"
+              onClick={() => deleteNode(node.id)}
+              title={t('delete')}
+              type="button"
+            >
+              x
+            </button>
+          </div>
+        </div>
+
+        <p className="stack-node-meta">{metaText}</p>
+      </article>
     </div>
   );
 }
@@ -140,6 +179,7 @@ function TreeList({ nodes, depth, visibleNodeIds }: TreeListProps) {
 }
 
 export function PromptStackPanel() {
+  const { t } = useI18n();
   const document = useAppStore(selectActiveDocument);
   const addRootNode = useAppStore((state) => state.addRootNode);
   const moveNodeWithinParent = useAppStore((state) => state.moveNodeWithinParent);
@@ -204,21 +244,25 @@ export function PromptStackPanel() {
   };
 
   if (!document) {
-    return <Panel title="Stack">No active document.</Panel>;
+    return <Panel title={t('contextStack')}>{t('noActiveDocument')}</Panel>;
   }
 
   return (
     <Panel
       rightSlot={
-        <Button onClick={addRootNode} tone="brand">
-          Add Node
-        </Button>
+        <button
+          className="omc-btn omc-btn-brand"
+          type="button"
+          onClick={addRootNode}
+        >
+          {t('addNode')}
+        </button>
       }
-      title="Context Stack"
+      title={t('contextStack')}
     >
       <Input
         onChange={(event) => setStackSearchQuery(event.target.value)}
-        placeholder="Search tag or content"
+        placeholder={t('searchTagOrContent')}
         value={stackSearchQuery}
       />
 
