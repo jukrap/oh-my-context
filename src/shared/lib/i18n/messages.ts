@@ -71,10 +71,13 @@ export type TranslationKey =
   | 'filters'
   | 'documents'
   | 'vaultTransfer'
+  | 'vaultExportOptions'
+  | 'vaultExportOptionsHelp'
   | 'importDocument'
   | 'exportDocument'
   | 'applySettingsOnImport'
   | 'vaultImported'
+  | 'vaultImportedWithoutSettings'
   | 'vaultExported'
   | 'vaultImportFailed'
   | 'createDocument'
@@ -172,6 +175,7 @@ export type TranslationKey =
   | 'kindChatJsonLabel'
   | 'kindChatJsonDescription'
   | 'vaultLabelKind'
+  | 'vaultLabelLabels'
   | 'vaultLabelUpdated'
   | 'hintVaultCreate'
   | 'hintVaultFilters'
@@ -185,6 +189,7 @@ export type TranslationKey =
   | 'hintVaultTransfer'
   | 'hintVaultImport'
   | 'hintVaultExport'
+  | 'hintVaultExportOptions'
   | 'hintVaultDelete'
   | 'close';
 
@@ -262,10 +267,15 @@ const messages: Record<AppLanguage, TranslationMap> = {
     filters: 'Filters',
     documents: 'Documents',
     vaultTransfer: 'Import',
+    vaultExportOptions: 'Export Options',
+    vaultExportOptionsHelp:
+      'These options are applied when you click Export Document on each row.',
     importDocument: 'Import Document',
     exportDocument: 'Export Document',
     applySettingsOnImport: 'Apply settings on import',
     vaultImported: 'Document imported.',
+    vaultImportedWithoutSettings:
+      'Document imported, but no settings were found in this file.',
     vaultExported: 'Document exported.',
     vaultImportFailed: 'Import failed. Check JSON format.',
     createDocument: 'Create Document',
@@ -399,6 +409,7 @@ const messages: Record<AppLanguage, TranslationMap> = {
     kindChatJsonDescription:
       'Best suited for role/content style message-array prompt formats.',
     vaultLabelKind: 'Kind',
+    vaultLabelLabels: 'Labels',
     vaultLabelUpdated: 'Updated',
     hintVaultCreate:
       'Create a new prompt document with name, kind and tags.',
@@ -415,6 +426,8 @@ const messages: Record<AppLanguage, TranslationMap> = {
     hintVaultImport: 'Import one document bundle JSON file.',
     hintVaultExport:
       'Export this document as a shareable JSON bundle.',
+    hintVaultExportOptions:
+      'Controls what data is included in JSON when exporting from a document row.',
     hintVaultDelete:
       'Delete this document. A confirmation may appear depending on settings.',
     close: 'Close',
@@ -490,10 +503,15 @@ const messages: Record<AppLanguage, TranslationMap> = {
     filters: '필터',
     documents: '문서 목록',
     vaultTransfer: '가져오기',
+    vaultExportOptions: '내보내기 옵션',
+    vaultExportOptionsHelp:
+      '아래 옵션은 각 문서 행의 문서 내보내기 버튼을 누를 때 적용됩니다.',
     importDocument: '문서 가져오기',
     exportDocument: '문서 내보내기',
     applySettingsOnImport: '가져오기 시 설정 적용',
     vaultImported: '문서를 가져왔습니다.',
+    vaultImportedWithoutSettings:
+      '문서는 가져왔지만, 파일에 설정이 없어 설정 적용은 건너뛰었습니다.',
     vaultExported: '문서를 내보냈습니다.',
     vaultImportFailed: '가져오기에 실패했습니다. JSON 형식을 확인하세요.',
     createDocument: '문서 생성',
@@ -625,6 +643,7 @@ const messages: Record<AppLanguage, TranslationMap> = {
     kindChatJsonDescription:
       'role/content 배열 기반 프롬프트 관리에 적합한 타입입니다.',
     vaultLabelKind: '종류',
+    vaultLabelLabels: '라벨',
     vaultLabelUpdated: '수정',
     hintVaultCreate:
       '이름, 종류, 태그를 지정해 새 프롬프트 문서를 생성합니다.',
@@ -642,6 +661,8 @@ const messages: Record<AppLanguage, TranslationMap> = {
     hintVaultImport: '문서 번들 JSON 파일 1개를 가져옵니다.',
     hintVaultExport:
       '이 문서를 공유 가능한 JSON 번들로 내보냅니다.',
+    hintVaultExportOptions:
+      '문서 행에서 내보낼 때 JSON에 어떤 데이터를 포함할지 제어합니다.',
     hintVaultDelete:
       '문서를 삭제합니다. 설정에 따라 확인 창이 나타날 수 있습니다.',
     close: '닫기',

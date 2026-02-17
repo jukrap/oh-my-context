@@ -47,7 +47,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
   const [editingNameId, setEditingNameId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
   const [transferIncludeIncludes, setTransferIncludeIncludes] = useState(true);
-  const [transferIncludeSettings, setTransferIncludeSettings] = useState(false);
+  const [transferIncludeSettings, setTransferIncludeSettings] = useState(true);
   const [transferApplySettings, setTransferApplySettings] = useState(false);
   const [transferNotice, setTransferNotice] = useState<string | null>(null);
 
@@ -148,7 +148,11 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
         settings: parsed.bundle.settings,
         applySettings: transferApplySettings,
       });
-      showTransferNotice(t('vaultImported'));
+      if (transferApplySettings && !parsed.bundle.settings) {
+        showTransferNotice(t('vaultImportedWithoutSettings'));
+      } else {
+        showTransferNotice(t('vaultImported'));
+      }
     } catch {
       showTransferNotice(t('vaultImportFailed'));
     }
@@ -237,22 +241,6 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
         </h4>
         <label className="setting-label">
           <input
-            checked={transferIncludeIncludes}
-            onChange={(event) => setTransferIncludeIncludes(event.target.checked)}
-            type="checkbox"
-          />
-          {t('includeIncludes')}
-        </label>
-        <label className="setting-label">
-          <input
-            checked={transferIncludeSettings}
-            onChange={(event) => setTransferIncludeSettings(event.target.checked)}
-            type="checkbox"
-          />
-          {t('includeSettings')}
-        </label>
-        <label className="setting-label">
-          <input
             checked={transferApplySettings}
             onChange={(event) => setTransferApplySettings(event.target.checked)}
             type="checkbox"
@@ -282,6 +270,33 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
         <h4 className="omc-tooltip-hint" data-tooltip={t('hintVaultDocuments')}>
           {t('documents')}
         </h4>
+        <div className="vault-export-options">
+          <p
+            className="vault-export-options-title omc-tooltip-hint"
+            data-tooltip={t('hintVaultExportOptions')}
+          >
+            {t('vaultExportOptions')}
+          </p>
+          <p className="drawer-hint">{t('vaultExportOptionsHelp')}</p>
+          <div className="vault-actions">
+            <label className="setting-label">
+              <input
+                checked={transferIncludeIncludes}
+                onChange={(event) => setTransferIncludeIncludes(event.target.checked)}
+                type="checkbox"
+              />
+              {t('includeIncludes')}
+            </label>
+            <label className="setting-label">
+              <input
+                checked={transferIncludeSettings}
+                onChange={(event) => setTransferIncludeSettings(event.target.checked)}
+                type="checkbox"
+              />
+              {t('includeSettings')}
+            </label>
+          </div>
+        </div>
         <div className="vault-list">
           {filteredDocuments.map((document) => (
             <article
@@ -314,7 +329,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
               </p>
               <p className="vault-meta">
                 <strong className="omc-tooltip-hint" data-tooltip={t('hintVaultTags')}>
-                  {t('tags')}
+                  {t('vaultLabelLabels')}
                 </strong>
                 {`: ${document.tags.join(', ') || t('noTags')}`}
               </p>

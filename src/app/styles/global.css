@@ -1267,6 +1267,22 @@ select {
   flex-wrap: wrap;
 }
 
+.vault-export-options {
+  border: 2px dashed var(--omc-fg);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vault-export-options-title {
+  margin: 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
 .docmeta-popover {
   position: absolute;
   right: 0;
