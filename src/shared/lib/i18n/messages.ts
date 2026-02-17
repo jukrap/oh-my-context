@@ -111,7 +111,7 @@ const messages: Record<AppLanguage, TranslationMap> = {
     enableNode: 'Enable node',
     collapseNode: 'Collapse node',
     expandNode: 'Expand node',
-    nodeMeta: '{mode} · {children} children · {state}',
+    nodeMeta: '{mode} | {children} children | {state}',
     stateEnabled: 'enabled',
     stateDisabled: 'disabled',
     addChild: 'Add child',
@@ -203,7 +203,7 @@ const messages: Record<AppLanguage, TranslationMap> = {
     enableNode: '노드 활성화',
     collapseNode: '노드 접기',
     expandNode: '노드 펼치기',
-    nodeMeta: '{mode} · 자식 {children}개 · {state}',
+    nodeMeta: '{mode} | 자식 {children}개 | {state}',
     stateEnabled: '활성',
     stateDisabled: '비활성',
     addChild: '자식 추가',
@@ -283,11 +283,14 @@ export function detectPreferredLanguage(): AppLanguage {
     return 'en';
   }
 
-  const locales = navigator.languages && navigator.languages.length > 0
-    ? navigator.languages
-    : [navigator.language];
+  const locales =
+    navigator.languages && navigator.languages.length > 0
+      ? navigator.languages
+      : [navigator.language];
 
-  const hasKorean = locales.some((locale) => locale.toLowerCase().startsWith('ko'));
+  const hasKorean = locales.some((locale) =>
+    locale.toLowerCase().startsWith('ko'),
+  );
   return hasKorean ? 'ko' : 'en';
 }
 

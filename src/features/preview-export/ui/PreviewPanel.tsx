@@ -1,34 +1,26 @@
 import { useMemo, useState } from 'react';
-import { ChevronDown, ChevronRight, Settings2 } from 'lucide-react';
 import { toJsonView } from '../../../shared/lib/json/render';
 import { toMarkdownView } from '../../../shared/lib/markdown/render';
 import { buildXmlPreview } from '../../../shared/lib/xml/serialize';
-import { copyToClipboard, createExportFileName, downloadTextFile } from '../../../shared/lib/export';
+import {
+  copyToClipboard,
+  createExportFileName,
+  downloadTextFile,
+} from '../../../shared/lib/export';
 import { useI18n } from '../../../shared/lib/i18n/useI18n';
-import { isValidXmlName } from '../../../entities/prompt-node/model/validation';
 import { selectActiveDocument, useAppStore } from '../../../shared/model/store';
 import { Button } from '../../../shared/ui/Button';
-import { Input } from '../../../shared/ui/Input';
 import { Panel } from '../../../shared/ui/Panel';
 
 type PreviewMode = 'XML' | 'MARKDOWN' | 'JSON';
 
-function parseTags(value: string): string[] {
-  return value
-    .split(',')
-    .map((item) => item.trim())
-    .filter((item) => item.length > 0);
-}
-
 export function PreviewPanel() {
   const { t } = useI18n();
   const document = useAppStore(selectActiveDocument);
-  const updateActiveDocument = useAppStore((state) => state.updateActiveDocument);
   const includesById = useAppStore((state) => state.includesById);
   const settings = useAppStore((state) => state.settings);
   const previewTab = useAppStore((state) => state.previewTab);
   const setPreviewTab = useAppStore((state) => state.setPreviewTab);
-  const [showDocumentMeta, setShowDocumentMeta] = useState(false);
   const [jsonWithIncludes, setJsonWithIncludes] = useState(false);
   const [jsonWithSettings, setJsonWithSettings] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -140,87 +132,9 @@ export function PreviewPanel() {
       }
       title={t('previewExport')}
     >
-      {document ? (
-        <section className="docmeta-card">
-          <button
-            className="docmeta-toggle"
-            onClick={() => setShowDocumentMeta((prev) => !prev)}
-            type="button"
-          >
-            <span className="docmeta-toggle-left">
-              <Settings2 size={14} />
-              <strong>{t('documentMeta')}</strong>
-            </span>
-            <span className="docmeta-summary">
-              {document.name} · {t('tags')}: {document.tags.length} · {t('rootTag')}:{' '}
-              {document.rootTagEnabled ? document.rootTagName : 'off'}
-            </span>
-            {showDocumentMeta ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-          </button>
-
-          {showDocumentMeta ? (
-            <div className="docmeta-content">
-              <div className="editor-section">
-                <label className="field-label" htmlFor="preview-doc-name">
-                  {t('documentName')}
-                </label>
-                <Input
-                  id="preview-doc-name"
-                  onChange={(event) =>
-                    updateActiveDocument({
-                      name: event.target.value,
-                    })
-                  }
-                  value={document.name}
-                />
-              </div>
-
-              <div className="editor-section">
-                <label className="field-label" htmlFor="preview-doc-tags">
-                  {t('tags')}
-                </label>
-                <Input
-                  id="preview-doc-tags"
-                  onChange={(event) =>
-                    updateActiveDocument({
-                      tags: parseTags(event.target.value),
-                    })
-                  }
-                  placeholder={t('tagsPlaceholder')}
-                  value={document.tags.join(', ')}
-                />
-              </div>
-
-              <div className="editor-section inline-grid">
-                <label className="field-label">
-                  <input
-                    checked={document.rootTagEnabled}
-                    onChange={(event) =>
-                      updateActiveDocument({
-                        rootTagEnabled: event.target.checked,
-                      })
-                    }
-                    type="checkbox"
-                  />
-                  {t('rootTag')}
-                </label>
-                <Input
-                  invalid={document.rootTagEnabled && !isValidXmlName(document.rootTagName)}
-                  onChange={(event) =>
-                    updateActiveDocument({
-                      rootTagName: event.target.value,
-                    })
-                  }
-                  placeholder="prompt"
-                  value={document.rootTagName}
-                />
-              </div>
-            </div>
-          ) : null}
-        </section>
-      ) : null}
-
-      <div className="preview-tabs">{(['XML', 'MARKDOWN', 'JSON'] as PreviewMode[]).map(renderTabButton)}</div>
+      <div className="preview-tabs">
+        {(['XML', 'MARKDOWN', 'JSON'] as PreviewMode[]).map(renderTabButton)}
+      </div>
 
       {previewTab === 'JSON' ? (
         <div className="json-options">
