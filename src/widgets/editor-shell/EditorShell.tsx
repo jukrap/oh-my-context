@@ -1,4 +1,5 @@
 import { type MouseEvent as ReactMouseEvent } from 'react';
+import { Blocks, Files, Settings, Shapes } from 'lucide-react';
 import { NodeEditorPanel } from '../../features/node-editor/ui/NodeEditorPanel';
 import { PreviewPanel } from '../../features/preview-export/ui/PreviewPanel';
 import { PromptStackPanel } from '../../features/prompt-stack/ui/PromptStackPanel';
@@ -136,6 +137,7 @@ export function EditorShell({
             tooltip={navHints.vault}
             tone={activeDrawer === '/vault' ? 'brand' : 'default'}
           >
+            <Files size={14} />
             {t('navVault')}
           </Button>
           <Button
@@ -147,6 +149,7 @@ export function EditorShell({
             tooltip={navHints.includes}
             tone={activeDrawer === '/includes' ? 'brand' : 'default'}
           >
+            <Blocks size={14} />
             {navHints.includesLabel}
           </Button>
           <Button
@@ -158,6 +161,7 @@ export function EditorShell({
             tooltip={navHints.templates}
             tone={activeDrawer === '/templates' ? 'brand' : 'default'}
           >
+            <Shapes size={14} />
             {t('navTemplates')}
           </Button>
           <Button
@@ -169,6 +173,7 @@ export function EditorShell({
             tooltip={navHints.settings}
             tone={activeDrawer === '/settings' ? 'brand' : 'default'}
           >
+            <Settings size={14} />
             {t('navSettings')}
           </Button>
         </nav>
