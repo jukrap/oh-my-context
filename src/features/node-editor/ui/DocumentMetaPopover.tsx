@@ -30,7 +30,7 @@ export function DocumentMetaPopover({ open, onClose }: DocumentMetaPopoverProps)
     <section className="docmeta-popover">
       <header className="docmeta-popover-header">
         <strong>{t('documentMeta')}</strong>
-        <Button onClick={onClose} tone="ghost">
+        <Button aria-label={t('close')} onClick={onClose} title={t('close')} tone="ghost">
           <X size={14} />
         </Button>
       </header>
