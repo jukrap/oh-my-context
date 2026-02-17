@@ -37,6 +37,7 @@ export function NodeEditorPanel() {
           <Button
             aria-expanded={showDocumentMeta}
             onClick={() => setShowDocumentMeta((prev) => !prev)}
+            title={showDocumentMeta ? t('hideDocumentMeta') : t('showDocumentMeta')}
             tone={showDocumentMeta ? 'brand' : 'default'}
           >
             <FileCog size={14} />
@@ -53,9 +54,7 @@ export function NodeEditorPanel() {
       {!selectedNode ? (
         <p className="empty-hint">{t('selectNodeHint')}</p>
       ) : (
-        <>
-          <hr className="divider" />
-
+        <div className="node-editor-sections">
           <div className="editor-section">
             <label className="field-label" htmlFor="node-tag">
               {t('tagName')}
@@ -89,6 +88,7 @@ export function NodeEditorPanel() {
                     },
                   }))
                 }
+                title={t('addAttribute')}
                 tone="ghost"
               >
                 <Plus size={14} />
@@ -141,6 +141,7 @@ export function NodeEditorPanel() {
                       };
                     })
                   }
+                  title={t('removeAttribute')}
                   tone="danger"
                 >
                   <Trash2 size={14} />
@@ -176,8 +177,16 @@ export function NodeEditorPanel() {
               <label className="field-label" htmlFor="node-content">
                 {t('content')}
               </label>
-              <span className="token-estimate">
-                {t('tokenEstimate', { count: contentLengthEstimate })}
+              <span
+                className="token-estimate"
+                title={t('tokenEstimate', { count: contentLengthEstimate })}
+              >
+                <span className="token-estimate-count">~{contentLengthEstimate}</span>
+                <span className="token-estimate-unit">tok</span>
+                <span className="token-estimate-hint">chars/4</span>
+                <span className="sr-only">
+                  {t('tokenEstimate', { count: contentLengthEstimate })}
+                </span>
               </span>
             </div>
             <textarea
@@ -195,32 +204,40 @@ export function NodeEditorPanel() {
             />
           </div>
 
-          <div className="editor-section inline-grid">
-            <Input onChange={(event) => setWrapTag(event.target.value)} value={wrapTag} />
-            <Button
-              onClick={() => {
-                const element = textareaRef.current;
-                if (!element) {
-                  return;
-                }
+          <div className="editor-section">
+            <div className="inline-grid wrap-selection-row">
+              <Input
+                onChange={(event) => setWrapTag(event.target.value)}
+                title={t('tagName')}
+                value={wrapTag}
+              />
+              <Button
+                className="wrap-selection-btn"
+                onClick={() => {
+                  const element = textareaRef.current;
+                  if (!element) {
+                    return;
+                  }
 
-                const start = element.selectionStart;
-                const end = element.selectionEnd;
-                const value = selectedNode.content;
-                const selected = value.slice(start, end);
-                const wrapped = `<${wrapTag}>${selected}</${wrapTag}>`;
-                const nextValue = `${value.slice(0, start)}${wrapped}${value.slice(end)}`;
+                  const start = element.selectionStart;
+                  const end = element.selectionEnd;
+                  const value = selectedNode.content;
+                  const selected = value.slice(start, end);
+                  const wrapped = `<${wrapTag}>${selected}</${wrapTag}>`;
+                  const nextValue = `${value.slice(0, start)}${wrapped}${value.slice(end)}`;
 
-                updateNode(selectedNode.id, (node) => ({
-                  ...node,
-                  content: nextValue,
-                }));
-              }}
-              tone="brand"
-            >
-              <Sparkles size={14} />
-              {t('wrapSelection')}
-            </Button>
+                  updateNode(selectedNode.id, (node) => ({
+                    ...node,
+                    content: nextValue,
+                  }));
+                }}
+                title={t('wrapSelection')}
+                tone="default"
+              >
+                <Sparkles size={14} />
+                {t('wrapSelection')}
+              </Button>
+            </div>
           </div>
 
           {selectedNode.contentMode === 'Markdown' && settings.showMarkdownPreview ? (
@@ -229,7 +246,7 @@ export function NodeEditorPanel() {
               <pre className="markdown-preview">{selectedNode.content}</pre>
             </div>
           ) : null}
-        </>
+        </div>
       )}
     </Panel>
   );
