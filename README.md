@@ -96,3 +96,7 @@ If your production branch is `master`, set Vercel Production Branch to `master`.
 
 - Favicon path: `public/icon.ico`
 - `package-lock.json` is intentionally ignored (`pnpm` workflow)
+
+## License
+
+MIT License. See [`LICENSE`](./LICENSE).
