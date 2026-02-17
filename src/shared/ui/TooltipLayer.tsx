@@ -19,6 +19,8 @@ interface TooltipLayout {
 const VIEWPORT_MARGIN = 10;
 const TARGET_GAP = 10;
 const HOVER_SHOW_DELAY_MS = 320;
+const HIDDEN_LAYOUT_TOP = -10000;
+const HIDDEN_LAYOUT_LEFT = -10000;
 
 function getTooltipTargetFromNode(node: EventTarget | null): TooltipTarget | null {
   if (!(node instanceof Element)) {
@@ -52,8 +54,8 @@ export function TooltipLayer() {
   const [visible, setVisible] = useState(false);
   const [text, setText] = useState('');
   const [layout, setLayout] = useState<TooltipLayout>({
-    top: 0,
-    left: 0,
+    top: HIDDEN_LAYOUT_TOP,
+    left: HIDDEN_LAYOUT_LEFT,
     side: 'top',
     arrowLeft: 12,
   });
@@ -67,11 +69,21 @@ export function TooltipLayer() {
     targetRef.current = null;
     setVisible(false);
     setText('');
+    setLayout((prev) => ({
+      ...prev,
+      top: HIDDEN_LAYOUT_TOP,
+      left: HIDDEN_LAYOUT_LEFT,
+    }));
   }, []);
 
   const showTooltip = useCallback((target: TooltipTarget): void => {
     pendingTargetRef.current = null;
     targetRef.current = target;
+    setLayout((prev) => ({
+      ...prev,
+      top: HIDDEN_LAYOUT_TOP,
+      left: HIDDEN_LAYOUT_LEFT,
+    }));
     setText(target.text);
     setVisible(true);
   }, []);
@@ -145,6 +157,11 @@ export function TooltipLayer() {
 
   useEffect(() => {
     const handlePointerOver = (event: PointerEvent): void => {
+      if (event.buttons !== 0) {
+        hideTooltip();
+        return;
+      }
+
       const nextTarget = getTooltipTargetFromNode(event.target);
       if (!nextTarget) {
         hideTooltip();
