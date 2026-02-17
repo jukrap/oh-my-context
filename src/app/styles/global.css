@@ -448,6 +448,61 @@ select {
   padding: 8px;
 }
 
+.markdown-preview-rendered {
+  white-space: normal;
+  line-height: 1.45;
+}
+
+.markdown-preview-rendered>*:first-child {
+  margin-top: 0;
+}
+
+.markdown-preview-rendered>*:last-child {
+  margin-bottom: 0;
+}
+
+.md-heading {
+  margin: 8px 0 4px;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.md-paragraph {
+  margin: 6px 0;
+}
+
+.md-list {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+
+.md-list li+li {
+  margin-top: 3px;
+}
+
+.md-blockquote {
+  margin: 6px 0;
+  border-left: 3px solid #000;
+  padding-left: 8px;
+  color: #222;
+}
+
+.md-code-block {
+  margin: 8px 0;
+  border: 2px solid #000;
+  background: #fff;
+  padding: 8px;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.md-inline-code {
+  border: 1px solid #000;
+  background: #fff;
+  padding: 0 4px;
+  font-size: 0.95em;
+}
+
 .stack-tree-root {
   border: 2px solid var(--omc-fg);
   min-height: 300px;
@@ -541,7 +596,7 @@ select {
 }
 
 .stack-node-card[data-recent='true'] {
-  background: color-mix(in srgb, var(--omc-brand) 20%, #fff 80%);
+  background: #fff0d6;
   animation: stack-new-node-pop 1350ms ease-out 1;
 }
 
@@ -557,20 +612,20 @@ select {
 @keyframes stack-new-node-pop {
   0% {
     box-shadow:
-      0 0 0 0 rgba(0, 230, 118, 0.45),
-      inset 0 0 0 0 rgba(0, 230, 118, 0.3);
+      0 0 0 0 rgba(255, 145, 0, 0.45),
+      inset 0 0 0 0 rgba(255, 145, 0, 0.28);
   }
 
   35% {
     box-shadow:
-      0 0 0 6px rgba(0, 230, 118, 0),
-      inset 0 0 0 999px rgba(0, 230, 118, 0.12);
+      0 0 0 6px rgba(255, 145, 0, 0),
+      inset 0 0 0 999px rgba(255, 176, 64, 0.16);
   }
 
   100% {
     box-shadow:
-      0 0 0 0 rgba(0, 230, 118, 0),
-      inset 0 0 0 0 rgba(0, 230, 118, 0);
+      0 0 0 0 rgba(255, 145, 0, 0),
+      inset 0 0 0 0 rgba(255, 176, 64, 0);
   }
 }
 
