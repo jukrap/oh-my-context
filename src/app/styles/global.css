@@ -333,7 +333,7 @@ select {
 .stack-node-row {
   display: flex;
   align-items: stretch;
-  gap: 6px;
+  gap: 5px;
   min-width: 0;
 }
 
@@ -369,8 +369,8 @@ select {
   content: '';
   position: absolute;
   left: var(--stack-branch-x);
-  top: -4px;
-  height: calc(var(--stack-branch-anchor-y) + 4px);
+  top: 0;
+  height: var(--stack-branch-anchor-y);
   border-left: 2px solid var(--branch-color);
 }
 
@@ -386,7 +386,7 @@ select {
 .stack-branch-horizontal {
   position: absolute;
   left: var(--stack-branch-x);
-  right: 4px;
+  right: 8px;
   top: var(--stack-branch-anchor-y);
   border-top: 2px solid var(--branch-color);
 }
@@ -565,6 +565,19 @@ select {
 .stack-add-inline .omc-btn[data-disabled='true'] {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.stack-add-root-btn,
+.stack-add-selected-btn {
+  background: #fff;
+}
+
+.stack-add-root-btn:hover {
+  background: var(--omc-brand-soft);
+}
+
+.stack-add-selected-btn:hover {
+  background: #e8f2ff;
 }
 
 .stack-add-popover {

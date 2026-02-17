@@ -219,6 +219,7 @@ function DraggableNodeRow({
   const cardStyle: CSSProperties = {
     opacity: isDragging ? 0.45 : 1,
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    marginLeft: depth > 0 ? '-5px' : undefined,
   };
 
   return (
@@ -309,7 +310,11 @@ function DraggableNodeRow({
           </div>
         </div>
 
-        <p className="stack-node-meta">{metaText}</p>
+        <p className="stack-node-meta">
+          {metaText}
+          {' | #'}
+          {depth + 1}
+        </p>
       </article>
     </div>
   );
@@ -456,7 +461,7 @@ function AddNodeMenu() {
 
         <button
           aria-label={t('addAtRoot')}
-          className="omc-btn omc-btn-brand stack-add-inline-btn stack-tooltip-btn"
+          className="omc-btn stack-add-inline-btn stack-add-root-btn stack-tooltip-btn"
           data-tooltip={t('addAtRoot')}
           onClick={() => handleAddNode('root')}
           type="button"
@@ -467,7 +472,7 @@ function AddNodeMenu() {
         <button
           aria-disabled={!selectedNode}
           aria-label={selectedNode ? t('addToSelected') : t('selectNodeFirst')}
-          className="omc-btn stack-add-inline-btn stack-tooltip-btn"
+          className="omc-btn stack-add-inline-btn stack-add-selected-btn stack-tooltip-btn"
           data-disabled={!selectedNode}
           data-tooltip={selectedNode ? t('addToSelected') : t('selectNodeFirst')}
           onClick={() => handleAddNode('child')}
