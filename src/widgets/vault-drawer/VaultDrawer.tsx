@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { PromptKind } from '../../entities/prompt-document/model/types';
+import { useI18n } from '../../shared/lib/i18n/useI18n';
 import { useAppStore } from '../../shared/model/store';
 import { Button } from '../../shared/ui/Button';
 import { Drawer } from '../../shared/ui/Drawer';
@@ -18,6 +19,7 @@ interface VaultDrawerProps {
 }
 
 export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
+  const { t } = useI18n();
   const documentsById = useAppStore((state) => state.documentsById);
   const documentOrder = useAppStore((state) => state.documentOrder);
   const activeDocumentId = useAppStore((state) => state.activeDocumentId);
@@ -60,9 +62,9 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
   }, [documentOrder, documentsById, kindFilter, search, tagFilter]);
 
   return (
-    <Drawer onClose={onClose} open={open} title="Prompt Vault">
+    <Drawer onClose={onClose} open={open} title={t('promptVault')}>
       <div className="drawer-group">
-        <h4>Create</h4>
+        <h4>{t('create')}</h4>
         <Input onChange={(event) => setNewName(event.target.value)} value={newName} />
         <select
           className="omc-select"
@@ -77,7 +79,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
         </select>
         <Input
           onChange={(event) => setNewTags(event.target.value)}
-          placeholder="tags separated by comma"
+          placeholder={t('tagsPlaceholder')}
           value={newTags}
         />
         <Button
@@ -94,15 +96,15 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
           }}
           tone="brand"
         >
-          Create Document
+          {t('createDocument')}
         </Button>
       </div>
 
       <div className="drawer-group">
-        <h4>Filters</h4>
+        <h4>{t('filters')}</h4>
         <Input
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search name or tags"
+          placeholder={t('searchNameOrTags')}
           value={search}
         />
         <select
@@ -121,13 +123,13 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
         </select>
         <Input
           onChange={(event) => setTagFilter(event.target.value)}
-          placeholder="Tag filter"
+          placeholder={t('tagFilter')}
           value={tagFilter}
         />
       </div>
 
       <div className="drawer-group">
-        <h4>Documents</h4>
+        <h4>{t('documents')}</h4>
         <div className="vault-list">
           {filteredDocuments.map((document) => (
             <article
@@ -145,7 +147,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
                     }}
                     tone="brand"
                   >
-                    Save
+                    {t('save')}
                   </Button>
                 </div>
               ) : (
@@ -153,9 +155,11 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
               )}
 
               <p className="vault-meta">{document.kind}</p>
-              <p className="vault-meta">{document.tags.join(', ') || 'No tags'}</p>
+              <p className="vault-meta">{document.tags.join(', ') || t('noTags')}</p>
               <p className="vault-meta">
-                Updated {new Date(document.updatedAt).toLocaleString()}
+                {t('updatedAt', {
+                  time: new Date(document.updatedAt).toLocaleString(),
+                })}
               </p>
 
               <div className="vault-actions">
@@ -166,7 +170,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
                   }}
                   tone="brand"
                 >
-                  Open
+                  {t('open')}
                 </Button>
                 <Button
                   onClick={() => {
@@ -175,15 +179,17 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
                   }}
                   tone="ghost"
                 >
-                  Rename
+                  {t('rename')}
                 </Button>
                 <Button onClick={() => duplicateDocument(document.id)} tone="ghost">
-                  Duplicate
+                  {t('duplicate')}
                 </Button>
                 <Button
                   onClick={() => {
                     if (settings.confirmBeforeDelete) {
-                      const ok = window.confirm(`Delete "${document.name}"?`);
+                      const ok = window.confirm(
+                        t('confirmDeleteDocument', { name: document.name }),
+                      );
                       if (!ok) {
                         return;
                       }
@@ -192,7 +198,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
                   }}
                   tone="danger"
                 >
-                  Delete
+                  {t('delete')}
                 </Button>
               </div>
             </article>

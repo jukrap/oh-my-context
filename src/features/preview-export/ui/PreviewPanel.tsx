@@ -3,6 +3,7 @@ import { toJsonView } from '../../../shared/lib/json/render';
 import { toMarkdownView } from '../../../shared/lib/markdown/render';
 import { buildXmlPreview } from '../../../shared/lib/xml/serialize';
 import { copyToClipboard, createExportFileName, downloadTextFile } from '../../../shared/lib/export';
+import { useI18n } from '../../../shared/lib/i18n/useI18n';
 import { selectActiveDocument, useAppStore } from '../../../shared/model/store';
 import { Button } from '../../../shared/ui/Button';
 import { Panel } from '../../../shared/ui/Panel';
@@ -10,6 +11,7 @@ import { Panel } from '../../../shared/ui/Panel';
 type PreviewMode = 'XML' | 'MARKDOWN' | 'JSON';
 
 export function PreviewPanel() {
+  const { t } = useI18n();
   const document = useAppStore(selectActiveDocument);
   const includesById = useAppStore((state) => state.includesById);
   const settings = useAppStore((state) => state.settings);
@@ -74,7 +76,7 @@ export function PreviewPanel() {
 
   async function handleCopy(): Promise<void> {
     const ok = await copyToClipboard(currentText);
-    setToast(ok ? 'Copied.' : 'Copy failed.');
+    setToast(ok ? t('copied') : t('copyFailed'));
     window.setTimeout(() => setToast(null), 1200);
   }
 
@@ -114,17 +116,17 @@ export function PreviewPanel() {
         <div className="preview-actions">
           <Button disabled={!canExport} onClick={() => void handleCopy()} tone="brand">
             {previewTab === 'XML'
-              ? 'Copy XML'
+              ? t('copyXml')
               : previewTab === 'MARKDOWN'
-                ? 'Copy Markdown'
-                : 'Copy JSON'}
+                ? t('copyMarkdown')
+                : t('copyJson')}
           </Button>
           <Button disabled={!canExport} onClick={handleDownload}>
-            Download
+            {t('download')}
           </Button>
         </div>
       }
-      title="Preview / Export"
+      title={t('previewExport')}
     >
       <div className="preview-tabs">{(['XML', 'MARKDOWN', 'JSON'] as PreviewMode[]).map(renderTabButton)}</div>
 
@@ -136,7 +138,7 @@ export function PreviewPanel() {
               onChange={(event) => setJsonWithIncludes(event.target.checked)}
               type="checkbox"
             />
-            Include Includes
+            {t('includeIncludes')}
           </label>
           <label>
             <input
@@ -144,7 +146,7 @@ export function PreviewPanel() {
               onChange={(event) => setJsonWithSettings(event.target.checked)}
               type="checkbox"
             />
-            Include Settings
+            {t('includeSettings')}
           </label>
         </div>
       ) : null}

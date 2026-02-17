@@ -1,4 +1,7 @@
+import type { AppLanguage } from '../../shared/lib/i18n/messages';
+import { useI18n } from '../../shared/lib/i18n/useI18n';
 import { useAppStore } from '../../shared/model/store';
+import { Button } from '../../shared/ui/Button';
 import { Drawer } from '../../shared/ui/Drawer';
 import { Input } from '../../shared/ui/Input';
 
@@ -8,14 +11,38 @@ interface SettingsDrawerProps {
 }
 
 export function SettingsDrawer({ open, onClose }: SettingsDrawerProps) {
+  const { language, t } = useI18n();
   const settings = useAppStore((state) => state.settings);
   const updateSettings = useAppStore((state) => state.updateSettings);
 
+  const setLanguage = (next: AppLanguage): void => {
+    updateSettings({ language: next });
+  };
+
   return (
-    <Drawer onClose={onClose} open={open} title="Settings">
+    <Drawer onClose={onClose} open={open} title={t('settings')}>
+      <div className="drawer-group">
+        <h4>{t('language')}</h4>
+        <div className="language-toggle-row">
+          <Button
+            onClick={() => setLanguage('ko')}
+            tone={language === 'ko' ? 'brand' : 'default'}
+          >
+            {t('korean')}
+          </Button>
+          <Button
+            onClick={() => setLanguage('en')}
+            tone={language === 'en' ? 'brand' : 'default'}
+          >
+            {t('english')}
+          </Button>
+        </div>
+        <p className="drawer-hint">{t('languageHint')}</p>
+      </div>
+
       <div className="drawer-group">
         <label>
-          Brand Color
+          {t('brandColor')}
           <Input
             onChange={(event) => updateSettings({ brandColor: event.target.value })}
             value={settings.brandColor}
@@ -32,7 +59,7 @@ export function SettingsDrawer({ open, onClose }: SettingsDrawerProps) {
             }
             type="checkbox"
           />
-          Confirm before delete
+          {t('confirmBeforeDelete')}
         </label>
       </div>
 
@@ -45,7 +72,7 @@ export function SettingsDrawer({ open, onClose }: SettingsDrawerProps) {
             }
             type="checkbox"
           />
-          Show markdown preview
+          {t('showMarkdownPreview')}
         </label>
       </div>
 
@@ -58,7 +85,7 @@ export function SettingsDrawer({ open, onClose }: SettingsDrawerProps) {
             }
             type="checkbox"
           />
-          RawXML strict mode (v1 placeholder)
+          {t('rawXmlStrictMode')}
         </label>
       </div>
 
@@ -71,13 +98,13 @@ export function SettingsDrawer({ open, onClose }: SettingsDrawerProps) {
             }
             type="checkbox"
           />
-          Default root tag enabled
+          {t('defaultRootTagEnabled')}
         </label>
       </div>
 
       <div className="drawer-group">
         <label>
-          Default root tag name
+          {t('defaultRootTagName')}
           <Input
             onChange={(event) =>
               updateSettings({ defaultRootTagName: event.target.value })

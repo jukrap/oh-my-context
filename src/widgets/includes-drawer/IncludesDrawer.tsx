@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useI18n } from '../../shared/lib/i18n/useI18n';
 import { selectActiveDocument, useAppStore } from '../../shared/model/store';
 import { Button } from '../../shared/ui/Button';
 import { Drawer } from '../../shared/ui/Drawer';
@@ -10,6 +11,7 @@ interface IncludesDrawerProps {
 }
 
 export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
+  const { t } = useI18n();
   const activeDocument = useAppStore(selectActiveDocument);
   const includesById = useAppStore((state) => state.includesById);
   const includeOrder = useAppStore((state) => state.includeOrder);
@@ -29,13 +31,13 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
   );
 
   return (
-    <Drawer onClose={onClose} open={open} title="Global Includes">
+    <Drawer onClose={onClose} open={open} title={t('globalIncludes')}>
       <div className="drawer-group">
         <Button onClick={createInclude} tone="brand">
-          Add Include
+          {t('addInclude')}
         </Button>
         <p className="drawer-hint">
-          Includes are inserted only during export and do not mutate original nodes.
+          {t('includeHint')}
         </p>
       </div>
 
@@ -54,10 +56,10 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
                     onChange={() => toggleIncludeForActiveDocument(includeItem.id)}
                     type="checkbox"
                   />
-                  Use in active document
+                  {t('useInActiveDocument')}
                 </label>
                 <Button onClick={() => deleteInclude(includeItem.id)} tone="danger">
-                  Delete
+                  {t('delete')}
                 </Button>
               </div>
 
@@ -71,7 +73,7 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
                 onChange={(event) =>
                   updateInclude(includeItem.id, { description: event.target.value })
                 }
-                placeholder="Description"
+                placeholder={t('description')}
                 value={includeItem.description}
               />
 
@@ -109,7 +111,7 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
                       },
                     })
                   }
-                  placeholder="targetTagName"
+                  placeholder={t('targetTagName')}
                   value={includeItem.insertion.targetTagName}
                 />
               </div>
@@ -135,7 +137,7 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
                       ],
                     })
                   }
-                  placeholder="Include tag"
+                  placeholder={t('includeTag')}
                   value={firstNode?.tagName ?? 'include'}
                 />
                 <Input
@@ -158,7 +160,7 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
                       ],
                     })
                   }
-                  placeholder="Include content"
+                  placeholder={t('includeContent')}
                   value={firstNode?.content ?? ''}
                 />
               </div>

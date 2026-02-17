@@ -5,7 +5,7 @@ import type { GlobalInclude, WorkspaceSettings } from '../../entities/include/mo
 import type { PromptDocument, PromptKind } from '../../entities/prompt-document/model/types';
 import { createNode, addChildNodeInTree, duplicateNodeInTree, findNodeById, removeNodeFromTree, reorderNodesWithinParent, updateNodeInTree } from '../../entities/prompt-node/model/tree';
 import type { PromptNode } from '../../entities/prompt-node/model/types';
-import { DEFAULT_LEFT_PANEL_WIDTH, DEFAULT_RIGHT_PANEL_WIDTH, DEFAULT_SETTINGS, SCHEMA_VERSION, createDefaultDocument } from '../config/defaults';
+import { DEFAULT_LEFT_PANEL_WIDTH, DEFAULT_RIGHT_PANEL_WIDTH, DEFAULT_SETTINGS, SCHEMA_VERSION, createDefaultDocument, createInitialSettings } from '../config/defaults';
 import { indexedDbStateStorage } from '../lib/storage/indexeddb-storage';
 
 export type PreviewTab = 'XML' | 'MARKDOWN' | 'JSON';
@@ -42,6 +42,8 @@ interface AppStoreState {
   setPreviewTab: (tab: PreviewTab) => void;
   setSaveStatus: (status: 'idle' | 'saving' | 'saved' | 'error') => void;
   setHydrated: (value: boolean) => void;
+  setLeftPanelWidth: (width: number) => void;
+  setRightPanelWidth: (width: number) => void;
   addRootNode: () => void;
   addChildNode: (parentId: string) => void;
   updateNode: (nodeId: string, updater: (node: PromptNode) => PromptNode) => void;
@@ -101,6 +103,8 @@ function getInitialState(): Omit<
   | 'setPreviewTab'
   | 'setSaveStatus'
   | 'setHydrated'
+  | 'setLeftPanelWidth'
+  | 'setRightPanelWidth'
   | 'addRootNode'
   | 'addChildNode'
   | 'updateNode'
@@ -123,7 +127,7 @@ function getInitialState(): Omit<
     activeDocumentId: initialDocument.id,
     includesById: {},
     includeOrder: [],
-    settings: DEFAULT_SETTINGS,
+    settings: createInitialSettings(),
     selectedNodeId: null,
     leftPanelWidth: DEFAULT_LEFT_PANEL_WIDTH,
     rightPanelWidth: DEFAULT_RIGHT_PANEL_WIDTH,
@@ -188,10 +192,11 @@ export const useAppStore = create<AppStoreState>()(
 
           const now = Date.now();
           const duplicateId = nanoid();
+          const duplicateSuffix = state.settings.language === 'ko' ? '복사본' : 'Copy';
           const duplicate: PromptDocument = {
             ...source,
             id: duplicateId,
-            name: `${source.name} Copy`,
+            name: `${source.name} ${duplicateSuffix}`,
             createdAt: now,
             updatedAt: now,
             schemaVersion: SCHEMA_VERSION,
@@ -269,6 +274,12 @@ export const useAppStore = create<AppStoreState>()(
       setHydrated: (value) => {
         set({ hydrated: value });
       },
+      setLeftPanelWidth: (width) => {
+        set({ leftPanelWidth: width });
+      },
+      setRightPanelWidth: (width) => {
+        set({ rightPanelWidth: width });
+      },
       addRootNode: () => {
         set((state) => {
           const patched = withActiveDocument(state, (document) => ({
@@ -342,9 +353,10 @@ export const useAppStore = create<AppStoreState>()(
       createInclude: () => {
         const now = Date.now();
         const id = nanoid();
+        const name = get().settings.language === 'ko' ? '새 Include' : 'New Include';
         const include: GlobalInclude = {
           id,
-          name: 'New Include',
+          name,
           description: '',
           nodes: [
             createNode({
@@ -456,9 +468,16 @@ export const useAppStore = create<AppStoreState>()(
       }),
       merge: (persisted, current) => {
         const typed = (persisted as Partial<AppStoreState>) ?? {};
+        const mergedSettings = {
+          ...DEFAULT_SETTINGS,
+          ...current.settings,
+          ...(typed.settings ?? {}),
+        };
+
         return {
           ...current,
           ...typed,
+          settings: mergedSettings,
           saveStatus: 'idle',
           lastSavedAt: null,
           hydrated: false,

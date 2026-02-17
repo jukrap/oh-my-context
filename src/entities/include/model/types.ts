@@ -24,6 +24,7 @@ export interface GlobalInclude {
 }
 
 export interface WorkspaceSettings {
+  language: 'en' | 'ko';
   brandColor: string;
   confirmBeforeDelete: boolean;
   showMarkdownPreview: boolean;

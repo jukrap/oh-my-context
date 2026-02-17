@@ -2,11 +2,13 @@ import { nanoid } from 'nanoid';
 import type { PromptDocument, PromptKind } from '../../entities/prompt-document/model/types';
 import type { WorkspaceSettings } from '../../entities/include/model/types';
 import { createNode } from '../../entities/prompt-node/model/tree';
+import { detectPreferredLanguage } from '../lib/i18n/messages';
 
 export const SCHEMA_VERSION = 1;
 export const BRAND_COLOR_DEFAULT = '#00E676';
 
 export const DEFAULT_SETTINGS: WorkspaceSettings = {
+  language: 'en',
   brandColor: BRAND_COLOR_DEFAULT,
   confirmBeforeDelete: true,
   showMarkdownPreview: true,
@@ -15,8 +17,15 @@ export const DEFAULT_SETTINGS: WorkspaceSettings = {
   defaultRootTagName: 'prompt',
 };
 
-export const DEFAULT_LEFT_PANEL_WIDTH = 360;
-export const DEFAULT_RIGHT_PANEL_WIDTH = 420;
+export const DEFAULT_LEFT_PANEL_WIDTH = 540;
+export const DEFAULT_RIGHT_PANEL_WIDTH = 430;
+
+export function createInitialSettings(): WorkspaceSettings {
+  return {
+    ...DEFAULT_SETTINGS,
+    language: detectPreferredLanguage(),
+  };
+}
 
 export function createDefaultDocument(
   name: string,

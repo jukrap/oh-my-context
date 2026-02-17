@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { isValidXmlName } from '../../../entities/prompt-node/model/validation';
+import { useI18n } from '../../../shared/lib/i18n/useI18n';
 import { selectActiveDocument, selectSelectedNode, useAppStore } from '../../../shared/model/store';
 import { Button } from '../../../shared/ui/Button';
 import { Input } from '../../../shared/ui/Input';
@@ -13,6 +14,7 @@ function parseTags(value: string): string[] {
 }
 
 export function NodeEditorPanel() {
+  const { t } = useI18n();
   const document = useAppStore(selectActiveDocument);
   const selectedNode = useAppStore(selectSelectedNode);
   const updateNode = useAppStore((state) => state.updateNode);
@@ -30,14 +32,14 @@ export function NodeEditorPanel() {
   }, [selectedNode]);
 
   if (!document) {
-    return <Panel title="Editor">No active document.</Panel>;
+    return <Panel title={t('nodeEditor')}>{t('noActiveDocument')}</Panel>;
   }
 
   return (
-    <Panel title="Node Editor">
+    <Panel title={t('nodeEditor')}>
       <div className="editor-section">
         <label className="field-label" htmlFor="doc-name">
-          Document Name
+          {t('documentName')}
         </label>
         <Input
           id="doc-name"
@@ -52,7 +54,7 @@ export function NodeEditorPanel() {
 
       <div className="editor-section">
         <label className="field-label" htmlFor="doc-tags">
-          Tags
+          {t('tags')}
         </label>
         <Input
           id="doc-tags"
@@ -61,7 +63,7 @@ export function NodeEditorPanel() {
               tags: parseTags(event.target.value),
             })
           }
-          placeholder="prompt, policy, baseline"
+          placeholder={t('tagsPlaceholder')}
           value={document.tags.join(', ')}
         />
       </div>
@@ -77,7 +79,7 @@ export function NodeEditorPanel() {
             }
             type="checkbox"
           />
-          Root Tag
+          {t('rootTag')}
         </label>
         <Input
           invalid={document.rootTagEnabled && !isValidXmlName(document.rootTagName)}
@@ -92,14 +94,14 @@ export function NodeEditorPanel() {
       </div>
 
       {!selectedNode ? (
-        <p className="empty-hint">Select a node from the stack to edit details.</p>
+        <p className="empty-hint">{t('selectNodeHint')}</p>
       ) : (
         <>
           <hr className="divider" />
 
           <div className="editor-section">
             <label className="field-label" htmlFor="node-tag">
-              Tag Name
+              {t('tagName')}
             </label>
             <Input
               id="node-tag"
@@ -113,13 +115,13 @@ export function NodeEditorPanel() {
               value={selectedNode.tagName}
             />
             {!isValidXmlName(selectedNode.tagName) ? (
-              <p className="field-error">Tag must match XML name pattern.</p>
+              <p className="field-error">{t('xmlNameValidation')}</p>
             ) : null}
           </div>
 
           <div className="editor-section">
             <div className="editor-row">
-              <span className="field-label">Attributes</span>
+              <span className="field-label">{t('attributes')}</span>
               <Button
                 onClick={() =>
                   updateNode(selectedNode.id, (node) => ({
@@ -132,8 +134,8 @@ export function NodeEditorPanel() {
                 }
                 tone="ghost"
               >
-                Add Attr
-              </Button>
+                  {t('addAttribute')}
+                </Button>
             </div>
 
             {Object.entries(selectedNode.attributes).map(([key, value]) => (
@@ -183,7 +185,7 @@ export function NodeEditorPanel() {
                   }
                   tone="danger"
                 >
-                  Remove
+                  {t('removeAttribute')}
                 </Button>
               </div>
             ))}
@@ -191,7 +193,7 @@ export function NodeEditorPanel() {
 
           <div className="editor-section">
             <label className="field-label" htmlFor="content-mode">
-              Content Mode
+              {t('contentMode')}
             </label>
             <select
               className="omc-select"
@@ -213,10 +215,10 @@ export function NodeEditorPanel() {
           <div className="editor-section">
             <div className="editor-row">
               <label className="field-label" htmlFor="node-content">
-                Content
+                {t('content')}
               </label>
               <span className="token-estimate">
-                ~{contentLengthEstimate} tokens (rough chars/4 estimate)
+                {t('tokenEstimate', { count: contentLengthEstimate })}
               </span>
             </div>
             <textarea
@@ -257,13 +259,13 @@ export function NodeEditorPanel() {
               }}
               tone="brand"
             >
-              Wrap Selection with Tag
+              {t('wrapSelection')}
             </Button>
           </div>
 
           {selectedNode.contentMode === 'Markdown' && settings.showMarkdownPreview ? (
             <div className="editor-section">
-              <p className="field-label">Markdown Preview (raw)</p>
+              <p className="field-label">{t('markdownPreview')}</p>
               <pre className="markdown-preview">{selectedNode.content}</pre>
             </div>
           ) : null}
