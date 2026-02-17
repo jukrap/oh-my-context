@@ -342,6 +342,15 @@ select {
   font-size: 12px;
 }
 
+.field-help {
+  margin: 2px 0 0;
+  padding-left: 8px;
+  border-left: 2px solid var(--omc-fg);
+  color: var(--omc-muted-text);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
 .editor-section {
   display: flex;
   flex-direction: column;

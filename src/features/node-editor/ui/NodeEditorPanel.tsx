@@ -46,6 +46,46 @@ export function NodeEditorPanel() {
     };
   }, [language]);
 
+  const contentModeMeta = useMemo(() => {
+    if (language === 'ko') {
+      return {
+        Plain: {
+          label: 'Plain',
+          description:
+            '일반 텍스트 모드입니다. 내보내기 시 CDATA로 감싸 안전하게 직렬화됩니다.',
+        },
+        Markdown: {
+          label: 'Markdown',
+          description:
+            '마크다운 문법을 유지하는 텍스트 모드입니다. 설정에 따라 하단 미리보기를 볼 수 있습니다.',
+        },
+        RawXML: {
+          label: 'RawXML',
+          description:
+            'XML 조각을 그대로 넣는 모드입니다. 잘못된 XML이면 출력이 깨질 수 있으니 주의하세요.',
+        },
+      } as const;
+    }
+
+    return {
+      Plain: {
+        label: 'Plain',
+        description:
+          'General text mode. Export wraps content safely with CDATA.',
+      },
+      Markdown: {
+        label: 'Markdown',
+        description:
+          'Markdown-aware text mode. Optional preview is shown below when enabled.',
+      },
+      RawXML: {
+        label: 'RawXML',
+        description:
+          'Injects raw XML fragment as-is. Invalid XML may break export output.',
+      },
+    } as const;
+  }, [language]);
+
   if (!document) {
     return <Panel title={t('nodeEditor')}>{t('noActiveDocument')}</Panel>;
   }
@@ -197,10 +237,13 @@ export function NodeEditorPanel() {
               }
               value={selectedNode.contentMode}
             >
-              <option value="Plain">Plain</option>
-              <option value="Markdown">Markdown</option>
-              <option value="RawXML">RawXML</option>
+              <option value="Plain">{contentModeMeta.Plain.label}</option>
+              <option value="Markdown">{contentModeMeta.Markdown.label}</option>
+              <option value="RawXML">{contentModeMeta.RawXML.label}</option>
             </select>
+            <p className="field-help">
+              {contentModeMeta[selectedNode.contentMode].description}
+            </p>
           </div>
 
           <div className="editor-section">

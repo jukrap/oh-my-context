@@ -38,6 +38,62 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
   const [editingNameId, setEditingNameId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
 
+  const kindMeta = useMemo(() => {
+    if (language === 'ko') {
+      return {
+        XML_STACK: {
+          label: 'XML 스택 프롬프트',
+          description:
+            '트리 기반 노드 편집을 중심으로 XML을 안전하게 내보내는 기본 문서 타입입니다.',
+        },
+        MARKDOWN_DOC: {
+          label: '마크다운 문서',
+          description:
+            '본문이 마크다운 중심인 문서입니다. 구조화된 설명/지침 문서 작성에 적합합니다.',
+        },
+        RAW_XML: {
+          label: '원시 XML',
+          description:
+            'RawXML 중심 문서입니다. XML 조각을 직접 관리할 때 사용합니다.',
+        },
+        CHAT_MESSAGES_JSON: {
+          label: '채팅 메시지 JSON',
+          description:
+            'role/content 메시지 배열(JSON) 형태의 프롬프트 관리에 적합한 타입입니다.',
+        },
+      } as const;
+    }
+
+    return {
+      XML_STACK: {
+        label: 'XML Stack Prompt',
+        description:
+          'Default tree-based prompt type optimized for safe XML export.',
+      },
+      MARKDOWN_DOC: {
+        label: 'Markdown Document',
+        description:
+          'Markdown-focused document type for structured instructions and notes.',
+      },
+      RAW_XML: {
+        label: 'Raw XML',
+        description:
+          'RawXML-oriented document type for directly managed XML fragments.',
+      },
+      CHAT_MESSAGES_JSON: {
+        label: 'Chat Messages JSON',
+        description:
+          'Best suited for role/content style message-array prompt formats.',
+      },
+    } as const;
+  }, [language]);
+
+  const allKindsLabel = language === 'ko' ? '전체 종류' : 'All Kinds';
+  const allKindsDescription =
+    language === 'ko'
+      ? '모든 문서 종류를 목록에 표시합니다.'
+      : 'Show documents of every kind in the list.';
+
   const filteredDocuments = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
     const normalizedTag = tagFilter.trim().toLowerCase();
@@ -124,10 +180,11 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
         >
           {KIND_OPTIONS.map((kind) => (
             <option key={kind} value={kind}>
-              {kind}
+              {kindMeta[kind].label}
             </option>
           ))}
         </select>
+        <p className="field-help">{kindMeta[newKind].description}</p>
         <Input
           onChange={(event) => setNewTags(event.target.value)}
           placeholder={t('tagsPlaceholder')}
@@ -167,13 +224,18 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
           }
           value={kindFilter}
         >
-          <option value="ALL">ALL</option>
+          <option value="ALL">{allKindsLabel}</option>
           {KIND_OPTIONS.map((kind) => (
             <option key={kind} value={kind}>
-              {kind}
+              {kindMeta[kind].label}
             </option>
           ))}
         </select>
+        <p className="field-help">
+          {kindFilter === 'ALL'
+            ? allKindsDescription
+            : kindMeta[kindFilter].description}
+        </p>
         <Input
           onChange={(event) => setTagFilter(event.target.value)}
           placeholder={t('tagFilter')}
@@ -213,7 +275,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
                 <strong className="omc-tooltip-hint" data-tooltip={hints.kind}>
                   {metaLabels.kind}
                 </strong>
-                {`: ${document.kind}`}
+                {`: ${kindMeta[document.kind].label} (${document.kind})`}
               </p>
               <p className="vault-meta">
                 <strong className="omc-tooltip-hint" data-tooltip={hints.tags}>
