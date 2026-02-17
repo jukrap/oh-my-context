@@ -118,8 +118,12 @@ export function SettingsDrawer({ open, onClose }: SettingsDrawerProps) {
       </div>
 
       <div className="drawer-group">
-        <div className="setting-field omc-tooltip-hint" data-tooltip={hints.defaultRootTagName}>
-          <label className="setting-label" htmlFor="default-root-tag-name-input">
+        <div className="setting-field">
+          <label
+            className="setting-label omc-tooltip-hint"
+            data-tooltip={hints.defaultRootTagName}
+            htmlFor="default-root-tag-name-input"
+          >
             {t('defaultRootTagName')}
           </label>
           <Input
