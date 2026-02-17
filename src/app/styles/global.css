@@ -280,9 +280,41 @@ select {
 }
 
 .field-label[data-tooltip] {
-  cursor: help;
-  text-decoration: underline dotted;
-  text-underline-offset: 2px;
+  cursor: default;
+  text-decoration: none;
+}
+
+.field-label[data-tooltip],
+.omc-tooltip-hint[data-tooltip] {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+}
+
+.field-label[data-tooltip]::after,
+.omc-tooltip-hint[data-tooltip]::after {
+  content: 'i';
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--omc-fg);
+  background: #fff;
+  color: #000;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-1px);
+}
+
+.field-label[data-tooltip]:hover::after,
+.field-label[data-tooltip]:focus-within::after,
+.omc-tooltip-hint[data-tooltip]:hover::after,
+.omc-tooltip-hint[data-tooltip]:focus-within::after {
+  background: var(--omc-brand-soft);
 }
 
 .field-error {
@@ -1006,6 +1038,21 @@ select {
 .drawer-hint {
   margin: 0;
   font-size: 12px;
+}
+
+.setting-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.setting-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .language-toggle-row {

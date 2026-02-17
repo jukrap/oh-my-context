@@ -16,7 +16,7 @@ import { Panel } from '../../../shared/ui/Panel';
 type PreviewMode = 'XML' | 'MARKDOWN' | 'JSON';
 
 export function PreviewPanel() {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const document = useAppStore(selectActiveDocument);
   const includesById = useAppStore((state) => state.includesById);
   const settings = useAppStore((state) => state.settings);
@@ -25,6 +25,24 @@ export function PreviewPanel() {
   const [jsonWithIncludes, setJsonWithIncludes] = useState(false);
   const [jsonWithSettings, setJsonWithSettings] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+
+  const jsonHints = useMemo(() => {
+    if (language === 'ko') {
+      return {
+        includeIncludes:
+          'JSON 내보내기에 전역 Include 정의를 함께 포함합니다.',
+        includeSettings:
+          'JSON 내보내기에 워크스페이스 설정값을 함께 포함합니다.',
+      };
+    }
+
+    return {
+      includeIncludes:
+        'Include global include definitions in JSON export output.',
+      includeSettings:
+        'Include workspace settings in JSON export output.',
+    };
+  }, [language]);
 
   const xmlResult = useMemo(() => {
     if (!document) {
@@ -157,7 +175,7 @@ export function PreviewPanel() {
 
       {previewTab === 'JSON' ? (
         <div className="json-options">
-          <label>
+          <label className="omc-tooltip-hint" data-tooltip={jsonHints.includeIncludes}>
             <input
               checked={jsonWithIncludes}
               onChange={(event) => setJsonWithIncludes(event.target.checked)}
@@ -165,7 +183,7 @@ export function PreviewPanel() {
             />
             {t('includeIncludes')}
           </label>
-          <label>
+          <label className="omc-tooltip-hint" data-tooltip={jsonHints.includeSettings}>
             <input
               checked={jsonWithSettings}
               onChange={(event) => setJsonWithSettings(event.target.checked)}

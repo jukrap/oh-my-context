@@ -20,7 +20,7 @@ export function EditorShell({
   onOpenDrawer,
   onCloseDrawer,
 }: EditorShellProps) {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const activeDocument = useAppStore(selectActiveDocument);
   const leftPanelWidth = useAppStore((state) => state.leftPanelWidth);
   const rightPanelWidth = useAppStore((state) => state.rightPanelWidth);
@@ -95,6 +95,15 @@ export function EditorShell({
           ? t('saveError')
           : t('saveIdle');
 
+  const leftResizeHint =
+    language === 'ko'
+      ? '좌우로 드래그해서 Context Stack 너비를 조절합니다.'
+      : 'Drag horizontally to resize Context Stack width.';
+  const rightResizeHint =
+    language === 'ko'
+      ? '좌우로 드래그해서 Preview / Export 너비를 조절합니다.'
+      : 'Drag horizontally to resize Preview / Export width.';
+
   return (
     <div className="editor-shell">
       <header className="editor-topbar">
@@ -164,14 +173,16 @@ export function EditorShell({
           <PromptStackPanel />
           <div
             aria-label="Resize context stack panel"
-            className="panel-splitter"
+            className="panel-splitter omc-tooltip-btn"
+            data-tooltip={leftResizeHint}
             onMouseDown={startResize('left')}
             role="separator"
           />
           <NodeEditorPanel />
           <div
             aria-label="Resize preview panel"
-            className="panel-splitter"
+            className="panel-splitter omc-tooltip-btn"
+            data-tooltip={rightResizeHint}
             onMouseDown={startResize('right')}
             role="separator"
           />
