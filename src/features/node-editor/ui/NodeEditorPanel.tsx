@@ -52,6 +52,7 @@ export function NodeEditorPanel() {
 
   return (
     <Panel
+      className="node-editor-panel"
       rightSlot={
         <div className="panel-meta-trigger">
           <Button
@@ -76,7 +77,11 @@ export function NodeEditorPanel() {
       ) : (
         <div className="node-editor-sections">
           <div className="editor-section">
-            <label className="field-label" htmlFor="node-tag" title={fieldHints.tagName}>
+            <label
+              className="field-label omc-tooltip-btn"
+              data-tooltip={fieldHints.tagName}
+              htmlFor="node-tag"
+            >
               {t('tagName')}
             </label>
             <Input
@@ -97,7 +102,7 @@ export function NodeEditorPanel() {
 
           <div className="editor-section">
             <div className="editor-row">
-              <span className="field-label" title={fieldHints.attributes}>
+              <span className="field-label omc-tooltip-btn" data-tooltip={fieldHints.attributes}>
                 {t('attributes')}
               </span>
               <Button
@@ -174,7 +179,11 @@ export function NodeEditorPanel() {
           </div>
 
           <div className="editor-section">
-            <label className="field-label" htmlFor="content-mode" title={fieldHints.contentMode}>
+            <label
+              className="field-label omc-tooltip-btn"
+              data-tooltip={fieldHints.contentMode}
+              htmlFor="content-mode"
+            >
               {t('contentMode')}
             </label>
             <select
@@ -196,12 +205,16 @@ export function NodeEditorPanel() {
 
           <div className="editor-section">
             <div className="editor-row">
-              <label className="field-label" htmlFor="node-content" title={fieldHints.content}>
+              <label
+                className="field-label omc-tooltip-btn"
+                data-tooltip={fieldHints.content}
+                htmlFor="node-content"
+              >
                 {t('content')}
               </label>
               <span
-                className="token-estimate"
-                title={t('tokenEstimate', { count: contentLengthEstimate })}
+                className="token-estimate omc-tooltip-btn"
+                data-tooltip={t('tokenEstimate', { count: contentLengthEstimate })}
               >
                 <span className="token-estimate-count">~{contentLengthEstimate.toLocaleString()}</span>
                 <span className="token-estimate-unit">tok est.</span>
@@ -225,8 +238,8 @@ export function NodeEditorPanel() {
             />
             <div className="inline-grid wrap-selection-row">
               <Input
+                aria-label={t('tagName')}
                 onChange={(event) => setWrapTag(event.target.value)}
-                title={fieldHints.wrap}
                 value={wrapTag}
               />
               <Button

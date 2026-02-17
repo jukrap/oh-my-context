@@ -107,11 +107,11 @@ export function PreviewPanel() {
 
     return (
       <button
-        className="preview-tab-button"
+        className="preview-tab-button omc-tooltip-btn"
         data-active={previewTab === tab}
+        data-tooltip={tab}
         key={tab}
         onClick={() => setPreviewTab(tab)}
-        title={tab}
         type="button"
       >
         {icon}

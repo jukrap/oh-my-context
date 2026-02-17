@@ -236,10 +236,10 @@ function DraggableNodeRow({
         <div className="stack-node-main">
           <div className="stack-node-main-left">
             <button
-              className="stack-drag-handle"
+              className="stack-drag-handle omc-tooltip-btn"
               type="button"
               aria-label={t('dragNode')}
-              title={t('dragNode')}
+              data-tooltip={t('dragNode')}
               {...attributes}
               {...listeners}
             >
@@ -248,10 +248,10 @@ function DraggableNodeRow({
 
             {node.children.length > 0 ? (
               <button
-                className="stack-collapse-toggle"
+                className="stack-collapse-toggle omc-tooltip-btn"
                 type="button"
                 aria-label={node.collapsed ? t('expandNode') : t('collapseNode')}
-                title={node.collapsed ? t('expandNode') : t('collapseNode')}
+                data-tooltip={node.collapsed ? t('expandNode') : t('collapseNode')}
                 onClick={() => toggleNodeCollapsed(node.id)}
               >
                 {node.collapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
@@ -261,10 +261,10 @@ function DraggableNodeRow({
             )}
 
             <button
-              className="stack-node-label"
+              className="stack-node-label omc-tooltip-btn"
               data-selected={selectedNodeId === node.id}
+              data-tooltip={`<${node.tagName}>`}
               onClick={() => setSelectedNodeId(node.id)}
-              title={`<${node.tagName}>`}
               type="button"
             >
               &lt;{node.tagName}&gt;
@@ -274,37 +274,37 @@ function DraggableNodeRow({
           <div className="stack-node-actions">
             <button
               aria-label={t('enableNode')}
-              className="stack-enable-toggle"
+              className="stack-enable-toggle omc-tooltip-btn"
               data-enabled={node.enabled}
+              data-tooltip={t('enableNode')}
               onClick={() => toggleNodeEnabled(node.id)}
-              title={t('enableNode')}
               type="button"
             >
               {node.enabled ? 'ON' : 'OFF'}
             </button>
             <button
               aria-label={t('addChild')}
-              className="stack-mini-action"
+              className="stack-mini-action omc-tooltip-btn"
+              data-tooltip={t('addChild')}
               onClick={() => addChildNode(node.id)}
-              title={t('addChild')}
               type="button"
             >
               <Plus size={14} />
             </button>
             <button
               aria-label={t('duplicate')}
-              className="stack-mini-action"
+              className="stack-mini-action omc-tooltip-btn"
+              data-tooltip={t('duplicate')}
               onClick={() => duplicateNode(node.id)}
-              title={t('duplicate')}
               type="button"
             >
               <Copy size={14} />
             </button>
             <button
               aria-label={t('delete')}
-              className="stack-mini-action danger"
+              className="stack-mini-action danger omc-tooltip-btn"
+              data-tooltip={t('delete')}
               onClick={() => deleteNode(node.id)}
-              title={t('delete')}
               type="button"
             >
               <Trash2 size={14} />

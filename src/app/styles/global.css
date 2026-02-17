@@ -277,7 +277,7 @@ select {
   letter-spacing: 0.06em;
 }
 
-.field-label[title] {
+.field-label[data-tooltip] {
   cursor: help;
   text-decoration: underline dotted;
   text-underline-offset: 2px;
@@ -766,11 +766,13 @@ select {
   color: var(--omc-muted-text);
 }
 
+.omc-tooltip-btn,
 .stack-tooltip-btn {
   position: relative;
 }
 
-.stack-tooltip-btn::before {
+.omc-tooltip-btn[data-tooltip]::before,
+.stack-tooltip-btn[data-tooltip]::before {
   content: '';
   position: absolute;
   left: 50%;
@@ -784,7 +786,8 @@ select {
   transition: opacity 120ms ease-out;
 }
 
-.stack-tooltip-btn::after {
+.omc-tooltip-btn[data-tooltip]::after,
+.stack-tooltip-btn[data-tooltip]::after {
   content: attr(data-tooltip);
   position: absolute;
   left: 50%;
@@ -796,7 +799,8 @@ select {
   font-size: 11px;
   font-weight: 700;
   line-height: 1.15;
-  white-space: nowrap;
+  white-space: normal;
+  max-width: min(260px, 76vw);
   padding: 4px 6px;
   opacity: 0;
   pointer-events: none;
@@ -804,11 +808,30 @@ select {
   z-index: 24;
 }
 
-.stack-tooltip-btn:hover::before,
-.stack-tooltip-btn:hover::after,
-.stack-tooltip-btn:focus-visible::before,
-.stack-tooltip-btn:focus-visible::after {
+.omc-tooltip-btn[data-tooltip]:hover::before,
+.omc-tooltip-btn[data-tooltip]:hover::after,
+.omc-tooltip-btn[data-tooltip]:focus-visible::before,
+.omc-tooltip-btn[data-tooltip]:focus-visible::after,
+.stack-tooltip-btn[data-tooltip]:hover::before,
+.stack-tooltip-btn[data-tooltip]:hover::after,
+.stack-tooltip-btn[data-tooltip]:focus-visible::before,
+.stack-tooltip-btn[data-tooltip]:focus-visible::after {
   opacity: 1;
+}
+
+.field-label.omc-tooltip-btn[data-tooltip]::before {
+  left: 8px;
+  transform: none;
+}
+
+.field-label.omc-tooltip-btn[data-tooltip]::after {
+  left: 0;
+  transform: none;
+  max-width: min(320px, 82vw);
+}
+
+.node-editor-panel .omc-panel-body {
+  overflow-x: hidden;
 }
 
 .panel-splitter {
