@@ -99,6 +99,22 @@ export type TranslationKey =
   | 'defaultRootTagName'
   | 'templatesV1'
   | 'templatesHint'
+  | 'templateLibrary'
+  | 'templateKindLabel'
+  | 'templateNodeCountLabel'
+  | 'templateApplyToActive'
+  | 'templateCreateDocument'
+  | 'templateApplyToActiveHint'
+  | 'templateCreateDocumentHint'
+  | 'templateActiveDocumentRequired'
+  | 'templateXmlBaselineName'
+  | 'templateXmlBaselineDescription'
+  | 'templateXmlStrictOutputName'
+  | 'templateXmlStrictOutputDescription'
+  | 'templateRawXmlFragmentName'
+  | 'templateRawXmlFragmentDescription'
+  | 'templateChatMessagesStarterName'
+  | 'templateChatMessagesStarterDescription'
   | 'hintResizeContextStack'
   | 'hintResizePreviewExport'
   | 'hintNavVault'
@@ -261,18 +277,41 @@ const messages: Record<AppLanguage, TranslationMap> = {
     english: 'English',
     confirmBeforeDelete: 'Confirm before delete',
     showMarkdownPreview: 'Show markdown preview',
-    rawXmlStrictMode: 'RawXML strict mode (v1 placeholder)',
+    rawXmlStrictMode: 'RawXML strict mode',
     defaultRootTagEnabled: 'Default root tag enabled',
     defaultRootTagName: 'Default root tag name',
-    templatesV1: 'Templates (v1)',
+    templatesV1: 'Templates',
     templatesHint:
-      'Template presets will be added in v1. Current MVP focuses on vault, stack editing, includes and export safety.',
+      'Use a starter template, then apply it to the active document or create a new document from it.',
+    templateLibrary: 'Template Library',
+    templateKindLabel: 'Kind',
+    templateNodeCountLabel: 'Nodes',
+    templateApplyToActive: 'Apply To Active',
+    templateCreateDocument: 'Create Document',
+    templateApplyToActiveHint:
+      'Replace active document structure with this template.',
+    templateCreateDocumentHint:
+      'Create a new document initialized with this template.',
+    templateActiveDocumentRequired:
+      'Open or create a document first, then apply template.',
+    templateXmlBaselineName: 'XML Baseline Prompt',
+    templateXmlBaselineDescription:
+      'General-purpose XML prompt with role, task, context, constraints and output format.',
+    templateXmlStrictOutputName: 'XML Strict Output Prompt',
+    templateXmlStrictOutputDescription:
+      'Focused on deterministic and schema-shaped output requirements.',
+    templateRawXmlFragmentName: 'Raw XML Fragment Prompt',
+    templateRawXmlFragmentDescription:
+      'Starter template for workflows that inject raw XML fragments.',
+    templateChatMessagesStarterName: 'Chat Messages Starter',
+    templateChatMessagesStarterDescription:
+      'Role/content style starter for chat-messages JSON workflows.',
     hintResizeContextStack: 'Drag horizontally to resize Context Stack width.',
     hintResizePreviewExport: 'Drag horizontally to resize Preview / Export width.',
     hintNavVault: 'Manage documents: create, search, filter and switch.',
     hintNavIncludes:
       'Manage global include blocks inserted automatically at export time.',
-    hintNavTemplates: 'Placeholder for v1 templates.',
+    hintNavTemplates: 'Browse and apply reusable prompt templates.',
     hintNavSettings:
       'Manage workspace options such as language and preview defaults.',
     hintFieldTagName: 'XML tag name. Invalid names block export.',
@@ -323,7 +362,7 @@ const messages: Record<AppLanguage, TranslationMap> = {
     hintSettingsMarkdownPreview:
       'Show markdown preview in Node Editor when content mode is Markdown.',
     hintSettingsRawXmlStrictMode:
-      'v1 placeholder option for stricter RawXML validation.',
+      'When enabled, RawXML node content is parsed as XML fragments during preview/export. Invalid fragments block XML export.',
     hintSettingsDefaultRootTagEnabled:
       'Enable root tag by default for newly created documents.',
     hintSettingsDefaultRootTagName:
@@ -454,17 +493,40 @@ const messages: Record<AppLanguage, TranslationMap> = {
     english: '영어 (English)',
     confirmBeforeDelete: '삭제 전 확인',
     showMarkdownPreview: '마크다운 미리보기 표시',
-    rawXmlStrictMode: 'RawXML 엄격 모드 (v1 예정)',
+    rawXmlStrictMode: 'RawXML 엄격 모드',
     defaultRootTagEnabled: '기본 루트 태그 사용',
     defaultRootTagName: '기본 루트 태그 이름',
-    templatesV1: '템플릿 (v1)',
+    templatesV1: '템플릿',
     templatesHint:
-      '템플릿 프리셋은 v1에서 제공됩니다. 현재 MVP는 문서함, 스택 편집, 전역 포함, 안전한 내보내기에 집중합니다.',
+      '시작 템플릿을 선택한 뒤 활성 문서에 적용하거나 새 문서를 템플릿으로 생성할 수 있습니다.',
+    templateLibrary: '템플릿 라이브러리',
+    templateKindLabel: '종류',
+    templateNodeCountLabel: '노드 수',
+    templateApplyToActive: '활성 문서에 적용',
+    templateCreateDocument: '새 문서 생성',
+    templateApplyToActiveHint:
+      '현재 활성 문서 구조를 이 템플릿으로 교체합니다.',
+    templateCreateDocumentHint:
+      '이 템플릿으로 초기화된 새 문서를 생성합니다.',
+    templateActiveDocumentRequired:
+      '먼저 문서를 열거나 생성한 뒤 템플릿을 적용하세요.',
+    templateXmlBaselineName: 'XML 기본 프롬프트',
+    templateXmlBaselineDescription:
+      'role, task, context, constraints, output_format으로 구성된 범용 XML 템플릿입니다.',
+    templateXmlStrictOutputName: 'XML 엄격 출력 프롬프트',
+    templateXmlStrictOutputDescription:
+      '결과 형식 고정과 스키마 중심 출력을 요구하는 템플릿입니다.',
+    templateRawXmlFragmentName: 'Raw XML 조각 프롬프트',
+    templateRawXmlFragmentDescription:
+      'Raw XML 조각 삽입 워크플로에 맞춘 시작 템플릿입니다.',
+    templateChatMessagesStarterName: '채팅 메시지 시작 템플릿',
+    templateChatMessagesStarterDescription:
+      'role/content 기반 채팅 메시지 JSON 워크플로 시작 템플릿입니다.',
     hintResizeContextStack: '좌우로 드래그해 Context Stack 너비를 조절합니다.',
     hintResizePreviewExport: '좌우로 드래그해 Preview / Export 너비를 조절합니다.',
     hintNavVault: '문서 생성, 검색, 필터, 전환을 관리합니다.',
     hintNavIncludes: '내보내기 시 자동 삽입되는 전역 Include를 관리합니다.',
-    hintNavTemplates: 'v1 템플릿 기능 자리입니다.',
+    hintNavTemplates: '재사용 가능한 프롬프트 템플릿을 둘러보고 적용합니다.',
     hintNavSettings: '언어와 미리보기 기본값 등 작업 공간 설정을 관리합니다.',
     hintFieldTagName: 'XML 태그 이름입니다. 잘못된 이름이면 내보내기가 차단됩니다.',
     hintFieldAttributes:
@@ -514,7 +576,7 @@ const messages: Record<AppLanguage, TranslationMap> = {
     hintSettingsMarkdownPreview:
       'Node Editor에서 Markdown 모드일 때 미리보기를 표시합니다.',
     hintSettingsRawXmlStrictMode:
-      'RawXML 검증을 강화하는 v1 예정 옵션입니다.',
+      '활성화하면 RawXML 노드 내용을 미리보기/내보내기 시 XML 조각으로 파싱 검사합니다. 잘못된 조각이 있으면 XML 내보내기를 차단합니다.',
     hintSettingsDefaultRootTagEnabled:
       '새 문서 생성 시 루트 태그를 기본 활성화합니다.',
     hintSettingsDefaultRootTagName:
