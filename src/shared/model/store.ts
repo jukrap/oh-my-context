@@ -29,6 +29,7 @@ interface AppStoreState {
   rightPanelWidth: number;
   stackSearchQuery: string;
   previewTab: PreviewTab;
+  newlyCreatedNodeId: string | null;
   createDocument: (payload: CreateDocumentPayload) => void;
   deleteDocument: (id: string) => void;
   duplicateDocument: (id: string) => void;
@@ -142,6 +143,7 @@ function getInitialState(): Omit<
     rightPanelWidth: DEFAULT_RIGHT_PANEL_WIDTH,
     stackSearchQuery: '',
     previewTab: 'XML',
+    newlyCreatedNodeId: null,
   };
 }
 
@@ -161,6 +163,7 @@ export const useAppStore = create<AppStoreState>()(
           documentOrder: [document.id, ...state.documentOrder],
           activeDocumentId: document.id,
           selectedNodeId: null,
+          newlyCreatedNodeId: null,
         }));
       },
       deleteDocument: (id) => {
@@ -175,6 +178,7 @@ export const useAppStore = create<AppStoreState>()(
               documentOrder: [fallback.id],
               activeDocumentId: fallback.id,
               selectedNodeId: null,
+              newlyCreatedNodeId: null,
             };
           }
 
@@ -186,6 +190,8 @@ export const useAppStore = create<AppStoreState>()(
             activeDocumentId:
               state.activeDocumentId === id ? fallbackId : state.activeDocumentId,
             selectedNodeId: null,
+            newlyCreatedNodeId:
+              state.activeDocumentId === id ? null : state.newlyCreatedNodeId,
           };
         });
       },
@@ -221,6 +227,7 @@ export const useAppStore = create<AppStoreState>()(
             documentOrder: [duplicate.id, ...state.documentOrder],
             activeDocumentId: duplicate.id,
             selectedNodeId: null,
+            newlyCreatedNodeId: null,
           };
         });
       },
@@ -251,6 +258,7 @@ export const useAppStore = create<AppStoreState>()(
         set({
           activeDocumentId: id,
           selectedNodeId: null,
+          newlyCreatedNodeId: null,
         });
       },
       updateActiveDocument: (partial) => {
@@ -263,7 +271,10 @@ export const useAppStore = create<AppStoreState>()(
         });
       },
       setSelectedNodeId: (nodeId) => {
-        set({ selectedNodeId: nodeId });
+        set({
+          selectedNodeId: nodeId,
+          newlyCreatedNodeId: null,
+        });
       },
       setStackSearchQuery: (query) => {
         set({ stackSearchQuery: query });
@@ -280,25 +291,53 @@ export const useAppStore = create<AppStoreState>()(
       addRootNode: (tagName) => {
         set((state) => {
           const nextTagName = resolveNodeTagName(tagName);
-          const patched = withActiveDocument(state, (document) => ({
-            ...document,
-            nodes: [...document.nodes, createNode({ tagName: nextTagName })],
-          }));
-          return patched;
+          const activeId = state.activeDocumentId;
+          if (!activeId) {
+            return {};
+          }
+
+          const document = state.documentsById[activeId];
+          if (!document) {
+            return {};
+          }
+
+          const createdNode = createNode({ tagName: nextTagName });
+          return {
+            documentsById: {
+              ...state.documentsById,
+              [activeId]: touchDocument({
+                ...document,
+                nodes: [...document.nodes, createdNode],
+              }),
+            },
+            newlyCreatedNodeId: createdNode.id,
+          };
         });
       },
       addChildNode: (parentId, tagName) => {
         set((state) => {
           const nextTagName = resolveNodeTagName(tagName);
-          const patched = withActiveDocument(state, (document) => ({
-            ...document,
-            nodes: addChildNodeInTree(
-              document.nodes,
-              parentId,
-              createNode({ tagName: nextTagName }),
-            ),
-          }));
-          return patched;
+          const activeId = state.activeDocumentId;
+          if (!activeId) {
+            return {};
+          }
+
+          const document = state.documentsById[activeId];
+          if (!document) {
+            return {};
+          }
+
+          const createdNode = createNode({ tagName: nextTagName });
+          return {
+            documentsById: {
+              ...state.documentsById,
+              [activeId]: touchDocument({
+                ...document,
+                nodes: addChildNodeInTree(document.nodes, parentId, createdNode),
+              }),
+            },
+            newlyCreatedNodeId: createdNode.id,
+          };
         });
       },
       updateNode: (nodeId, updater) => {
@@ -320,6 +359,10 @@ export const useAppStore = create<AppStoreState>()(
             ...patched,
             selectedNodeId:
               state.selectedNodeId === nodeId ? null : state.selectedNodeId,
+            newlyCreatedNodeId:
+              state.newlyCreatedNodeId === nodeId
+                ? null
+                : state.newlyCreatedNodeId,
           };
         });
       },
@@ -464,6 +507,7 @@ export const useAppStore = create<AppStoreState>()(
     {
       name: 'omc-workspace-v1',
       version: 1,
+      skipHydration: true,
       storage: createJSONStorage(() => indexedDbStateStorage),
       partialize: (state) => ({
         documentsById: state.documentsById,

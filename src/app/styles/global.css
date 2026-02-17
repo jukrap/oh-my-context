@@ -540,6 +540,11 @@ select {
   background: var(--omc-brand-soft);
 }
 
+.stack-node-card[data-recent='true'] {
+  background: color-mix(in srgb, var(--omc-brand) 20%, #fff 80%);
+  animation: stack-new-node-pop 1350ms ease-out 1;
+}
+
 .stack-node-card[data-drop-active='true'] {
   outline: 3px solid #00e676;
   outline-offset: -2px;
@@ -547,6 +552,26 @@ select {
 
 .stack-node-card[data-disabled='true'] {
   opacity: 0.75;
+}
+
+@keyframes stack-new-node-pop {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(0, 230, 118, 0.45),
+      inset 0 0 0 0 rgba(0, 230, 118, 0.3);
+  }
+
+  35% {
+    box-shadow:
+      0 0 0 6px rgba(0, 230, 118, 0),
+      inset 0 0 0 999px rgba(0, 230, 118, 0.12);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(0, 230, 118, 0),
+      inset 0 0 0 0 rgba(0, 230, 118, 0);
+  }
 }
 
 .stack-node-main {

@@ -184,6 +184,7 @@ function DraggableNodeRow({
 }) {
   const { t } = useI18n();
   const selectedNodeId = useAppStore((state) => state.selectedNodeId);
+  const newlyCreatedNodeId = useAppStore((state) => state.newlyCreatedNodeId);
   const setSelectedNodeId = useAppStore((state) => state.setSelectedNodeId);
   const addChildNode = useAppStore((state) => state.addChildNode);
   const duplicateNode = useAppStore((state) => state.duplicateNode);
@@ -221,6 +222,7 @@ function DraggableNodeRow({
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
     marginLeft: depth > 0 ? '-5px' : undefined,
   };
+  const isRecentlyCreated = newlyCreatedNodeId === node.id;
 
   return (
     <div className="stack-node-row" data-selected={selectedNodeId === node.id}>
@@ -229,6 +231,7 @@ function DraggableNodeRow({
         className="stack-node-card"
         data-disabled={!node.enabled}
         data-drop-active={activeDropId === buildNodeDropId(node.id, 'inside')}
+        data-recent={isRecentlyCreated}
         data-selected={selectedNodeId === node.id}
         ref={setCardRef}
         style={cardStyle}

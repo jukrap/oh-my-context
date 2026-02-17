@@ -1,11 +1,9 @@
 import { useEffect } from 'react';
 import { flushAutosaveNow, subscribeAutosaveStatus } from '../../../shared/lib/storage/indexeddb-storage';
-import { useAppStore } from '../../../shared/model/store';
 import { useRuntimeStore } from '../../../shared/model/runtime-store';
 
 export function useAutosaveLifecycle(): void {
   const setSaveStatus = useRuntimeStore((state) => state.setSaveStatus);
-  const setHydrated = useRuntimeStore((state) => state.setHydrated);
 
   useEffect(() => {
     const unsubscribe = subscribeAutosaveStatus((status) => {
@@ -14,12 +12,6 @@ export function useAutosaveLifecycle(): void {
 
     return unsubscribe;
   }, [setSaveStatus]);
-
-  useEffect(() => {
-    void Promise.resolve(useAppStore.persist.rehydrate()).then(() => {
-      setHydrated(true);
-    });
-  }, [setHydrated]);
 
   useEffect(() => {
     const handleVisibilityChange = (): void => {
