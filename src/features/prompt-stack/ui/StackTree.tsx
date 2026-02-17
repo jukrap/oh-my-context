@@ -43,8 +43,14 @@ function BranchGuides({
     return <div aria-hidden className="stack-branch-guides" />;
   }
 
-  const visibleAncestorLines = ancestorLines.slice(-STACK_MAX_VISIBLE_GUIDE_DEPTH);
-  const startDepth = Math.max(depth - visibleAncestorLines.length, 0);
+  // From stage 10+, keep only pass-through ancestor lines and omit deep connector branches.
+  const hideDeepConnectorDepth = STACK_MAX_VISIBLE_GUIDE_DEPTH + 1;
+  const isDeepOverflow = depth >= hideDeepConnectorDepth;
+
+  const visibleAncestorLines = isDeepOverflow
+    ? ancestorLines.slice(0, STACK_MAX_VISIBLE_GUIDE_DEPTH)
+    : ancestorLines.slice(-STACK_MAX_VISIBLE_GUIDE_DEPTH);
+  const startDepth = isDeepOverflow ? 0 : Math.max(depth - visibleAncestorLines.length, 0);
   const parentDepth = Math.max(depth - 1, 0);
   const connectorColor = getDepthColor(parentDepth);
 
@@ -53,7 +59,7 @@ function BranchGuides({
       {visibleAncestorLines.map((hasLine, index) => (
         <span
           className="stack-branch-column"
-          data-active={index > 0 ? hasLine : false}
+          data-active={hasLine && !(startDepth === 0 && index === 0)}
           key={`${depth}-${index}`}
           style={
             {
@@ -62,13 +68,19 @@ function BranchGuides({
           }
         />
       ))}
-      <span
-        className="stack-branch-connector"
-        data-last={isLast}
-        style={{ ['--branch-color' as string]: connectorColor } as CSSProperties}
-      >
-        <span className="stack-branch-horizontal" />
-      </span>
+      {isDeepOverflow ? (
+        <span className="stack-branch-connector stack-branch-connector-omitted">
+          <span className="stack-branch-overflow-marker">...</span>
+        </span>
+      ) : (
+        <span
+          className="stack-branch-connector"
+          data-last={isLast}
+          style={{ ['--branch-color' as string]: connectorColor } as CSSProperties}
+        >
+          <span className="stack-branch-horizontal" />
+        </span>
+      )}
     </div>
   );
 }

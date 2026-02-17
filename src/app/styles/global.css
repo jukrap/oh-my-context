@@ -641,6 +641,22 @@ select {
   flex: 0 0 auto;
 }
 
+.stack-branch-overflow-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 16px;
+  padding: 0 4px;
+  border: 2px solid var(--omc-fg);
+  background: var(--omc-surface-2);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--omc-muted-text);
+  line-height: 1;
+}
+
 .stack-branch-column,
 .stack-branch-connector {
   position: relative;
@@ -660,6 +676,18 @@ select {
 .stack-branch-connector {
   width: 24px;
   flex: 0 0 24px;
+}
+
+.stack-branch-connector-omitted {
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 2px;
+}
+
+.stack-branch-connector-omitted::before,
+.stack-branch-connector-omitted::after,
+.stack-branch-connector-omitted .stack-branch-horizontal {
+  display: none;
 }
 
 .stack-branch-connector::before {
