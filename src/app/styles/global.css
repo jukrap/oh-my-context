@@ -476,6 +476,11 @@ select {
   padding-left: 18px;
 }
 
+.md-list-ordered {
+  list-style: decimal;
+  padding-left: 22px;
+}
+
 .md-list li+li {
   margin-top: 3px;
 }
@@ -501,6 +506,35 @@ select {
   background: #fff;
   padding: 0 4px;
   font-size: 0.95em;
+}
+
+.md-link {
+  color: #0056cf;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.md-link:hover {
+  color: #003f98;
+}
+
+.md-image {
+  display: block;
+  max-width: min(100%, 420px);
+  height: auto;
+  border: 2px solid #000;
+  background: #fff;
+  margin: 8px 0;
+}
+
+.md-hr {
+  margin: 10px 0;
+  border: 0;
+  border-top: 2px solid #000;
+}
+
+.md-strike {
+  text-decoration-thickness: 2px;
 }
 
 .stack-tree-root {

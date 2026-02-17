@@ -8,13 +8,49 @@ import { Input } from '../../../shared/ui/Input';
 import { Panel } from '../../../shared/ui/Panel';
 import { DocumentMetaPopover } from './DocumentMetaPopover';
 
+const INLINE_TOKEN_PATTERN =
+  /(!\[[^\]]*\]\([^)]+\)|\[[^\]]+\]\([^)]+\)|`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|~~[^~]+~~|\*[^*\n]+\*|_[^_\n]+_)/g;
+
+function parseLinkToken(raw: string): { label: string; url: string } | null {
+  const match = raw.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+  if (!match) {
+    return null;
+  }
+
+  const label = match[1] ?? '';
+  const url = (match[2] ?? '').trim();
+  if (!label || !url) {
+    return null;
+  }
+
+  return { label, url };
+}
+
+function parseImageToken(raw: string): { alt: string; src: string } | null {
+  const match = raw.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+  if (!match) {
+    return null;
+  }
+
+  const alt = match[1] ?? '';
+  const src = (match[2] ?? '').trim();
+  if (!src) {
+    return null;
+  }
+
+  return { alt, src };
+}
+
+function isHorizontalRuleLine(line: string): boolean {
+  return /^(?:-{3,}|\*{3,}|_{3,})$/.test(line.trim());
+}
+
 function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode[] {
-  const tokenPattern = /(`[^`]+`|\*\*[^*]+\*\*|\*[^*\n]+\*)/g;
   const tokens: ReactNode[] = [];
   let cursor = 0;
   let index = 0;
 
-  for (const match of text.matchAll(tokenPattern)) {
+  for (const match of text.matchAll(INLINE_TOKEN_PATTERN)) {
     if (typeof match.index !== 'number') {
       continue;
     }
@@ -26,26 +62,64 @@ function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode[] {
       tokens.push(text.slice(cursor, start));
     }
 
-    if (raw.startsWith('**') && raw.endsWith('**')) {
+    const imageToken = parseImageToken(raw);
+    if (imageToken) {
       tokens.push(
-        <strong key={`${keyPrefix}-strong-${index}`}>
-          {raw.slice(2, -2)}
-        </strong>,
-      );
-    } else if (raw.startsWith('`') && raw.endsWith('`')) {
-      tokens.push(
-        <code className="md-inline-code" key={`${keyPrefix}-code-${index}`}>
-          {raw.slice(1, -1)}
-        </code>,
-      );
-    } else if (raw.startsWith('*') && raw.endsWith('*')) {
-      tokens.push(
-        <em key={`${keyPrefix}-em-${index}`}>
-          {raw.slice(1, -1)}
-        </em>,
+        <img
+          alt={imageToken.alt}
+          className="md-image"
+          key={`${keyPrefix}-img-${index}`}
+          loading="lazy"
+          src={imageToken.src}
+        />,
       );
     } else {
-      tokens.push(raw);
+      const linkToken = parseLinkToken(raw);
+      if (linkToken) {
+        tokens.push(
+          <a
+            className="md-link"
+            href={linkToken.url}
+            key={`${keyPrefix}-link-${index}`}
+            rel="noreferrer noopener"
+            target="_blank"
+          >
+            {renderInlineMarkdown(linkToken.label, `${keyPrefix}-link-label-${index}`)}
+          </a>,
+        );
+      } else if (
+        (raw.startsWith('**') && raw.endsWith('**')) ||
+        (raw.startsWith('__') && raw.endsWith('__'))
+      ) {
+        tokens.push(
+          <strong key={`${keyPrefix}-strong-${index}`}>
+            {raw.slice(2, -2)}
+          </strong>,
+        );
+      } else if (raw.startsWith('`') && raw.endsWith('`')) {
+        tokens.push(
+          <code className="md-inline-code" key={`${keyPrefix}-code-${index}`}>
+            {raw.slice(1, -1)}
+          </code>,
+        );
+      } else if (raw.startsWith('~~') && raw.endsWith('~~')) {
+        tokens.push(
+          <del className="md-strike" key={`${keyPrefix}-strike-${index}`}>
+            {raw.slice(2, -2)}
+          </del>,
+        );
+      } else if (
+        (raw.startsWith('*') && raw.endsWith('*')) ||
+        (raw.startsWith('_') && raw.endsWith('_'))
+      ) {
+        tokens.push(
+          <em key={`${keyPrefix}-em-${index}`}>
+            {raw.slice(1, -1)}
+          </em>,
+        );
+      } else {
+        tokens.push(raw);
+      }
     }
 
     cursor = start + raw.length;
@@ -70,8 +144,10 @@ function renderMarkdownBlocks(source: string): ReactNode[] {
     return (
       trimmed.startsWith('```') ||
       /^#{1,6}\s+/.test(trimmed) ||
+      /^\s*\d+\.\s+/.test(line) ||
       /^\s*[-*]\s+/.test(line) ||
-      /^\s*>\s+/.test(line)
+      /^\s*>\s+/.test(line) ||
+      isHorizontalRuleLine(line)
     );
   };
 
@@ -103,6 +179,13 @@ function renderMarkdownBlocks(source: string): ReactNode[] {
       continue;
     }
 
+    if (isHorizontalRuleLine(line)) {
+      blocks.push(<hr className="md-hr" key={`md-hr-${blockIndex}`} />);
+      blockIndex += 1;
+      lineIndex += 1;
+      continue;
+    }
+
     const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
     if (headingMatch) {
       const hashes = headingMatch[1];
@@ -119,6 +202,37 @@ function renderMarkdownBlocks(source: string): ReactNode[] {
       );
       blockIndex += 1;
       lineIndex += 1;
+      continue;
+    }
+
+    if (/^\s*\d+\.\s+/.test(line)) {
+      const orderedItems: Array<{ order: number; text: string }> = [];
+
+      while (lineIndex < lines.length) {
+        const current = lines[lineIndex] ?? '';
+        const orderedMatch = current.match(/^\s*(\d+)\.\s+(.+)$/);
+        if (!orderedMatch) {
+          break;
+        }
+
+        orderedItems.push({
+          order: Number(orderedMatch[1] ?? '1'),
+          text: orderedMatch[2] ?? '',
+        });
+        lineIndex += 1;
+      }
+
+      const start = orderedItems[0]?.order ?? 1;
+      blocks.push(
+        <ol className="md-list md-list-ordered" key={`md-ol-${blockIndex}`} start={start}>
+          {orderedItems.map((item, index) => (
+            <li key={`md-ol-item-${blockIndex}-${index}`}>
+              {renderInlineMarkdown(item.text, `ol-${blockIndex}-${index}`)}
+            </li>
+          ))}
+        </ol>,
+      );
+      blockIndex += 1;
       continue;
     }
 
