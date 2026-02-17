@@ -21,7 +21,7 @@
   --stack-depth-3: #009f52;
   --stack-depth-4: #008445;
   --stack-depth-5: #006b39;
-  --stack-branch-anchor-y: 18px;
+  --stack-branch-anchor-y: 21px;
 }
 
 *,
@@ -319,13 +319,13 @@ select {
 .stack-node-wrap {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .stack-node-row {
   display: flex;
   align-items: stretch;
-  gap: 8px;
+  gap: 6px;
   min-width: 0;
 }
 
@@ -346,23 +346,23 @@ select {
 .stack-branch-column[data-active='true']::before {
   content: '';
   position: absolute;
-  top: -6px;
-  bottom: -6px;
+  top: -4px;
+  bottom: -4px;
   left: 7px;
   border-left: 2px solid var(--branch-color);
 }
 
 .stack-branch-connector {
-  width: 20px;
-  flex: 0 0 20px;
+  width: 24px;
+  flex: 0 0 24px;
 }
 
 .stack-branch-connector::before {
   content: '';
   position: absolute;
   left: 7px;
-  top: -6px;
-  height: calc(var(--stack-branch-anchor-y) + 6px);
+  top: -4px;
+  height: calc(var(--stack-branch-anchor-y) + 4px);
   border-left: 2px solid var(--branch-color);
 }
 
@@ -371,14 +371,14 @@ select {
   position: absolute;
   left: 7px;
   top: var(--stack-branch-anchor-y);
-  bottom: -6px;
+  bottom: -4px;
   border-left: 2px solid var(--branch-color);
 }
 
 .stack-branch-horizontal {
   position: absolute;
   left: 7px;
-  right: 0;
+  right: -4px;
   top: var(--stack-branch-anchor-y);
   border-top: 2px solid var(--branch-color);
 }
@@ -508,7 +508,7 @@ select {
 }
 
 .stack-drop-slot {
-  height: 6px;
+  height: 5px;
   border-radius: 2px;
   background: transparent;
   transition: background-color 120ms ease-out;
@@ -520,11 +520,6 @@ select {
 
 .stack-add-menu {
   position: relative;
-}
-
-.stack-add-trigger {
-  min-width: 168px;
-  justify-content: space-between;
 }
 
 .stack-add-inline {
@@ -544,7 +539,7 @@ select {
 }
 
 .stack-add-inline-btn {
-  min-width: 112px;
+  min-width: 108px;
 }
 
 .stack-add-popover {
