@@ -26,3 +26,6 @@ yarn.lock
 *.njsproj
 *.sln
 *.sw?
+
+# Local planning docs (private)
+docs/plans/
