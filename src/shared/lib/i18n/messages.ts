@@ -25,6 +25,7 @@ export type TranslationKey =
   | 'addToSelected'
   | 'defaultLabel'
   | 'selectNodeFirst'
+  | 'selectAddTag'
   | 'searchTagOrContent'
   | 'dragNode'
   | 'enableNode'
@@ -128,6 +129,7 @@ const messages: Record<AppLanguage, TranslationMap> = {
     addToSelected: 'Add To Selected',
     defaultLabel: 'Default',
     selectNodeFirst: 'Select a node first',
+    selectAddTag: 'Select add tag',
     searchTagOrContent: 'Search tag or content',
     dragNode: 'Drag node',
     enableNode: 'Enable node',
@@ -231,6 +233,7 @@ const messages: Record<AppLanguage, TranslationMap> = {
     addToSelected: '선택 노드에 추가',
     defaultLabel: '기본',
     selectNodeFirst: '먼저 노드를 선택하세요',
+    selectAddTag: '추가 태그 선택',
     searchTagOrContent: '태그 또는 내용 검색',
     dragNode: '노드 드래그',
     enableNode: '노드 활성화',

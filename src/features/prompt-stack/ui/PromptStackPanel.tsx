@@ -157,7 +157,7 @@ function DropSlot({
       data-active={activeDropId === dropId}
       data-variant={variant}
       style={{
-        marginLeft: depth * 14 + 18,
+        marginLeft: depth * 14 + (depth > 0 ? 15 : 18),
       }}
     />
   );
@@ -213,6 +213,7 @@ function DraggableNodeRow({
   const cardStyle: CSSProperties = {
     opacity: isDragging ? 0.45 : 1,
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    marginLeft: depth > 0 ? '-3px' : undefined,
   };
 
   return (
@@ -421,7 +422,10 @@ function AddNodeMenu() {
   };
 
   const handleAddNode = (target: 'root' | 'child'): void => {
-    if (target === 'child' && selectedNode) {
+    if (target === 'child') {
+      if (!selectedNode) {
+        return;
+      }
       addChildNode(selectedNode.id, selectedTag);
       return;
     }
@@ -434,7 +438,9 @@ function AddNodeMenu() {
       <div className="stack-add-inline">
         <button
           aria-expanded={open}
-          className="omc-btn stack-tag-picker"
+          aria-label={t('selectAddTag')}
+          className="omc-btn stack-tag-picker stack-tooltip-btn"
+          data-tooltip={t('selectAddTag')}
           onClick={() => setOpen((prev) => !prev)}
           type="button"
         >
@@ -444,23 +450,25 @@ function AddNodeMenu() {
         </button>
 
         <button
-          className="omc-btn omc-btn-brand stack-add-inline-btn"
+          aria-label={t('addAtRoot')}
+          className="omc-btn omc-btn-brand stack-add-inline-btn stack-tooltip-btn"
+          data-tooltip={t('addAtRoot')}
           onClick={() => handleAddNode('root')}
           type="button"
         >
           <ListTree size={14} />
-          {t('addAtRoot')}
         </button>
 
         <button
-          className="omc-btn stack-add-inline-btn"
-          disabled={!selectedNode}
+          aria-disabled={!selectedNode}
+          aria-label={selectedNode ? t('addToSelected') : t('selectNodeFirst')}
+          className="omc-btn stack-add-inline-btn stack-tooltip-btn"
+          data-disabled={!selectedNode}
+          data-tooltip={selectedNode ? t('addToSelected') : t('selectNodeFirst')}
           onClick={() => handleAddNode('child')}
-          title={selectedNode ? `<${selectedNode.tagName}>` : t('selectNodeFirst')}
           type="button"
         >
           <Crosshair size={14} />
-          {t('addToSelected')}
         </button>
       </div>
 
