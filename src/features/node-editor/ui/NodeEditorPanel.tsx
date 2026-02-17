@@ -1,3 +1,4 @@
+import { Plus, Sparkles, Trash2 } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 import { isValidXmlName } from '../../../entities/prompt-node/model/validation';
 import { useI18n } from '../../../shared/lib/i18n/useI18n';
@@ -70,8 +71,9 @@ export function NodeEditorPanel() {
                 }
                 tone="ghost"
               >
-                  {t('addAttribute')}
-                </Button>
+                <Plus size={14} />
+                {t('addAttribute')}
+              </Button>
             </div>
 
             {Object.entries(selectedNode.attributes).map(([key, value]) => (
@@ -121,6 +123,7 @@ export function NodeEditorPanel() {
                   }
                   tone="danger"
                 >
+                  <Trash2 size={14} />
                   {t('removeAttribute')}
                 </Button>
               </div>
@@ -195,6 +198,7 @@ export function NodeEditorPanel() {
               }}
               tone="brand"
             >
+              <Sparkles size={14} />
               {t('wrapSelection')}
             </Button>
           </div>

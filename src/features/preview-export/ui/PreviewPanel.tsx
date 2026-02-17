@@ -1,3 +1,4 @@
+import { Braces, Code, Copy, Download, FileText } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { toJsonView } from '../../../shared/lib/json/render';
 import { toMarkdownView } from '../../../shared/lib/markdown/render';
@@ -101,6 +102,9 @@ export function PreviewPanel() {
   }
 
   function renderTabButton(tab: PreviewMode) {
+    const icon =
+      tab === 'XML' ? <Code size={14} /> : tab === 'MARKDOWN' ? <FileText size={14} /> : <Braces size={14} />;
+
     return (
       <button
         className="preview-tab-button"
@@ -109,6 +113,7 @@ export function PreviewPanel() {
         onClick={() => setPreviewTab(tab)}
         type="button"
       >
+        {icon}
         {tab}
       </button>
     );
@@ -119,6 +124,7 @@ export function PreviewPanel() {
       rightSlot={
         <div className="preview-actions">
           <Button disabled={!canExport} onClick={() => void handleCopy()} tone="brand">
+            <Copy size={14} />
             {previewTab === 'XML'
               ? t('copyXml')
               : previewTab === 'MARKDOWN'
@@ -126,6 +132,7 @@ export function PreviewPanel() {
                 : t('copyJson')}
           </Button>
           <Button disabled={!canExport} onClick={handleDownload}>
+            <Download size={14} />
             {t('download')}
           </Button>
         </div>
