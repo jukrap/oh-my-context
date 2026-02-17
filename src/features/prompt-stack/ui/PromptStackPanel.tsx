@@ -125,7 +125,7 @@ function BranchGuides({
       {ancestorLines.map((hasLine, index) => (
         <span
           className="stack-branch-column"
-          data-active={hasLine}
+          data-active={index > 0 ? hasLine : false}
           key={`${depth}-${index}`}
           style={{ ['--branch-color' as string]: getDepthColor(index) } as CSSProperties}
         />
@@ -239,6 +239,7 @@ function DraggableNodeRow({
               className="stack-drag-handle"
               type="button"
               aria-label={t('dragNode')}
+              title={t('dragNode')}
               {...attributes}
               {...listeners}
             >
@@ -250,6 +251,7 @@ function DraggableNodeRow({
                 className="stack-collapse-toggle"
                 type="button"
                 aria-label={node.collapsed ? t('expandNode') : t('collapseNode')}
+                title={node.collapsed ? t('expandNode') : t('collapseNode')}
                 onClick={() => toggleNodeCollapsed(node.id)}
               >
                 {node.collapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}

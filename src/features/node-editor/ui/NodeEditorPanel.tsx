@@ -9,7 +9,7 @@ import { Panel } from '../../../shared/ui/Panel';
 import { DocumentMetaPopover } from './DocumentMetaPopover';
 
 export function NodeEditorPanel() {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const document = useAppStore(selectActiveDocument);
   const selectedNode = useAppStore(selectSelectedNode);
   const updateNode = useAppStore((state) => state.updateNode);
@@ -25,6 +25,26 @@ export function NodeEditorPanel() {
 
     return Math.ceil(selectedNode.content.length / 4);
   }, [selectedNode]);
+
+  const fieldHints = useMemo(() => {
+    if (language === 'ko') {
+      return {
+        tagName: 'XML 태그 이름입니다. 규칙에 맞지 않으면 내보내기가 차단됩니다.',
+        attributes: '속성 키는 XML 이름 규칙을 따라야 합니다. 값은 문자열로 저장됩니다.',
+        contentMode: 'Plain/Markdown/RawXML 중 콘텐츠 처리 방식을 선택합니다.',
+        content: '노드 본문입니다. 특수문자는 내보내기 시 안전하게 처리됩니다.',
+        wrap: '콘텐츠에서 선택한 텍스트를 입력한 태그로 즉시 감쌉니다.',
+      };
+    }
+
+    return {
+      tagName: 'XML tag name. Invalid names block export.',
+      attributes: 'Attribute keys must follow XML name rules. Values are stored as strings.',
+      contentMode: 'Choose how this node content is handled: Plain, Markdown or RawXML.',
+      content: 'Node body content. Special characters are safely handled during export.',
+      wrap: 'Wrap currently selected text in the content area with the tag you entered.',
+    };
+  }, [language]);
 
   if (!document) {
     return <Panel title={t('nodeEditor')}>{t('noActiveDocument')}</Panel>;
@@ -56,7 +76,7 @@ export function NodeEditorPanel() {
       ) : (
         <div className="node-editor-sections">
           <div className="editor-section">
-            <label className="field-label" htmlFor="node-tag">
+            <label className="field-label" htmlFor="node-tag" title={fieldHints.tagName}>
               {t('tagName')}
             </label>
             <Input
@@ -77,7 +97,9 @@ export function NodeEditorPanel() {
 
           <div className="editor-section">
             <div className="editor-row">
-              <span className="field-label">{t('attributes')}</span>
+              <span className="field-label" title={fieldHints.attributes}>
+                {t('attributes')}
+              </span>
               <Button
                 onClick={() =>
                   updateNode(selectedNode.id, (node) => ({
@@ -152,7 +174,7 @@ export function NodeEditorPanel() {
           </div>
 
           <div className="editor-section">
-            <label className="field-label" htmlFor="content-mode">
+            <label className="field-label" htmlFor="content-mode" title={fieldHints.contentMode}>
               {t('contentMode')}
             </label>
             <select
@@ -174,16 +196,15 @@ export function NodeEditorPanel() {
 
           <div className="editor-section">
             <div className="editor-row">
-              <label className="field-label" htmlFor="node-content">
+              <label className="field-label" htmlFor="node-content" title={fieldHints.content}>
                 {t('content')}
               </label>
               <span
                 className="token-estimate"
                 title={t('tokenEstimate', { count: contentLengthEstimate })}
               >
-                <span className="token-estimate-count">~{contentLengthEstimate}</span>
-                <span className="token-estimate-unit">tok</span>
-                <span className="token-estimate-hint">chars/4</span>
+                <span className="token-estimate-count">~{contentLengthEstimate.toLocaleString()}</span>
+                <span className="token-estimate-unit">tok est.</span>
                 <span className="sr-only">
                   {t('tokenEstimate', { count: contentLengthEstimate })}
                 </span>
@@ -202,13 +223,10 @@ export function NodeEditorPanel() {
               rows={8}
               value={selectedNode.content}
             />
-          </div>
-
-          <div className="editor-section">
             <div className="inline-grid wrap-selection-row">
               <Input
                 onChange={(event) => setWrapTag(event.target.value)}
-                title={t('tagName')}
+                title={fieldHints.wrap}
                 value={wrapTag}
               />
               <Button
@@ -231,7 +249,7 @@ export function NodeEditorPanel() {
                     content: nextValue,
                   }));
                 }}
-                title={t('wrapSelection')}
+                title={fieldHints.wrap}
                 tone="default"
               >
                 <Sparkles size={14} />

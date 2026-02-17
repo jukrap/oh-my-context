@@ -111,6 +111,7 @@ export function PreviewPanel() {
         data-active={previewTab === tab}
         key={tab}
         onClick={() => setPreviewTab(tab)}
+        title={tab}
         type="button"
       >
         {icon}
@@ -123,7 +124,18 @@ export function PreviewPanel() {
     <Panel
       rightSlot={
         <div className="preview-actions">
-          <Button disabled={!canExport} onClick={() => void handleCopy()} tone="brand">
+          <Button
+            disabled={!canExport}
+            onClick={() => void handleCopy()}
+            title={
+              previewTab === 'XML'
+                ? t('copyXml')
+                : previewTab === 'MARKDOWN'
+                  ? t('copyMarkdown')
+                  : t('copyJson')
+            }
+            tone="brand"
+          >
             <Copy size={14} />
             {previewTab === 'XML'
               ? t('copyXml')
@@ -131,7 +143,7 @@ export function PreviewPanel() {
                 ? t('copyMarkdown')
                 : t('copyJson')}
           </Button>
-          <Button disabled={!canExport} onClick={handleDownload}>
+          <Button disabled={!canExport} onClick={handleDownload} title={t('download')}>
             <Download size={14} />
             {t('download')}
           </Button>

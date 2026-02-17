@@ -7,6 +7,7 @@
   --omc-brand-soft: #dbffe9;
   --omc-brand-soft-2: #ecfff5;
   --omc-soft: #f3f3f3;
+  --omc-hover: #dfdfdf;
   --omc-danger-soft: #fff3f3;
   --omc-scroll-track: #d6d6d6;
   --omc-muted-text: #2a2a2a;
@@ -207,7 +208,7 @@ select {
 }
 
 .omc-btn:hover {
-  background: var(--omc-soft);
+  background: var(--omc-hover);
 }
 
 .omc-btn:focus-visible {
@@ -243,7 +244,7 @@ select {
 }
 
 .omc-btn-ghost:hover {
-  background: var(--omc-soft);
+  background: var(--omc-hover);
 }
 
 .omc-input,
@@ -274,6 +275,12 @@ select {
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 0.06em;
+}
+
+.field-label[title] {
+  cursor: help;
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
 }
 
 .field-error {
@@ -336,33 +343,25 @@ select {
 .token-estimate {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   border: 2px solid var(--omc-fg);
-  background: var(--omc-soft);
-  padding: 2px 8px;
+  background: #fff;
+  padding: 3px 8px;
   font-weight: 700;
   font-size: 12px;
+  white-space: nowrap;
 }
 
 .token-estimate-count {
   font-variant-numeric: tabular-nums;
 }
 
-.token-estimate-unit,
-.token-estimate-hint {
+.token-estimate-unit {
   border-left: 1px solid var(--omc-fg);
   padding-left: 6px;
-}
-
-.token-estimate-unit {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-}
-
-.token-estimate-hint {
-  font-size: 10px;
-  color: var(--omc-muted-text);
 }
 
 .wrap-selection-row {
@@ -521,7 +520,7 @@ select {
 
 .stack-drag-handle:hover,
 .stack-collapse-toggle:hover {
-  background: var(--omc-soft);
+  background: var(--omc-hover);
 }
 
 .stack-enable-toggle {
@@ -539,7 +538,7 @@ select {
 }
 
 .stack-enable-toggle:hover {
-  background: var(--omc-soft);
+  background: var(--omc-hover);
 }
 
 .stack-enable-toggle[data-enabled='true']:hover {
@@ -570,7 +569,7 @@ select {
 }
 
 .stack-node-label:hover {
-  background: var(--omc-soft);
+  background: var(--omc-hover);
 }
 
 .stack-node-label[data-selected='true']:hover {
@@ -601,7 +600,7 @@ select {
 }
 
 .stack-mini-action:hover {
-  background: var(--omc-soft);
+  background: var(--omc-hover);
 }
 
 .stack-mini-action.danger:hover {
@@ -858,7 +857,7 @@ select {
 }
 
 .preview-tab-button:hover {
-  background: var(--omc-soft);
+  background: var(--omc-hover);
 }
 
 .preview-tab-button[data-active='true']:hover {

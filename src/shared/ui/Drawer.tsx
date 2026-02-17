@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import type { PropsWithChildren } from 'react';
+import { X } from 'lucide-react';
 import { Button } from './Button';
 import { useI18n } from '../lib/i18n/useI18n';
 
@@ -17,7 +18,8 @@ export function Drawer({ title, open, onClose, children }: PropsWithChildren<Dra
       <aside aria-hidden={!open} className={clsx('omc-drawer', open && 'is-open')}>
         <header className="omc-drawer-header">
           <h3>{title}</h3>
-          <Button tone="ghost" onClick={onClose}>
+          <Button aria-label={t('close')} title={t('close')} tone="ghost" onClick={onClose}>
+            <X size={14} />
             {t('close')}
           </Button>
         </header>
