@@ -1,17 +1,23 @@
 import {
   DndContext,
+  type DragOverEvent,
   type DragEndEvent,
   PointerSensor,
   closestCenter,
+  useDraggable,
+  useDroppable,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
 import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { type KeyboardEvent, useMemo } from 'react';
+  ChevronDown,
+  ChevronRight,
+  Copy,
+  GripVertical,
+  Plus,
+  Trash2,
+} from 'lucide-react';
+import { type KeyboardEvent, useMemo, useState } from 'react';
 import { buildNodeVisibilitySet, flattenVisibleNodeIds } from '../../../entities/prompt-node/model/tree';
 import type { PromptNode } from '../../../entities/prompt-node/model/types';
 import { useI18n } from '../../../shared/lib/i18n/useI18n';
@@ -23,9 +29,107 @@ interface TreeListProps {
   nodes: PromptNode[];
   depth: number;
   visibleNodeIds: Set<string>;
+  activeDropId: string | null;
 }
 
-function SortableNodeRow({ node, depth }: { node: PromptNode; depth: number }) {
+type DropPosition = 'before' | 'inside' | 'after';
+
+type DropTarget =
+  | { kind: 'root' }
+  | { kind: 'node'; nodeId: string; position: DropPosition };
+
+function buildNodeDropId(nodeId: string, position: DropPosition): string {
+  return `node:${nodeId}:${position}`;
+}
+
+function parseDropTarget(dropId: string | null): DropTarget | null {
+  if (!dropId) {
+    return null;
+  }
+
+  if (dropId === 'root:bottom') {
+    return { kind: 'root' };
+  }
+
+  const parts = dropId.split(':');
+  if (parts.length !== 3 || parts[0] !== 'node') {
+    return null;
+  }
+
+  const nodeId = parts[1];
+  const position = parts[2];
+  if (!nodeId || !position) {
+    return null;
+  }
+
+  if (position !== 'before' && position !== 'inside' && position !== 'after') {
+    return null;
+  }
+
+  return {
+    kind: 'node',
+    nodeId,
+    position,
+  };
+}
+
+function DepthGuides({ depth }: { depth: number }) {
+  if (depth === 0) {
+    return <div className="stack-depth-guides" />;
+  }
+
+  return (
+    <div aria-hidden className="stack-depth-guides">
+      {Array.from({ length: depth }).map((_, index) => (
+        <span
+          className="stack-depth-guide"
+          key={`${depth}-${index}`}
+          style={{
+            opacity: Math.min(0.32 + index * 0.1, 0.75),
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function DropSlot({
+  dropId,
+  activeDropId,
+  depth,
+  variant,
+}: {
+  dropId: string;
+  activeDropId: string | null;
+  depth: number;
+  variant: 'before' | 'after' | 'root';
+}) {
+  const { setNodeRef } = useDroppable({
+    id: dropId,
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className="stack-drop-slot"
+      data-active={activeDropId === dropId}
+      data-variant={variant}
+      style={{
+        marginLeft: variant === 'root' ? 0 : depth * 14 + 18,
+      }}
+    />
+  );
+}
+
+function DraggableNodeRow({
+  node,
+  depth,
+  activeDropId,
+}: {
+  node: PromptNode;
+  depth: number;
+  activeDropId: string | null;
+}) {
   const { t } = useI18n();
   const selectedNodeId = useAppStore((state) => state.selectedNodeId);
   const setSelectedNodeId = useAppStore((state) => state.setSelectedNodeId);
@@ -38,13 +142,21 @@ function SortableNodeRow({ node, depth }: { node: PromptNode; depth: number }) {
   const {
     attributes,
     listeners,
-    setNodeRef,
+    setNodeRef: setDraggableRef,
     transform,
-    transition,
-    isDragging,
-  } = useSortable({
+    isDragging
+  } = useDraggable({
     id: node.id,
   });
+
+  const { setNodeRef: setInsideDroppableRef } = useDroppable({
+    id: buildNodeDropId(node.id, 'inside'),
+  });
+
+  const setCardRef = (element: HTMLElement | null): void => {
+    setDraggableRef(element);
+    setInsideDroppableRef(element);
+  };
 
   const metaText = t('nodeMeta', {
     mode: node.contentMode,
@@ -53,24 +165,21 @@ function SortableNodeRow({ node, depth }: { node: PromptNode; depth: number }) {
   });
 
   return (
-    <div
-      ref={setNodeRef}
-      className="stack-node-row"
-      data-selected={selectedNodeId === node.id}
-      style={{
-        transform: transform
-          ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-          : undefined,
-        transition,
-        opacity: isDragging ? 0.7 : 1,
-      }}
-    >
-      <div
-        aria-hidden
-        className="stack-depth-strip"
-        style={{ width: `${depth * 16}px` }}
-      />
-      <article className="stack-node-card" data-disabled={!node.enabled} data-selected={selectedNodeId === node.id}>
+    <div className="stack-node-row" data-selected={selectedNodeId === node.id}>
+      <DepthGuides depth={depth} />
+      <article
+        className="stack-node-card"
+        data-disabled={!node.enabled}
+        data-drop-active={activeDropId === buildNodeDropId(node.id, 'inside')}
+        data-selected={selectedNodeId === node.id}
+        ref={setCardRef}
+        style={{
+          opacity: isDragging ? 0.45 : 1,
+          transform: transform
+            ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+            : undefined,
+        }}
+      >
         <div className="stack-node-main">
           <div className="stack-node-main-left">
             <button
@@ -80,15 +189,18 @@ function SortableNodeRow({ node, depth }: { node: PromptNode; depth: number }) {
               {...attributes}
               {...listeners}
             >
-              ::
+              <GripVertical size={14} />
             </button>
 
-            <input
+            <button
+              className="stack-enable-toggle"
               aria-label={t('enableNode')}
-              checked={node.enabled}
-              onChange={() => toggleNodeEnabled(node.id)}
-              type="checkbox"
-            />
+              data-enabled={node.enabled}
+              onClick={() => toggleNodeEnabled(node.id)}
+              type="button"
+            >
+              {node.enabled ? 'ON' : 'OFF'}
+            </button>
 
             {node.children.length > 0 ? (
               <button
@@ -97,7 +209,7 @@ function SortableNodeRow({ node, depth }: { node: PromptNode; depth: number }) {
                 aria-label={node.collapsed ? t('expandNode') : t('collapseNode')}
                 onClick={() => toggleNodeCollapsed(node.id)}
               >
-                {node.collapsed ? '+' : '-'}
+                {node.collapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
               </button>
             ) : (
               <span className="stack-collapse-placeholder" />
@@ -122,7 +234,7 @@ function SortableNodeRow({ node, depth }: { node: PromptNode; depth: number }) {
               title={t('addChild')}
               type="button"
             >
-              +
+              <Plus size={14} />
             </button>
             <button
               aria-label={t('duplicate')}
@@ -131,7 +243,7 @@ function SortableNodeRow({ node, depth }: { node: PromptNode; depth: number }) {
               title={t('duplicate')}
               type="button"
             >
-              2x
+              <Copy size={14} />
             </button>
             <button
               aria-label={t('delete')}
@@ -140,7 +252,7 @@ function SortableNodeRow({ node, depth }: { node: PromptNode; depth: number }) {
               title={t('delete')}
               type="button"
             >
-              x
+              <Trash2 size={14} />
             </button>
           </div>
         </div>
@@ -151,30 +263,44 @@ function SortableNodeRow({ node, depth }: { node: PromptNode; depth: number }) {
   );
 }
 
-function TreeList({ nodes, depth, visibleNodeIds }: TreeListProps) {
+function TreeList({ nodes, depth, visibleNodeIds, activeDropId }: TreeListProps) {
   const visibleNodes = nodes.filter((node) => visibleNodeIds.has(node.id));
   if (visibleNodes.length === 0) {
     return null;
   }
 
   return (
-    <SortableContext
-      items={visibleNodes.map((node) => node.id)}
-      strategy={verticalListSortingStrategy}
-    >
+    <>
       {visibleNodes.map((node) => (
         <div className="stack-node-wrap" key={node.id}>
-          <SortableNodeRow depth={depth} node={node} />
+          <DropSlot
+            activeDropId={activeDropId}
+            depth={depth}
+            dropId={buildNodeDropId(node.id, 'before')}
+            variant="before"
+          />
+          <DraggableNodeRow
+            activeDropId={activeDropId}
+            depth={depth}
+            node={node}
+          />
           {!node.collapsed ? (
             <TreeList
+              activeDropId={activeDropId}
               depth={depth + 1}
               nodes={node.children}
               visibleNodeIds={visibleNodeIds}
             />
           ) : null}
+          <DropSlot
+            activeDropId={activeDropId}
+            depth={depth}
+            dropId={buildNodeDropId(node.id, 'after')}
+            variant="after"
+          />
         </div>
       ))}
-    </SortableContext>
+    </>
   );
 }
 
@@ -182,11 +308,13 @@ export function PromptStackPanel() {
   const { t } = useI18n();
   const document = useAppStore(selectActiveDocument);
   const addRootNode = useAppStore((state) => state.addRootNode);
-  const moveNodeWithinParent = useAppStore((state) => state.moveNodeWithinParent);
+  const moveNodeByDropTarget = useAppStore((state) => state.moveNodeByDropTarget);
+  const moveNodeToRootEnd = useAppStore((state) => state.moveNodeToRootEnd);
   const stackSearchQuery = useAppStore((state) => state.stackSearchQuery);
   const setStackSearchQuery = useAppStore((state) => state.setStackSearchQuery);
   const selectedNodeId = useAppStore((state) => state.selectedNodeId);
   const setSelectedNodeId = useAppStore((state) => state.setSelectedNodeId);
+  const [activeDropId, setActiveDropId] = useState<string | null>(null);
 
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -209,12 +337,24 @@ export function PromptStackPanel() {
   const onDragEnd = (event: DragEndEvent): void => {
     const activeId = String(event.active.id);
     const overId = event.over ? String(event.over.id) : null;
+    const target = parseDropTarget(overId);
+    setActiveDropId(null);
 
-    if (!overId || activeId === overId) {
+    if (!target) {
       return;
     }
 
-    moveNodeWithinParent(activeId, overId);
+    if (target.kind === 'root') {
+      moveNodeToRootEnd(activeId);
+      return;
+    }
+
+    moveNodeByDropTarget(activeId, target.nodeId, target.position);
+  };
+
+  const onDragOver = (event: DragOverEvent): void => {
+    const overId = event.over ? String(event.over.id) : null;
+    setActiveDropId(overId);
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
@@ -270,9 +410,21 @@ export function PromptStackPanel() {
         <DndContext
           collisionDetection={closestCenter}
           onDragEnd={onDragEnd}
+          onDragOver={onDragOver}
           sensors={sensors}
         >
-          <TreeList depth={0} nodes={document.nodes} visibleNodeIds={visibleNodeIds} />
+          <TreeList
+            activeDropId={activeDropId}
+            depth={0}
+            nodes={document.nodes}
+            visibleNodeIds={visibleNodeIds}
+          />
+          <DropSlot
+            activeDropId={activeDropId}
+            depth={0}
+            dropId="root:bottom"
+            variant="root"
+          />
         </DndContext>
       </div>
     </Panel>

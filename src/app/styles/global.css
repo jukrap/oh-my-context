@@ -259,30 +259,38 @@ select {
   min-height: 300px;
   padding: 6px;
   overflow: auto;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 230, 118, 0.03) 0%,
+    rgba(255, 255, 255, 1) 25%
+  );
 }
 
 .stack-node-wrap {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .stack-node-row {
   display: flex;
   align-items: stretch;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
 }
 
-.stack-depth-strip {
-  background: repeating-linear-gradient(
-    to right,
-    transparent 0,
-    transparent 10px,
-    rgba(0, 0, 0, 0.2) 10px,
-    rgba(0, 0, 0, 0.2) 11px
-  );
-  border-right: 2px solid rgba(0, 0, 0, 0.35);
+.stack-depth-guides {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+.stack-depth-guide {
+  width: 10px;
+  border-left: 2px solid #000;
+  background: rgba(0, 230, 118, 0.14);
+  border-radius: 1px;
 }
 
 .stack-node-card {
@@ -300,8 +308,13 @@ select {
   background: #eafff2;
 }
 
+.stack-node-card[data-drop-active='true'] {
+  outline: 3px solid #00e676;
+  outline-offset: -2px;
+}
+
 .stack-node-card[data-disabled='true'] {
-  opacity: 0.7;
+  opacity: 0.75;
 }
 
 .stack-node-main {
@@ -324,14 +337,31 @@ select {
 .stack-collapse-toggle {
   border: 2px solid #000;
   background: #fff;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stack-enable-toggle {
+  border: 2px solid #000;
+  background: #fff;
+  min-width: 44px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 11px;
   font-weight: 700;
 }
 
+.stack-enable-toggle[data-enabled='true'] {
+  background: #dbffe9;
+}
+
 .stack-collapse-placeholder {
-  width: 28px;
+  width: 30px;
   display: inline-block;
 }
 
@@ -362,10 +392,13 @@ select {
 .stack-mini-action {
   border: 2px solid #000;
   background: #fff;
-  width: 30px;
+  width: 32px;
   height: 30px;
   cursor: pointer;
   font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .stack-mini-action.danger {
@@ -381,6 +414,23 @@ select {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.stack-drop-slot {
+  height: 8px;
+  border-radius: 2px;
+  background: transparent;
+  transition: background-color 120ms ease-out;
+}
+
+.stack-drop-slot[data-variant='root'] {
+  margin-top: 6px;
+  height: 16px;
+  border: 2px dashed rgba(0, 0, 0, 0.45);
+}
+
+.stack-drop-slot[data-active='true'] {
+  background: rgba(0, 230, 118, 0.45);
 }
 
 .panel-splitter {

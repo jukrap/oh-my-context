@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import type { GlobalInclude, WorkspaceSettings } from '../../entities/include/model/types';
 import type { PromptDocument, PromptKind } from '../../entities/prompt-document/model/types';
-import { createNode, addChildNodeInTree, duplicateNodeInTree, findNodeById, removeNodeFromTree, reorderNodesWithinParent, updateNodeInTree } from '../../entities/prompt-node/model/tree';
+import { createNode, addChildNodeInTree, duplicateNodeInTree, findNodeById, moveNodeByDrop, moveNodeToRootEnd, removeNodeFromTree, updateNodeInTree } from '../../entities/prompt-node/model/tree';
 import type { PromptNode } from '../../entities/prompt-node/model/types';
 import { DEFAULT_LEFT_PANEL_WIDTH, DEFAULT_RIGHT_PANEL_WIDTH, DEFAULT_SETTINGS, SCHEMA_VERSION, createDefaultDocument, createInitialSettings } from '../config/defaults';
 import { indexedDbStateStorage } from '../lib/storage/indexeddb-storage';
@@ -46,7 +46,12 @@ interface AppStoreState {
   duplicateNode: (nodeId: string) => void;
   toggleNodeEnabled: (nodeId: string) => void;
   toggleNodeCollapsed: (nodeId: string) => void;
-  moveNodeWithinParent: (activeId: string, overId: string) => void;
+  moveNodeByDropTarget: (
+    activeId: string,
+    targetId: string,
+    position: 'before' | 'inside' | 'after',
+  ) => void;
+  moveNodeToRootEnd: (activeId: string) => void;
   createInclude: () => void;
   updateInclude: (id: string, partial: Partial<GlobalInclude>) => void;
   deleteInclude: (id: string) => void;
@@ -105,7 +110,8 @@ function getInitialState(): Omit<
   | 'duplicateNode'
   | 'toggleNodeEnabled'
   | 'toggleNodeCollapsed'
-  | 'moveNodeWithinParent'
+  | 'moveNodeByDropTarget'
+  | 'moveNodeToRootEnd'
   | 'createInclude'
   | 'updateInclude'
   | 'deleteInclude'
@@ -322,11 +328,20 @@ export const useAppStore = create<AppStoreState>()(
           collapsed: !node.collapsed,
         }));
       },
-      moveNodeWithinParent: (activeId, overId) => {
+      moveNodeByDropTarget: (activeId, targetId, position) => {
         set((state) => {
           const patched = withActiveDocument(state, (document) => ({
             ...document,
-            nodes: reorderNodesWithinParent(document.nodes, activeId, overId),
+            nodes: moveNodeByDrop(document.nodes, activeId, targetId, position),
+          }));
+          return patched;
+        });
+      },
+      moveNodeToRootEnd: (activeId) => {
+        set((state) => {
+          const patched = withActiveDocument(state, (document) => ({
+            ...document,
+            nodes: moveNodeToRootEnd(document.nodes, activeId),
           }));
           return patched;
         });

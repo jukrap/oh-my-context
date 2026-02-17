@@ -242,3 +242,160 @@ export function reorderNodesWithinParent(
 
   return visit(nodes)[0];
 }
+
+type DropPosition = 'before' | 'inside' | 'after';
+
+function containsNodeId(nodes: PromptNode[], nodeId: string): boolean {
+  return nodes.some(
+    (node) => node.id === nodeId || containsNodeId(node.children, nodeId),
+  );
+}
+
+function isDescendantNode(
+  nodes: PromptNode[],
+  ancestorId: string,
+  descendantId: string,
+): boolean {
+  const ancestor = findNodeById(nodes, ancestorId);
+  if (!ancestor) {
+    return false;
+  }
+
+  return containsNodeId(ancestor.children, descendantId);
+}
+
+function detachNode(
+  nodes: PromptNode[],
+  activeId: string,
+): [PromptNode[], PromptNode | null] {
+  let extracted: PromptNode | null = null;
+
+  const walk = (list: PromptNode[]): PromptNode[] => {
+    const next: PromptNode[] = [];
+
+    list.forEach((node) => {
+      if (node.id === activeId) {
+        extracted = node;
+        return;
+      }
+
+      if (node.children.length === 0) {
+        next.push(node);
+        return;
+      }
+
+      const nextChildren = walk(node.children);
+      next.push(
+        nextChildren === node.children
+          ? node
+          : {
+              ...node,
+              children: nextChildren,
+            },
+      );
+    });
+
+    return next;
+  };
+
+  const detached = walk(nodes);
+  return [detached, extracted];
+}
+
+function insertNodeByTarget(
+  nodes: PromptNode[],
+  targetId: string,
+  nodeToInsert: PromptNode,
+  position: DropPosition,
+): [PromptNode[], boolean] {
+  const next: PromptNode[] = [];
+  let inserted = false;
+
+  nodes.forEach((node) => {
+    if (inserted) {
+      next.push(node);
+      return;
+    }
+
+    if (node.id === targetId) {
+      if (position === 'before') {
+        next.push(nodeToInsert, node);
+      } else if (position === 'after') {
+        next.push(node, nodeToInsert);
+      } else {
+        next.push({
+          ...node,
+          collapsed: false,
+          children: [...node.children, nodeToInsert],
+        });
+      }
+
+      inserted = true;
+      return;
+    }
+
+    if (node.children.length === 0) {
+      next.push(node);
+      return;
+    }
+
+    const [nextChildren, childInserted] = insertNodeByTarget(
+      node.children,
+      targetId,
+      nodeToInsert,
+      position,
+    );
+    if (childInserted) {
+      inserted = true;
+      next.push({
+        ...node,
+        children: nextChildren,
+      });
+    } else {
+      next.push(node);
+    }
+  });
+
+  return [inserted ? next : nodes, inserted];
+}
+
+export function moveNodeByDrop(
+  nodes: PromptNode[],
+  activeId: string,
+  targetId: string,
+  position: DropPosition,
+): PromptNode[] {
+  if (activeId === targetId) {
+    return nodes;
+  }
+
+  if (isDescendantNode(nodes, activeId, targetId)) {
+    return nodes;
+  }
+
+  const [detachedNodes, extractedNode] = detachNode(nodes, activeId);
+  if (!extractedNode) {
+    return nodes;
+  }
+
+  const [insertedNodes, inserted] = insertNodeByTarget(
+    detachedNodes,
+    targetId,
+    extractedNode,
+    position,
+  );
+
+  return inserted ? insertedNodes : [...detachedNodes, extractedNode];
+}
+
+export function moveNodeToRootEnd(
+  nodes: PromptNode[],
+  activeId: string,
+): PromptNode[] {
+  const [detachedNodes, extractedNode] = detachNode(nodes, activeId);
+  if (!extractedNode) {
+    return nodes;
+  }
+
+  return [...detachedNodes, extractedNode];
+}
