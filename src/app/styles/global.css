@@ -766,113 +766,69 @@ select {
   color: var(--omc-muted-text);
 }
 
-.omc-tooltip-btn,
-.stack-tooltip-btn {
-  position: relative;
+.node-editor-panel .omc-panel-body {
+  overflow-x: hidden;
 }
 
-.omc-tooltip-btn[data-tooltip]::before,
-.omc-tooltip-btn[data-tooltip]::after,
-.stack-tooltip-btn[data-tooltip]::before,
-.stack-tooltip-btn[data-tooltip]::after {
-  display: none;
-  opacity: 0;
+.omc-floating-tooltip {
+  position: fixed;
+  max-inline-size: min(360px, calc(100vw - 20px));
+  min-inline-size: 120px;
+  border: 2px solid var(--omc-fg);
+  background: #fff;
+  color: #000;
+  box-shadow: 3px 3px 0 #000;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: left;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  z-index: 2200;
   pointer-events: none;
 }
 
-.stack-tooltip-btn[data-tooltip]::before {
+.omc-floating-tooltip-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+}
+
+.omc-floating-tooltip[data-side='top'] .omc-floating-tooltip-arrow {
+  top: 100%;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid var(--omc-fg);
+}
+
+.omc-floating-tooltip[data-side='top'] .omc-floating-tooltip-arrow::after {
   content: '';
   position: absolute;
-  left: 50%;
-  top: calc(100% + 4px);
-  transform: translateX(-50%);
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 6px solid var(--omc-fg);
+  top: -7px;
+  left: -5px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #fff;
 }
 
-.stack-tooltip-btn[data-tooltip]::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  left: 50%;
-  top: calc(100% + 10px);
-  transform: translateX(-50%);
-  border: 2px solid var(--omc-fg);
-  background: #fff;
-  color: #000;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.25;
-  white-space: normal;
-  text-align: left;
-  inline-size: max-content;
-  min-inline-size: 88px;
-  max-inline-size: min(320px, 80vw);
-  word-break: keep-all;
-  overflow-wrap: anywhere;
-  padding: 4px 6px;
-  z-index: 60;
+.omc-floating-tooltip[data-side='bottom'] .omc-floating-tooltip-arrow {
+  bottom: 100%;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid var(--omc-fg);
 }
 
-.omc-tooltip-btn[data-tooltip]:hover::before,
-.omc-tooltip-btn[data-tooltip]:hover::after,
-.omc-tooltip-btn[data-tooltip]:focus-visible::before,
-.omc-tooltip-btn[data-tooltip]:focus-visible::after,
-.stack-tooltip-btn[data-tooltip]:hover::before,
-.stack-tooltip-btn[data-tooltip]:hover::after,
-.stack-tooltip-btn[data-tooltip]:focus-visible::before,
-.stack-tooltip-btn[data-tooltip]:focus-visible::after {
-  display: block;
-  opacity: 1;
-}
-
-.omc-tooltip-btn[data-tooltip]::before {
+.omc-floating-tooltip[data-side='bottom'] .omc-floating-tooltip-arrow::after {
   content: '';
   position: absolute;
-  left: 50%;
-  bottom: calc(100% + 4px);
-  transform: translateX(-50%);
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 6px solid var(--omc-fg);
-}
-
-.omc-tooltip-btn[data-tooltip]::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + 10px);
-  transform: translateX(-50%);
-  border: 2px solid var(--omc-fg);
-  background: #fff;
-  color: #000;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.25;
-  white-space: normal;
-  text-align: left;
-  inline-size: max-content;
-  min-inline-size: 88px;
-  max-inline-size: min(320px, 80vw);
-  word-break: keep-all;
-  overflow-wrap: anywhere;
-  padding: 4px 6px;
-  z-index: 60;
-}
-
-.field-label.omc-tooltip-btn[data-tooltip]::before {
-  left: 10px;
-  transform: none;
-}
-
-.field-label.omc-tooltip-btn[data-tooltip]::after {
-  left: 0;
-  transform: none;
-  max-inline-size: min(340px, 80vw);
-}
-
-.node-editor-panel .omc-panel-body {
-  overflow-x: hidden;
+  top: 2px;
+  left: -5px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #fff;
 }
 
 .panel-splitter {

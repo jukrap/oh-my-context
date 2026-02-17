@@ -4,11 +4,13 @@ import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   tone?: 'default' | 'brand' | 'danger' | 'ghost';
   tooltip?: string;
+  tooltipSide?: 'top' | 'bottom';
 }
 
 export function Button({
   tone = 'default',
   tooltip,
+  tooltipSide,
   title,
   className,
   children,
@@ -26,6 +28,7 @@ export function Button({
         className,
       )}
       data-tooltip={resolvedTooltip}
+      data-tooltip-side={resolvedTooltip ? tooltipSide : undefined}
       type="button"
       {...props}
     >

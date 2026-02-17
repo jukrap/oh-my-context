@@ -453,6 +453,7 @@ function AddNodeMenu() {
           aria-label={t('selectAddTag')}
           className="omc-btn stack-tag-picker stack-tooltip-btn"
           data-tooltip={t('selectAddTag')}
+          data-tooltip-side="bottom"
           onClick={() => setOpen((prev) => !prev)}
           type="button"
         >
@@ -465,6 +466,7 @@ function AddNodeMenu() {
           aria-label={t('addAtRoot')}
           className="omc-btn stack-add-inline-btn stack-add-root-btn stack-tooltip-btn"
           data-tooltip={t('addAtRoot')}
+          data-tooltip-side="bottom"
           onClick={() => handleAddNode('root')}
           type="button"
         >
@@ -477,6 +479,7 @@ function AddNodeMenu() {
           className="omc-btn stack-add-inline-btn stack-add-selected-btn stack-tooltip-btn"
           data-disabled={!selectedNode}
           data-tooltip={selectedNode ? t('addToSelected') : t('selectNodeFirst')}
+          data-tooltip-side="bottom"
           onClick={() => handleAddNode('child')}
           type="button"
         >
