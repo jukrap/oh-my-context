@@ -100,3 +100,7 @@ If your production branch is `master`, set Vercel Production Branch to `master`.
 ## License
 
 MIT License. See [`LICENSE`](./LICENSE).
+
+## Author
+
+- `jukrap`
