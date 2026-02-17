@@ -3,6 +3,7 @@ import { NodeEditorPanel } from '../../features/node-editor/ui/NodeEditorPanel';
 import { PreviewPanel } from '../../features/preview-export/ui/PreviewPanel';
 import { PromptStackPanel } from '../../features/prompt-stack/ui/PromptStackPanel';
 import { useI18n } from '../../shared/lib/i18n/useI18n';
+import { useRuntimeStore } from '../../shared/model/runtime-store';
 import { selectActiveDocument, useAppStore } from '../../shared/model/store';
 import { Button } from '../../shared/ui/Button';
 
@@ -25,9 +26,9 @@ export function EditorShell({
   const rightPanelWidth = useAppStore((state) => state.rightPanelWidth);
   const setLeftPanelWidth = useAppStore((state) => state.setLeftPanelWidth);
   const setRightPanelWidth = useAppStore((state) => state.setRightPanelWidth);
-  const saveStatus = useAppStore((state) => state.saveStatus);
-  const lastSavedAt = useAppStore((state) => state.lastSavedAt);
-  const hydrated = useAppStore((state) => state.hydrated);
+  const saveStatus = useRuntimeStore((state) => state.saveStatus);
+  const lastSavedAt = useRuntimeStore((state) => state.lastSavedAt);
+  const hydrated = useRuntimeStore((state) => state.hydrated);
 
   const MIN_LEFT_WIDTH = 440;
   const MAX_LEFT_WIDTH = 760;

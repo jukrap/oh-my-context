@@ -28,9 +28,6 @@ interface AppStoreState {
   rightPanelWidth: number;
   stackSearchQuery: string;
   previewTab: PreviewTab;
-  saveStatus: 'idle' | 'saving' | 'saved' | 'error';
-  lastSavedAt: number | null;
-  hydrated: boolean;
   createDocument: (payload: CreateDocumentPayload) => void;
   deleteDocument: (id: string) => void;
   duplicateDocument: (id: string) => void;
@@ -40,8 +37,6 @@ interface AppStoreState {
   setSelectedNodeId: (nodeId: string | null) => void;
   setStackSearchQuery: (query: string) => void;
   setPreviewTab: (tab: PreviewTab) => void;
-  setSaveStatus: (status: 'idle' | 'saving' | 'saved' | 'error') => void;
-  setHydrated: (value: boolean) => void;
   setLeftPanelWidth: (width: number) => void;
   setRightPanelWidth: (width: number) => void;
   addRootNode: () => void;
@@ -101,8 +96,6 @@ function getInitialState(): Omit<
   | 'setSelectedNodeId'
   | 'setStackSearchQuery'
   | 'setPreviewTab'
-  | 'setSaveStatus'
-  | 'setHydrated'
   | 'setLeftPanelWidth'
   | 'setRightPanelWidth'
   | 'addRootNode'
@@ -133,9 +126,6 @@ function getInitialState(): Omit<
     rightPanelWidth: DEFAULT_RIGHT_PANEL_WIDTH,
     stackSearchQuery: '',
     previewTab: 'XML',
-    saveStatus: 'idle',
-    lastSavedAt: null,
-    hydrated: false,
   };
 }
 
@@ -264,15 +254,6 @@ export const useAppStore = create<AppStoreState>()(
       },
       setPreviewTab: (tab) => {
         set({ previewTab: tab });
-      },
-      setSaveStatus: (status) => {
-        set({
-          saveStatus: status,
-          lastSavedAt: status === 'saved' ? Date.now() : get().lastSavedAt,
-        });
-      },
-      setHydrated: (value) => {
-        set({ hydrated: value });
       },
       setLeftPanelWidth: (width) => {
         set({ leftPanelWidth: width });
@@ -478,9 +459,6 @@ export const useAppStore = create<AppStoreState>()(
           ...current,
           ...typed,
           settings: mergedSettings,
-          saveStatus: 'idle',
-          lastSavedAt: null,
-          hydrated: false,
         };
       },
     },
