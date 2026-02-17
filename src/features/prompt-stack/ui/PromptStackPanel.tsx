@@ -48,6 +48,12 @@ const STACK_DEPTH_COLORS = [
   'var(--stack-depth-3)',
   'var(--stack-depth-4)',
   'var(--stack-depth-5)',
+  'var(--stack-depth-6)',
+  'var(--stack-depth-7)',
+  'var(--stack-depth-8)',
+  'var(--stack-depth-9)',
+  'var(--stack-depth-10)',
+  'var(--stack-depth-11)',
 ];
 
 const RECOMMENDED_NODE_TAGS = [
@@ -213,7 +219,6 @@ function DraggableNodeRow({
   const cardStyle: CSSProperties = {
     opacity: isDragging ? 0.45 : 1,
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
-    marginLeft: depth > 0 ? '-3px' : undefined,
   };
 
   return (
