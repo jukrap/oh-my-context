@@ -103,4 +103,4 @@ MIT License. See [`LICENSE`](./LICENSE).
 
 ## Author
 
-- `jukrap`
+- GitHub: [jukrap](https://github.com/jukrap)
