@@ -772,6 +772,14 @@ select {
 }
 
 .omc-tooltip-btn[data-tooltip]::before,
+.omc-tooltip-btn[data-tooltip]::after,
+.stack-tooltip-btn[data-tooltip]::before,
+.stack-tooltip-btn[data-tooltip]::after {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .stack-tooltip-btn[data-tooltip]::before {
   content: '';
   position: absolute;
@@ -781,12 +789,8 @@ select {
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
   border-bottom: 6px solid var(--omc-fg);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 120ms ease-out;
 }
 
-.omc-tooltip-btn[data-tooltip]::after,
 .stack-tooltip-btn[data-tooltip]::after {
   content: attr(data-tooltip);
   position: absolute;
@@ -796,16 +800,18 @@ select {
   border: 2px solid var(--omc-fg);
   background: #fff;
   color: #000;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.25;
   white-space: normal;
-  max-width: min(260px, 76vw);
+  text-align: left;
+  inline-size: max-content;
+  min-inline-size: 88px;
+  max-inline-size: min(320px, 80vw);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
   padding: 4px 6px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 120ms ease-out;
-  z-index: 24;
+  z-index: 60;
 }
 
 .omc-tooltip-btn[data-tooltip]:hover::before,
@@ -816,18 +822,53 @@ select {
 .stack-tooltip-btn[data-tooltip]:hover::after,
 .stack-tooltip-btn[data-tooltip]:focus-visible::before,
 .stack-tooltip-btn[data-tooltip]:focus-visible::after {
+  display: block;
   opacity: 1;
 }
 
+.omc-tooltip-btn[data-tooltip]::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 4px);
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--omc-fg);
+}
+
+.omc-tooltip-btn[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+  border: 2px solid var(--omc-fg);
+  background: #fff;
+  color: #000;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: normal;
+  text-align: left;
+  inline-size: max-content;
+  min-inline-size: 88px;
+  max-inline-size: min(320px, 80vw);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  padding: 4px 6px;
+  z-index: 60;
+}
+
 .field-label.omc-tooltip-btn[data-tooltip]::before {
-  left: 8px;
+  left: 10px;
   transform: none;
 }
 
 .field-label.omc-tooltip-btn[data-tooltip]::after {
   left: 0;
   transform: none;
-  max-width: min(320px, 82vw);
+  max-inline-size: min(340px, 80vw);
 }
 
 .node-editor-panel .omc-panel-body {
