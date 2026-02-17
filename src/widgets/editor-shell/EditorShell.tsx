@@ -1,4 +1,4 @@
-import { type MouseEvent as ReactMouseEvent } from 'react';
+import { type MouseEvent as ReactMouseEvent, useState } from 'react';
 import { Blocks, Files, Settings, Shapes } from 'lucide-react';
 import { NodeEditorPanel } from '../../features/node-editor/ui/NodeEditorPanel';
 import { PreviewPanel } from '../../features/preview-export/ui/PreviewPanel';
@@ -16,6 +16,8 @@ interface EditorShellProps {
   onCloseDrawer: () => void;
 }
 
+type MobilePanel = 'stack' | 'editor' | 'preview';
+
 export function EditorShell({
   activeDrawer,
   onOpenDrawer,
@@ -30,6 +32,7 @@ export function EditorShell({
   const saveStatus = useRuntimeStore((state) => state.saveStatus);
   const lastSavedAt = useRuntimeStore((state) => state.lastSavedAt);
   const hydrated = useRuntimeStore((state) => state.hydrated);
+  const [mobilePanel, setMobilePanel] = useState<MobilePanel>('stack');
 
   const MIN_LEFT_WIDTH = 440;
   const MAX_LEFT_WIDTH = 760;
@@ -164,30 +167,72 @@ export function EditorShell({
       {!hydrated ? (
         <main className="loading-state">{t('loadingWorkspace')}</main>
       ) : (
-        <main
-          className="editor-grid"
-          style={{
-            gridTemplateColumns: `${leftPanelWidth}px 12px minmax(280px, 1fr) 12px ${rightPanelWidth}px`,
-          }}
-        >
-          <PromptStackPanel />
-          <div
-            aria-label="Resize context stack panel"
-            className="panel-splitter omc-tooltip-btn"
-            data-tooltip={t('hintResizeContextStack')}
-            onMouseDown={startResize('left')}
-            role="separator"
-          />
-          <NodeEditorPanel />
-          <div
-            aria-label="Resize preview panel"
-            className="panel-splitter omc-tooltip-btn"
-            data-tooltip={t('hintResizePreviewExport')}
-            onMouseDown={startResize('right')}
-            role="separator"
-          />
-          <PreviewPanel />
-        </main>
+        <>
+          <div className="mobile-panel-switch" role="tablist">
+            <button
+              aria-selected={mobilePanel === 'stack'}
+              className="mobile-panel-tab"
+              data-active={mobilePanel === 'stack'}
+              onClick={() => setMobilePanel('stack')}
+              role="tab"
+              type="button"
+            >
+              {t('mobilePanelStack')}
+            </button>
+            <button
+              aria-selected={mobilePanel === 'editor'}
+              className="mobile-panel-tab"
+              data-active={mobilePanel === 'editor'}
+              onClick={() => setMobilePanel('editor')}
+              role="tab"
+              type="button"
+            >
+              {t('mobilePanelEditor')}
+            </button>
+            <button
+              aria-selected={mobilePanel === 'preview'}
+              className="mobile-panel-tab"
+              data-active={mobilePanel === 'preview'}
+              onClick={() => setMobilePanel('preview')}
+              role="tab"
+              type="button"
+            >
+              {t('mobilePanelPreview')}
+            </button>
+          </div>
+
+          <main
+            className="editor-grid"
+            data-mobile-panel={mobilePanel}
+            style={{
+              gridTemplateColumns: `${leftPanelWidth}px 12px minmax(280px, 1fr) 12px ${rightPanelWidth}px`,
+            }}
+          >
+            <div className="editor-panel-slot" data-panel="stack">
+              <PromptStackPanel />
+            </div>
+            <div
+              aria-label="Resize context stack panel"
+              className="panel-splitter omc-tooltip-btn"
+              data-tooltip={t('hintResizeContextStack')}
+              onMouseDown={startResize('left')}
+              role="separator"
+            />
+            <div className="editor-panel-slot" data-panel="editor">
+              <NodeEditorPanel />
+            </div>
+            <div
+              aria-label="Resize preview panel"
+              className="panel-splitter omc-tooltip-btn"
+              data-tooltip={t('hintResizePreviewExport')}
+              onMouseDown={startResize('right')}
+              role="separator"
+            />
+            <div className="editor-panel-slot" data-panel="preview">
+              <PreviewPanel />
+            </div>
+          </main>
+        </>
       )}
     </div>
   );

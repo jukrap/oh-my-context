@@ -6,6 +6,9 @@ export type TranslationKey =
   | 'navIncludes'
   | 'navTemplates'
   | 'navSettings'
+  | 'mobilePanelStack'
+  | 'mobilePanelEditor'
+  | 'mobilePanelPreview'
   | 'saveSaving'
   | 'saveSaved'
   | 'saveError'
@@ -202,6 +205,9 @@ const messages: Record<AppLanguage, TranslationMap> = {
     navIncludes: 'Includes',
     navTemplates: 'Templates',
     navSettings: 'Settings',
+    mobilePanelStack: 'Stack',
+    mobilePanelEditor: 'Editor',
+    mobilePanelPreview: 'Preview',
     saveSaving: 'Saving...',
     saveSaved: '{time} saved',
     saveError: 'Error',
@@ -438,6 +444,9 @@ const messages: Record<AppLanguage, TranslationMap> = {
     navIncludes: '전역 포함',
     navTemplates: '템플릿',
     navSettings: '설정',
+    mobilePanelStack: '스택',
+    mobilePanelEditor: '편집',
+    mobilePanelPreview: '미리보기',
     saveSaving: '저장 중...',
     saveSaved: '{time} 저장됨',
     saveError: '저장 오류',
