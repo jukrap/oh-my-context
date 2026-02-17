@@ -17,6 +17,7 @@ XML 프롬프트를 트리 기반으로 편집하고, 전역 포함 블록을 �
 ## 기술 스택
 
 - React + TypeScript + Vite
+- React Compiler (babel-plugin-react-compiler)
 - React Router
 - Zustand (전역 상태)
 - TanStack Query
