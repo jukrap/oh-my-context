@@ -1,3 +1,14 @@
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-style: normal;
+  font-weight: 45 920;
+  font-display: swap;
+  src:
+    local('Pretendard Variable'),
+    url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2')
+      format('woff2-variations');
+}
+
 :root {
   --omc-bg: #ffffff;
   --omc-fg: #000000;
@@ -15,7 +26,15 @@
   --omc-shadow: 6px 6px 0 #000000;
   --omc-radius: 2px;
   --omc-gap: 12px;
-  --omc-font: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --omc-font:
+    'Pretendard Variable',
+    'Pretendard',
+    'Apple SD Gothic Neo',
+    'Noto Sans KR',
+    'Segoe UI',
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
   --stack-depth-0: #00e676;
   --stack-depth-1: #00b0ff;
   --stack-depth-2: #ff9100;
