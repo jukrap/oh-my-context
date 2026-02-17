@@ -270,6 +270,8 @@ select {
   display: inline-flex;
   gap: 8px;
   align-items: center;
+  align-self: flex-start;
+  width: fit-content;
   margin-bottom: 4px;
   font-size: 12px;
   text-transform: uppercase;
@@ -772,8 +774,8 @@ select {
 
 .omc-floating-tooltip {
   position: fixed;
-  max-inline-size: min(360px, calc(100vw - 20px));
-  min-inline-size: 120px;
+  inline-size: max-content;
+  max-inline-size: min(46ch, calc(100vw - 20px));
   border: 2px solid var(--omc-fg);
   background: #fff;
   color: #000;
@@ -784,8 +786,8 @@ select {
   line-height: 1.3;
   text-align: left;
   white-space: normal;
-  word-break: keep-all;
-  overflow-wrap: break-word;
+  word-break: normal;
+  overflow-wrap: anywhere;
   z-index: 2200;
   pointer-events: none;
 }

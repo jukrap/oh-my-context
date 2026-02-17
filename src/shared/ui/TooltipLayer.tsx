@@ -18,6 +18,7 @@ interface TooltipLayout {
 
 const VIEWPORT_MARGIN = 10;
 const TARGET_GAP = 10;
+const HOVER_SHOW_DELAY_MS = 320;
 
 function getTooltipTargetFromNode(node: EventTarget | null): TooltipTarget | null {
   if (!(node instanceof Element)) {
@@ -46,6 +47,9 @@ function getTooltipTargetFromNode(node: EventTarget | null): TooltipTarget | nul
 export function TooltipLayer() {
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const targetRef = useRef<TooltipTarget | null>(null);
+  const pendingTargetRef = useRef<TooltipTarget | null>(null);
+  const showTimerRef = useRef<number | null>(null);
+  const hideTimerRef = useRef<number | null>(null);
   const [visible, setVisible] = useState(false);
   const [text, setText] = useState('');
   const [layout, setLayout] = useState<TooltipLayout>({
@@ -56,9 +60,52 @@ export function TooltipLayer() {
   });
 
   const hideTooltip = useCallback(() => {
+    if (showTimerRef.current !== null) {
+      window.clearTimeout(showTimerRef.current);
+      showTimerRef.current = null;
+    }
+    if (hideTimerRef.current !== null) {
+      window.clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
+    pendingTargetRef.current = null;
     targetRef.current = null;
     setVisible(false);
   }, []);
+
+  const showTooltip = useCallback((target: TooltipTarget): void => {
+    if (hideTimerRef.current !== null) {
+      window.clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
+    pendingTargetRef.current = null;
+    targetRef.current = target;
+    setText(target.text);
+    setVisible(true);
+  }, []);
+
+  const scheduleShow = useCallback(
+    (target: TooltipTarget, delayMs: number): void => {
+      if (showTimerRef.current !== null) {
+        window.clearTimeout(showTimerRef.current);
+      }
+      if (hideTimerRef.current !== null) {
+        window.clearTimeout(hideTimerRef.current);
+        hideTimerRef.current = null;
+      }
+
+      pendingTargetRef.current = target;
+      showTimerRef.current = window.setTimeout(() => {
+        const pending = pendingTargetRef.current;
+        showTimerRef.current = null;
+        if (!pending) {
+          return;
+        }
+        showTooltip(pending);
+      }, delayMs);
+    },
+    [showTooltip],
+  );
 
   const updateLayout = useCallback(() => {
     const tooltipElement = tooltipRef.current;
@@ -109,12 +156,6 @@ export function TooltipLayer() {
   }, [hideTooltip]);
 
   useEffect(() => {
-    const showTooltip = (target: TooltipTarget): void => {
-      targetRef.current = target;
-      setText(target.text);
-      setVisible(true);
-    };
-
     const handlePointerOver = (event: PointerEvent): void => {
       const nextTarget = getTooltipTargetFromNode(event.target);
       if (!nextTarget) {
@@ -122,11 +163,14 @@ export function TooltipLayer() {
         return;
       }
 
-      if (targetRef.current?.element === nextTarget.element) {
+      if (
+        targetRef.current?.element === nextTarget.element ||
+        pendingTargetRef.current?.element === nextTarget.element
+      ) {
         return;
       }
 
-      showTooltip(nextTarget);
+      scheduleShow(nextTarget, HOVER_SHOW_DELAY_MS);
     };
 
     const handlePointerDown = (): void => {
@@ -155,9 +199,7 @@ export function TooltipLayer() {
           return;
         }
 
-        targetRef.current = nextTarget;
-        setText(nextTarget.text);
-        setVisible(true);
+        showTooltip(nextTarget);
       }, 0);
     };
 
@@ -179,8 +221,14 @@ export function TooltipLayer() {
       document.removeEventListener('focusin', handleFocusIn, true);
       document.removeEventListener('focusout', handleFocusOut, true);
       document.removeEventListener('keydown', handleKeyDown, true);
+      if (showTimerRef.current !== null) {
+        window.clearTimeout(showTimerRef.current);
+      }
+      if (hideTimerRef.current !== null) {
+        window.clearTimeout(hideTimerRef.current);
+      }
     };
-  }, [hideTooltip]);
+  }, [hideTooltip, scheduleShow, showTooltip]);
 
   useLayoutEffect(() => {
     if (!visible) {
