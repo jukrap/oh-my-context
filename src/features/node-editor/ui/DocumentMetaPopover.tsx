@@ -1,9 +1,9 @@
 import { X } from 'lucide-react';
-import { isValidXmlName } from '../../entities/prompt-node/model/validation';
-import { useI18n } from '../../shared/lib/i18n/useI18n';
-import { selectActiveDocument, useAppStore } from '../../shared/model/store';
-import { Button } from '../../shared/ui/Button';
-import { Input } from '../../shared/ui/Input';
+import { isValidXmlName } from '../../../entities/prompt-node/model/validation';
+import { useI18n } from '../../../shared/lib/i18n/useI18n';
+import { selectActiveDocument, useAppStore } from '../../../shared/model/store';
+import { Button } from '../../../shared/ui/Button';
+import { Input } from '../../../shared/ui/Input';
 
 interface DocumentMetaPopoverProps {
   open: boolean;
@@ -53,7 +53,7 @@ export function DocumentMetaPopover({ open, onClose }: DocumentMetaPopoverProps)
 
         <div className="editor-section">
           <label className="field-label" htmlFor="popover-doc-tags">
-            {t('tags')}
+            {t('documentLabels')}
           </label>
           <Input
             id="popover-doc-tags"

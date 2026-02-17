@@ -15,12 +15,12 @@ import {
   Copy,
   GripVertical,
   Plus,
-  Sparkles,
   Trash2,
 } from 'lucide-react';
-import { type CSSProperties, type KeyboardEvent, useMemo, useState } from 'react';
+import { type CSSProperties, type KeyboardEvent as ReactKeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { buildNodeVisibilitySet, flattenVisibleNodeIds } from '../../../entities/prompt-node/model/tree';
 import type { PromptNode } from '../../../entities/prompt-node/model/types';
+import type { TranslationKey } from '../../../shared/lib/i18n/messages';
 import { useI18n } from '../../../shared/lib/i18n/useI18n';
 import { Input } from '../../../shared/ui/Input';
 import { Panel } from '../../../shared/ui/Panel';
@@ -48,13 +48,16 @@ const STACK_DEPTH_COLORS = [
 ];
 
 const RECOMMENDED_NODE_TAGS = [
-  { value: 'instruction', description: 'Task and expected outcome' },
-  { value: 'constraints', description: 'Safety and style constraints' },
-  { value: 'context', description: 'Background context input' },
-  { value: 'examples', description: 'Few-shot examples' },
-  { value: 'output_format', description: 'Output schema or format' },
-  { value: 'checklist', description: 'Final quality checklist' },
-];
+  { value: 'instruction', descriptionKey: 'recommendedInstructionDesc' },
+  { value: 'constraints', descriptionKey: 'recommendedConstraintsDesc' },
+  { value: 'context', descriptionKey: 'recommendedContextDesc' },
+  { value: 'examples', descriptionKey: 'recommendedExamplesDesc' },
+  { value: 'output_format', descriptionKey: 'recommendedOutputFormatDesc' },
+  { value: 'checklist', descriptionKey: 'recommendedChecklistDesc' },
+] as const satisfies ReadonlyArray<{
+  value: string;
+  descriptionKey: TranslationKey;
+}>;
 
 function buildNodeDropId(nodeId: string, position: DropPosition): string {
   return `node:${nodeId}:${position}`;
@@ -363,19 +366,105 @@ function TreeList({
   );
 }
 
+function AddNodeMenu() {
+  const { t } = useI18n();
+  const addRootNode = useAppStore((state) => state.addRootNode);
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const handlePointerDown = (event: MouseEvent): void => {
+      const container = menuRef.current;
+      if (!container) {
+        return;
+      }
+
+      if (event.target instanceof Node && !container.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+      }
+    };
+
+    window.addEventListener('mousedown', handlePointerDown);
+    window.addEventListener('keydown', handleEscape);
+    return () => {
+      window.removeEventListener('mousedown', handlePointerDown);
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [open]);
+
+  const handleAddNode = (tagName: string): void => {
+    addRootNode(tagName);
+    setOpen(false);
+  };
+
+  return (
+    <div className="stack-add-menu" ref={menuRef}>
+      <button
+        aria-expanded={open}
+        className="omc-btn omc-btn-brand stack-add-trigger"
+        onClick={() => setOpen((prev) => !prev)}
+        type="button"
+      >
+        <Plus size={14} />
+        {t('addNode')}
+        <ChevronDown size={14} />
+      </button>
+
+      {open ? (
+        <div className="stack-add-popover" role="menu">
+          <p className="stack-add-section-title">{t('quickAddContext')}</p>
+          <button
+            className="stack-add-item stack-add-item-quick"
+            onClick={() => handleAddNode('context')}
+            type="button"
+          >
+            <span className="stack-add-item-title">{'<context>'}</span>
+            <span className="stack-add-item-desc">{t('quickAddContextDescription')}</span>
+          </button>
+
+          <p className="stack-add-section-title">{t('recommendedTags')}</p>
+          <div className="stack-add-list">
+            {RECOMMENDED_NODE_TAGS.map((item) => (
+              <button
+                className="stack-add-item"
+                key={item.value}
+                onClick={() => handleAddNode(item.value)}
+                type="button"
+              >
+                <span className="stack-add-item-title">
+                  {'<'}
+                  {item.value}
+                  {'>'}
+                </span>
+                <span className="stack-add-item-desc">{t(item.descriptionKey)}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export function PromptStackPanel() {
   const { t } = useI18n();
   const document = useAppStore(selectActiveDocument);
-  const addRootNode = useAppStore((state) => state.addRootNode);
   const moveNodeByDropTarget = useAppStore((state) => state.moveNodeByDropTarget);
   const stackSearchQuery = useAppStore((state) => state.stackSearchQuery);
   const setStackSearchQuery = useAppStore((state) => state.setStackSearchQuery);
   const selectedNodeId = useAppStore((state) => state.selectedNodeId);
   const setSelectedNodeId = useAppStore((state) => state.setSelectedNodeId);
   const [activeDropId, setActiveDropId] = useState<string | null>(null);
-  const [recommendedTag, setRecommendedTag] = useState(
-    RECOMMENDED_NODE_TAGS[0]?.value ?? 'instruction',
-  );
 
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -413,7 +502,7 @@ export function PromptStackPanel() {
     setActiveDropId(overId);
   };
 
-  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+  const onKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>): void => {
     if (navigationIds.length === 0) {
       return;
     }
@@ -445,43 +534,7 @@ export function PromptStackPanel() {
 
   return (
     <Panel
-      rightSlot={
-        <div className="stack-header-actions">
-          <button className="omc-btn omc-btn-brand" type="button" onClick={() => addRootNode()}>
-            <Plus size={14} />
-            {t('quickAddContext')}
-          </button>
-
-          <div className="stack-preset-add">
-            <label className="sr-only" htmlFor="recommended-node-tag">
-              {t('recommendedTag')}
-            </label>
-            <select
-              className="omc-select stack-preset-select"
-              id="recommended-node-tag"
-              onChange={(event) => setRecommendedTag(event.target.value)}
-              value={recommendedTag}
-            >
-              {RECOMMENDED_NODE_TAGS.map((item) => (
-                <option key={item.value} value={item.value}>
-                  {'<'}
-                  {item.value}
-                  {'> '}
-                  {item.description}
-                </option>
-              ))}
-            </select>
-            <button
-              className="omc-btn"
-              type="button"
-              onClick={() => addRootNode(recommendedTag)}
-            >
-              <Sparkles size={14} />
-              {t('addRecommendedTag')}
-            </button>
-          </div>
-        </div>
-      }
+      rightSlot={<AddNodeMenu />}
       title={t('contextStack')}
     >
       <Input

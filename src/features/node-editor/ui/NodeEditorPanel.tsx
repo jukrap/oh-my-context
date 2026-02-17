@@ -1,4 +1,4 @@
-import { Plus, Sparkles, Trash2 } from 'lucide-react';
+import { FileCog, Plus, Sparkles, Trash2 } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 import { isValidXmlName } from '../../../entities/prompt-node/model/validation';
 import { useI18n } from '../../../shared/lib/i18n/useI18n';
@@ -6,6 +6,7 @@ import { selectActiveDocument, selectSelectedNode, useAppStore } from '../../../
 import { Button } from '../../../shared/ui/Button';
 import { Input } from '../../../shared/ui/Input';
 import { Panel } from '../../../shared/ui/Panel';
+import { DocumentMetaPopover } from './DocumentMetaPopover';
 
 export function NodeEditorPanel() {
   const { t } = useI18n();
@@ -15,6 +16,7 @@ export function NodeEditorPanel() {
   const settings = useAppStore((state) => state.settings);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [wrapTag, setWrapTag] = useState('tag');
+  const [showDocumentMeta, setShowDocumentMeta] = useState(false);
 
   const contentLengthEstimate = useMemo(() => {
     if (!selectedNode) {
@@ -29,7 +31,25 @@ export function NodeEditorPanel() {
   }
 
   return (
-    <Panel title={t('nodeEditor')}>
+    <Panel
+      rightSlot={
+        <div className="panel-meta-trigger">
+          <Button
+            aria-expanded={showDocumentMeta}
+            onClick={() => setShowDocumentMeta((prev) => !prev)}
+            tone={showDocumentMeta ? 'brand' : 'default'}
+          >
+            <FileCog size={14} />
+            {t('documentMeta')}
+          </Button>
+          <DocumentMetaPopover
+            open={showDocumentMeta}
+            onClose={() => setShowDocumentMeta(false)}
+          />
+        </div>
+      }
+      title={t('nodeEditor')}
+    >
       {!selectedNode ? (
         <p className="empty-hint">{t('selectNodeHint')}</p>
       ) : (

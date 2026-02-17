@@ -1,5 +1,4 @@
-import { FileCog } from 'lucide-react';
-import { type MouseEvent as ReactMouseEvent, useState } from 'react';
+import { type MouseEvent as ReactMouseEvent } from 'react';
 import { NodeEditorPanel } from '../../features/node-editor/ui/NodeEditorPanel';
 import { PreviewPanel } from '../../features/preview-export/ui/PreviewPanel';
 import { PromptStackPanel } from '../../features/prompt-stack/ui/PromptStackPanel';
@@ -7,7 +6,6 @@ import { useI18n } from '../../shared/lib/i18n/useI18n';
 import { useRuntimeStore } from '../../shared/model/runtime-store';
 import { selectActiveDocument, useAppStore } from '../../shared/model/store';
 import { Button } from '../../shared/ui/Button';
-import { DocumentMetaPopover } from './DocumentMetaPopover';
 
 type DrawerPath = '/vault' | '/includes' | '/templates' | '/settings';
 
@@ -23,7 +21,6 @@ export function EditorShell({
   onCloseDrawer,
 }: EditorShellProps) {
   const { t } = useI18n();
-  const [showDocumentMeta, setShowDocumentMeta] = useState(false);
   const activeDocument = useAppStore(selectActiveDocument);
   const leftPanelWidth = useAppStore((state) => state.leftPanelWidth);
   const rightPanelWidth = useAppStore((state) => state.rightPanelWidth);
@@ -152,17 +149,6 @@ export function EditorShell({
             <span>{activeDocument ? activeDocument.name : t('noActiveDocument')}</span>
             <strong>{saveStatusLabel}</strong>
           </div>
-          <Button
-            onClick={() => setShowDocumentMeta((prev) => !prev)}
-            tone={showDocumentMeta ? 'brand' : 'default'}
-          >
-            <FileCog size={14} />
-            {t('documentMeta')}
-          </Button>
-          <DocumentMetaPopover
-            open={showDocumentMeta}
-            onClose={() => setShowDocumentMeta(false)}
-          />
         </div>
       </header>
 

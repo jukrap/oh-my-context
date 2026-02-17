@@ -15,8 +15,16 @@ export type TranslationKey =
   | 'contextStack'
   | 'addNode'
   | 'quickAddContext'
+  | 'quickAddContextDescription'
+  | 'recommendedTags'
   | 'recommendedTag'
   | 'addRecommendedTag'
+  | 'recommendedInstructionDesc'
+  | 'recommendedConstraintsDesc'
+  | 'recommendedContextDesc'
+  | 'recommendedExamplesDesc'
+  | 'recommendedOutputFormatDesc'
+  | 'recommendedChecklistDesc'
   | 'searchTagOrContent'
   | 'dragNode'
   | 'enableNode'
@@ -33,6 +41,7 @@ export type TranslationKey =
   | 'showDocumentMeta'
   | 'hideDocumentMeta'
   | 'documentName'
+  | 'documentLabels'
   | 'tags'
   | 'tagsPlaceholder'
   | 'rootTag'
@@ -110,8 +119,16 @@ const messages: Record<AppLanguage, TranslationMap> = {
     contextStack: 'Context Stack',
     addNode: 'Add Node',
     quickAddContext: 'Quick Add <context>',
+    quickAddContextDescription: 'Add a generic context node immediately.',
+    recommendedTags: 'Recommended Tags',
     recommendedTag: 'Recommended Tag',
     addRecommendedTag: 'Add Recommended',
+    recommendedInstructionDesc: 'Primary task and objective for the model.',
+    recommendedConstraintsDesc: 'Safety, tone, and guardrail constraints.',
+    recommendedContextDesc: 'Background facts and user context.',
+    recommendedExamplesDesc: 'Few-shot examples for style and structure.',
+    recommendedOutputFormatDesc: 'Required response format or schema.',
+    recommendedChecklistDesc: 'Final checks before finishing the answer.',
     searchTagOrContent: 'Search tag or content',
     dragNode: 'Drag node',
     enableNode: 'Enable node',
@@ -128,8 +145,9 @@ const messages: Record<AppLanguage, TranslationMap> = {
     showDocumentMeta: 'Show document meta settings',
     hideDocumentMeta: 'Hide document meta settings',
     documentName: 'Document Name',
+    documentLabels: 'Document Labels',
     tags: 'Tags',
-    tagsPlaceholder: 'prompt, policy, baseline',
+    tagsPlaceholder: 'policy, baseline, seo',
     rootTag: 'Root Tag',
     selectNodeHint: 'Select a node from the stack to edit details.',
     tagName: 'Tag Name',
@@ -205,8 +223,16 @@ const messages: Record<AppLanguage, TranslationMap> = {
     contextStack: '컨텍스트 스택',
     addNode: '노드 추가',
     quickAddContext: '빠른 추가 <context>',
+    quickAddContextDescription: '기본 컨텍스트 노드를 즉시 추가합니다.',
+    recommendedTags: '권장 태그',
     recommendedTag: '권장 태그',
     addRecommendedTag: '권장 태그 추가',
+    recommendedInstructionDesc: '모델이 수행할 핵심 작업과 목적',
+    recommendedConstraintsDesc: '안전, 톤, 제약 조건',
+    recommendedContextDesc: '배경 정보와 사용자 맥락',
+    recommendedExamplesDesc: '스타일 유도를 위한 예시',
+    recommendedOutputFormatDesc: '출력 포맷 또는 스키마 요구사항',
+    recommendedChecklistDesc: '최종 답변 전 확인 항목',
     searchTagOrContent: '태그 또는 내용 검색',
     dragNode: '노드 드래그',
     enableNode: '노드 활성화',
@@ -220,11 +246,12 @@ const messages: Record<AppLanguage, TranslationMap> = {
     delete: '삭제',
     nodeEditor: '노드 편집기',
     documentMeta: '문서 메타',
-    showDocumentMeta: '문서 메타 설정 펼치기',
+    showDocumentMeta: '문서 메타 설정 열기',
     hideDocumentMeta: '문서 메타 설정 닫기',
     documentName: '문서 이름',
+    documentLabels: '문서 분류 라벨',
     tags: '태그',
-    tagsPlaceholder: 'prompt, policy, baseline',
+    tagsPlaceholder: '정책, 기준, 프로젝트A',
     rootTag: '루트 태그',
     selectNodeHint: '스택에서 노드를 선택하면 상세 편집이 가능합니다.',
     tagName: '태그 이름',
