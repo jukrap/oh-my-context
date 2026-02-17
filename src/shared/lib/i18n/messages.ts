@@ -26,6 +26,8 @@ export type TranslationKey =
   | 'duplicate'
   | 'delete'
   | 'nodeEditor'
+  | 'showDocumentMeta'
+  | 'hideDocumentMeta'
   | 'documentName'
   | 'tags'
   | 'tagsPlaceholder'
@@ -115,6 +117,8 @@ const messages: Record<AppLanguage, TranslationMap> = {
     duplicate: 'Duplicate',
     delete: 'Delete',
     nodeEditor: 'Node Editor',
+    showDocumentMeta: 'Show document meta settings',
+    hideDocumentMeta: 'Hide document meta settings',
     documentName: 'Document Name',
     tags: 'Tags',
     tagsPlaceholder: 'prompt, policy, baseline',
@@ -204,6 +208,8 @@ const messages: Record<AppLanguage, TranslationMap> = {
     duplicate: '복제',
     delete: '삭제',
     nodeEditor: '노드 편집기',
+    showDocumentMeta: '문서 메타 설정 펼치기',
+    hideDocumentMeta: '문서 메타 설정 접기',
     documentName: '문서 이름',
     tags: '태그',
     tagsPlaceholder: 'prompt, policy, baseline',

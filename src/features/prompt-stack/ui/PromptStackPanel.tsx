@@ -34,9 +34,7 @@ interface TreeListProps {
 
 type DropPosition = 'before' | 'inside' | 'after';
 
-type DropTarget =
-  | { kind: 'root' }
-  | { kind: 'node'; nodeId: string; position: DropPosition };
+type DropTarget = { kind: 'node'; nodeId: string; position: DropPosition };
 
 function buildNodeDropId(nodeId: string, position: DropPosition): string {
   return `node:${nodeId}:${position}`;
@@ -45,10 +43,6 @@ function buildNodeDropId(nodeId: string, position: DropPosition): string {
 function parseDropTarget(dropId: string | null): DropTarget | null {
   if (!dropId) {
     return null;
-  }
-
-  if (dropId === 'root:bottom') {
-    return { kind: 'root' };
   }
 
   const parts = dropId.split(':');
@@ -102,7 +96,7 @@ function DropSlot({
   dropId: string;
   activeDropId: string | null;
   depth: number;
-  variant: 'before' | 'after' | 'root';
+  variant: 'before' | 'after';
 }) {
   const { setNodeRef } = useDroppable({
     id: dropId,
@@ -115,7 +109,7 @@ function DropSlot({
       data-active={activeDropId === dropId}
       data-variant={variant}
       style={{
-        marginLeft: variant === 'root' ? 0 : depth * 14 + 18,
+        marginLeft: depth * 14 + 18,
       }}
     />
   );
@@ -269,6 +263,11 @@ function TreeList({ nodes, depth, visibleNodeIds, activeDropId }: TreeListProps)
     return null;
   }
 
+  const lastNode = visibleNodes[visibleNodes.length - 1];
+  if (!lastNode) {
+    return null;
+  }
+
   return (
     <>
       {visibleNodes.map((node) => (
@@ -292,14 +291,14 @@ function TreeList({ nodes, depth, visibleNodeIds, activeDropId }: TreeListProps)
               visibleNodeIds={visibleNodeIds}
             />
           ) : null}
-          <DropSlot
-            activeDropId={activeDropId}
-            depth={depth}
-            dropId={buildNodeDropId(node.id, 'after')}
-            variant="after"
-          />
         </div>
       ))}
+      <DropSlot
+        activeDropId={activeDropId}
+        depth={depth}
+        dropId={buildNodeDropId(lastNode.id, 'after')}
+        variant="after"
+      />
     </>
   );
 }
@@ -309,7 +308,6 @@ export function PromptStackPanel() {
   const document = useAppStore(selectActiveDocument);
   const addRootNode = useAppStore((state) => state.addRootNode);
   const moveNodeByDropTarget = useAppStore((state) => state.moveNodeByDropTarget);
-  const moveNodeToRootEnd = useAppStore((state) => state.moveNodeToRootEnd);
   const stackSearchQuery = useAppStore((state) => state.stackSearchQuery);
   const setStackSearchQuery = useAppStore((state) => state.setStackSearchQuery);
   const selectedNodeId = useAppStore((state) => state.selectedNodeId);
@@ -341,11 +339,6 @@ export function PromptStackPanel() {
     setActiveDropId(null);
 
     if (!target) {
-      return;
-    }
-
-    if (target.kind === 'root') {
-      moveNodeToRootEnd(activeId);
       return;
     }
 
@@ -418,12 +411,6 @@ export function PromptStackPanel() {
             depth={0}
             nodes={document.nodes}
             visibleNodeIds={visibleNodeIds}
-          />
-          <DropSlot
-            activeDropId={activeDropId}
-            depth={0}
-            dropId="root:bottom"
-            variant="root"
           />
         </DndContext>
       </div>

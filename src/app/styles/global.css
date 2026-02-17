@@ -215,6 +215,31 @@ select {
   gap: 6px;
 }
 
+.editor-collapsible {
+  border: 2px solid #000;
+  background: #f8f8f8;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editor-collapse-toggle {
+  border: 2px solid #000;
+  background: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 34px;
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.editor-collapsible-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .editor-row {
   display: flex;
   align-items: center;
@@ -421,12 +446,6 @@ select {
   border-radius: 2px;
   background: transparent;
   transition: background-color 120ms ease-out;
-}
-
-.stack-drop-slot[data-variant='root'] {
-  margin-top: 6px;
-  height: 16px;
-  border: 2px dashed rgba(0, 0, 0, 0.45);
 }
 
 .stack-drop-slot[data-active='true'] {
