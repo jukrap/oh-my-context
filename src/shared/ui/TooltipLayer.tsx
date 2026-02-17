@@ -185,6 +185,15 @@ export function TooltipLayer() {
       hideTooltip();
     };
 
+    const handleClick = (event: MouseEvent): void => {
+      const nextTarget = getTooltipTargetFromNode(event.target);
+      if (!nextTarget) {
+        return;
+      }
+
+      showTooltip(nextTarget);
+    };
+
     const handleFocusIn = (event: FocusEvent): void => {
       const nextTarget = getTooltipTargetFromNode(event.target);
       if (!nextTarget) {
@@ -219,6 +228,7 @@ export function TooltipLayer() {
 
     document.addEventListener('pointerover', handlePointerOver, true);
     document.addEventListener('pointerdown', handlePointerDown, true);
+    document.addEventListener('click', handleClick, true);
     document.addEventListener('focusin', handleFocusIn, true);
     document.addEventListener('focusout', handleFocusOut, true);
     document.addEventListener('keydown', handleKeyDown, true);
@@ -226,6 +236,7 @@ export function TooltipLayer() {
     return () => {
       document.removeEventListener('pointerover', handlePointerOver, true);
       document.removeEventListener('pointerdown', handlePointerDown, true);
+      document.removeEventListener('click', handleClick, true);
       document.removeEventListener('focusin', handleFocusIn, true);
       document.removeEventListener('focusout', handleFocusOut, true);
       document.removeEventListener('keydown', handleKeyDown, true);
