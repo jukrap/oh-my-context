@@ -14,17 +14,16 @@ export type TranslationKey =
   | 'loadingWorkspace'
   | 'contextStack'
   | 'addNode'
-  | 'quickAddContext'
-  | 'quickAddContextDescription'
   | 'recommendedTags'
-  | 'recommendedTag'
-  | 'addRecommendedTag'
   | 'recommendedInstructionDesc'
   | 'recommendedConstraintsDesc'
   | 'recommendedContextDesc'
   | 'recommendedExamplesDesc'
   | 'recommendedOutputFormatDesc'
   | 'recommendedChecklistDesc'
+  | 'currentAddTag'
+  | 'addAtRoot'
+  | 'addToSelected'
   | 'searchTagOrContent'
   | 'dragNode'
   | 'enableNode'
@@ -91,7 +90,6 @@ export type TranslationKey =
   | 'languageHint'
   | 'korean'
   | 'english'
-  | 'brandColor'
   | 'confirmBeforeDelete'
   | 'showMarkdownPreview'
   | 'rawXmlStrictMode'
@@ -118,17 +116,16 @@ const messages: Record<AppLanguage, TranslationMap> = {
     loadingWorkspace: 'Loading workspace...',
     contextStack: 'Context Stack',
     addNode: 'Add Node',
-    quickAddContext: 'Quick Add <context>',
-    quickAddContextDescription: 'Add a generic context node immediately.',
     recommendedTags: 'Recommended Tags',
-    recommendedTag: 'Recommended Tag',
-    addRecommendedTag: 'Add Recommended',
     recommendedInstructionDesc: 'Primary task and objective for the model.',
     recommendedConstraintsDesc: 'Safety, tone, and guardrail constraints.',
     recommendedContextDesc: 'Background facts and user context.',
     recommendedExamplesDesc: 'Few-shot examples for style and structure.',
     recommendedOutputFormatDesc: 'Required response format or schema.',
     recommendedChecklistDesc: 'Final checks before finishing the answer.',
+    currentAddTag: 'Current tag',
+    addAtRoot: 'Add At Root',
+    addToSelected: 'Add To Selected',
     searchTagOrContent: 'Search tag or content',
     dragNode: 'Drag node',
     enableNode: 'Enable node',
@@ -147,7 +144,7 @@ const messages: Record<AppLanguage, TranslationMap> = {
     documentName: 'Document Name',
     documentLabels: 'Document Labels',
     tags: 'Tags',
-    tagsPlaceholder: 'policy, baseline, seo',
+    tagsPlaceholder: 'policy, baseline, projectA',
     rootTag: 'Root Tag',
     selectNodeHint: 'Select a node from the stack to edit details.',
     tagName: 'Tag Name',
@@ -197,7 +194,6 @@ const messages: Record<AppLanguage, TranslationMap> = {
       'Default is English. Korean users are auto-detected on first visit.',
     korean: 'Korean',
     english: 'English',
-    brandColor: 'Brand Color',
     confirmBeforeDelete: 'Confirm before delete',
     showMarkdownPreview: 'Show markdown preview',
     rawXmlStrictMode: 'RawXML strict mode (v1 placeholder)',
@@ -222,17 +218,16 @@ const messages: Record<AppLanguage, TranslationMap> = {
     loadingWorkspace: '작업 공간 불러오는 중...',
     contextStack: '컨텍스트 스택',
     addNode: '노드 추가',
-    quickAddContext: '빠른 추가 <context>',
-    quickAddContextDescription: '기본 컨텍스트 노드를 즉시 추가합니다.',
     recommendedTags: '권장 태그',
-    recommendedTag: '권장 태그',
-    addRecommendedTag: '권장 태그 추가',
     recommendedInstructionDesc: '모델이 수행할 핵심 작업과 목적',
     recommendedConstraintsDesc: '안전, 톤, 제약 조건',
     recommendedContextDesc: '배경 정보와 사용자 맥락',
     recommendedExamplesDesc: '스타일 유도를 위한 예시',
     recommendedOutputFormatDesc: '출력 포맷 또는 스키마 요구사항',
     recommendedChecklistDesc: '최종 답변 전 확인 항목',
+    currentAddTag: '현재 추가 태그',
+    addAtRoot: '루트에 추가',
+    addToSelected: '선택 노드에 추가',
     searchTagOrContent: '태그 또는 내용 검색',
     dragNode: '노드 드래그',
     enableNode: '노드 활성화',
@@ -301,7 +296,6 @@ const messages: Record<AppLanguage, TranslationMap> = {
       '기본 언어는 영어이며, 첫 접속 시 브라우저 언어를 자동 감지합니다.',
     korean: '한국어',
     english: '영어',
-    brandColor: '브랜드 색상',
     confirmBeforeDelete: '삭제 전 확인',
     showMarkdownPreview: '마크다운 미리보기 표시',
     rawXmlStrictMode: 'RawXML 엄격 모드 (v1 예정)',

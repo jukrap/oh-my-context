@@ -5,11 +5,9 @@ import { createNode } from '../../entities/prompt-node/model/tree';
 import { detectPreferredLanguage } from '../lib/i18n/messages';
 
 export const SCHEMA_VERSION = 1;
-export const BRAND_COLOR_DEFAULT = '#00E676';
 
 export const DEFAULT_SETTINGS: WorkspaceSettings = {
   language: 'en',
-  brandColor: BRAND_COLOR_DEFAULT,
   confirmBeforeDelete: true,
   showMarkdownPreview: true,
   rawXmlStrictMode: false,

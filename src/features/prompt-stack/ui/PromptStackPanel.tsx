@@ -13,7 +13,9 @@ import {
   ChevronDown,
   ChevronRight,
   Copy,
+  Crosshair,
   GripVertical,
+  ListTree,
   Plus,
   Trash2,
 } from 'lucide-react';
@@ -24,7 +26,7 @@ import type { TranslationKey } from '../../../shared/lib/i18n/messages';
 import { useI18n } from '../../../shared/lib/i18n/useI18n';
 import { Input } from '../../../shared/ui/Input';
 import { Panel } from '../../../shared/ui/Panel';
-import { selectActiveDocument, useAppStore } from '../../../shared/model/store';
+import { selectActiveDocument, selectSelectedNode, useAppStore } from '../../../shared/model/store';
 
 interface TreeListProps {
   nodes: PromptNode[];
@@ -209,7 +211,6 @@ function DraggableNodeRow({
   const cardStyle: CSSProperties = {
     opacity: isDragging ? 0.45 : 1,
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
-    ['--stack-node-accent' as string]: getDepthColor(depth),
   };
 
   return (
@@ -369,7 +370,10 @@ function TreeList({
 function AddNodeMenu() {
   const { t } = useI18n();
   const addRootNode = useAppStore((state) => state.addRootNode);
+  const addChildNode = useAppStore((state) => state.addChildNode);
+  const selectedNode = useAppStore(selectSelectedNode);
   const [open, setOpen] = useState(false);
+  const [selectedTag, setSelectedTag] = useState('context');
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -402,9 +406,18 @@ function AddNodeMenu() {
     };
   }, [open]);
 
-  const handleAddNode = (tagName: string): void => {
-    addRootNode(tagName);
+  const handleSelectTag = (tagName: string): void => {
+    setSelectedTag(tagName);
     setOpen(false);
+  };
+
+  const handleAddNode = (tagName: string, target: 'root' | 'child'): void => {
+    if (target === 'child' && selectedNode) {
+      addChildNode(selectedNode.id, tagName);
+      return;
+    }
+
+    addRootNode(tagName);
   };
 
   return (
@@ -422,23 +435,14 @@ function AddNodeMenu() {
 
       {open ? (
         <div className="stack-add-popover" role="menu">
-          <p className="stack-add-section-title">{t('quickAddContext')}</p>
-          <button
-            className="stack-add-item stack-add-item-quick"
-            onClick={() => handleAddNode('context')}
-            type="button"
-          >
-            <span className="stack-add-item-title">{'<context>'}</span>
-            <span className="stack-add-item-desc">{t('quickAddContextDescription')}</span>
-          </button>
-
           <p className="stack-add-section-title">{t('recommendedTags')}</p>
           <div className="stack-add-list">
             {RECOMMENDED_NODE_TAGS.map((item) => (
               <button
                 className="stack-add-item"
+                data-selected={selectedTag === item.value}
                 key={item.value}
-                onClick={() => handleAddNode(item.value)}
+                onClick={() => handleSelectTag(item.value)}
                 type="button"
               >
                 <span className="stack-add-item-title">
@@ -452,6 +456,31 @@ function AddNodeMenu() {
           </div>
         </div>
       ) : null}
+
+      <div className="stack-add-quick-actions">
+        <p className="stack-add-current-tag">
+          {t('currentAddTag')} <strong>{`<${selectedTag}>`}</strong>
+        </p>
+        <div className="stack-add-quick-buttons">
+          <button
+            className="omc-btn stack-add-action-btn"
+            onClick={() => handleAddNode(selectedTag, 'root')}
+            type="button"
+          >
+            <ListTree size={14} />
+            {t('addAtRoot')}
+          </button>
+          <button
+            className="omc-btn stack-add-action-btn"
+            disabled={!selectedNode}
+            onClick={() => handleAddNode(selectedTag, 'child')}
+            type="button"
+          >
+            <Crosshair size={14} />
+            {t('addToSelected')}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

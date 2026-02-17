@@ -42,16 +42,6 @@ export function SettingsDrawer({ open, onClose }: SettingsDrawerProps) {
 
       <div className="drawer-group">
         <label>
-          {t('brandColor')}
-          <Input
-            onChange={(event) => updateSettings({ brandColor: event.target.value })}
-            value={settings.brandColor}
-          />
-        </label>
-      </div>
-
-      <div className="drawer-group">
-        <label>
           <input
             checked={settings.confirmBeforeDelete}
             onChange={(event) =>
