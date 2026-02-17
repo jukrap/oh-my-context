@@ -17,6 +17,7 @@ import {
   GripVertical,
   ListTree,
   Plus,
+  Tag,
   Trash2,
 } from 'lucide-react';
 import { type CSSProperties, type KeyboardEvent as ReactKeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
@@ -60,6 +61,7 @@ const RECOMMENDED_NODE_TAGS = [
   value: string;
   descriptionKey: TranslationKey;
 }>;
+const DEFAULT_NODE_TAG = 'context';
 
 function buildNodeDropId(nodeId: string, position: DropPosition): string {
   return `node:${nodeId}:${position}`;
@@ -373,8 +375,15 @@ function AddNodeMenu() {
   const addChildNode = useAppStore((state) => state.addChildNode);
   const selectedNode = useAppStore(selectSelectedNode);
   const [open, setOpen] = useState(false);
-  const [selectedTag, setSelectedTag] = useState('context');
+  const [selectedTag, setSelectedTag] = useState(DEFAULT_NODE_TAG);
   const menuRef = useRef<HTMLDivElement | null>(null);
+
+  const defaultTagItem =
+    RECOMMENDED_NODE_TAGS.find((item) => item.value === DEFAULT_NODE_TAG) ??
+    RECOMMENDED_NODE_TAGS[0];
+  const extraTagItems = RECOMMENDED_NODE_TAGS.filter(
+    (item) => item.value !== DEFAULT_NODE_TAG,
+  );
 
   useEffect(() => {
     if (!open) {
@@ -411,33 +420,74 @@ function AddNodeMenu() {
     setOpen(false);
   };
 
-  const handleAddNode = (tagName: string, target: 'root' | 'child'): void => {
+  const handleAddNode = (target: 'root' | 'child'): void => {
     if (target === 'child' && selectedNode) {
-      addChildNode(selectedNode.id, tagName);
+      addChildNode(selectedNode.id, selectedTag);
       return;
     }
 
-    addRootNode(tagName);
+    addRootNode(selectedTag);
   };
 
   return (
     <div className="stack-add-menu" ref={menuRef}>
-      <button
-        aria-expanded={open}
-        className="omc-btn omc-btn-brand stack-add-trigger"
-        onClick={() => setOpen((prev) => !prev)}
-        type="button"
-      >
-        <Plus size={14} />
-        {t('addNode')}
-        <ChevronDown size={14} />
-      </button>
+      <div className="stack-add-inline">
+        <button
+          aria-expanded={open}
+          className="omc-btn stack-tag-picker"
+          onClick={() => setOpen((prev) => !prev)}
+          type="button"
+        >
+          <Tag size={14} />
+          <span className="stack-tag-pill">{`<${selectedTag}>`}</span>
+          <ChevronDown size={14} />
+        </button>
+
+        <button
+          className="omc-btn omc-btn-brand stack-add-inline-btn"
+          onClick={() => handleAddNode('root')}
+          type="button"
+        >
+          <ListTree size={14} />
+          {t('addAtRoot')}
+        </button>
+
+        <button
+          className="omc-btn stack-add-inline-btn"
+          disabled={!selectedNode}
+          onClick={() => handleAddNode('child')}
+          title={selectedNode ? `<${selectedNode.tagName}>` : t('selectNodeFirst')}
+          type="button"
+        >
+          <Crosshair size={14} />
+          {t('addToSelected')}
+        </button>
+      </div>
 
       {open ? (
         <div className="stack-add-popover" role="menu">
           <p className="stack-add-section-title">{t('recommendedTags')}</p>
+
+          {defaultTagItem ? (
+            <button
+              className="stack-add-item stack-add-item-default"
+              data-selected={selectedTag === defaultTagItem.value}
+              onClick={() => handleSelectTag(defaultTagItem.value)}
+              type="button"
+            >
+              <span className="stack-add-item-head">
+                <span className="stack-add-item-title">{'<context>'}</span>
+                <span className="stack-add-badge">{t('defaultLabel')}</span>
+              </span>
+              <span className="stack-add-item-desc">
+                {t(defaultTagItem.descriptionKey)}
+              </span>
+            </button>
+          ) : null}
+
+          <div className="stack-add-popover-divider" />
           <div className="stack-add-list">
-            {RECOMMENDED_NODE_TAGS.map((item) => (
+            {extraTagItems.map((item) => (
               <button
                 className="stack-add-item"
                 data-selected={selectedTag === item.value}
@@ -456,31 +506,6 @@ function AddNodeMenu() {
           </div>
         </div>
       ) : null}
-
-      <div className="stack-add-quick-actions">
-        <p className="stack-add-current-tag">
-          {t('currentAddTag')} <strong>{`<${selectedTag}>`}</strong>
-        </p>
-        <div className="stack-add-quick-buttons">
-          <button
-            className="omc-btn stack-add-action-btn"
-            onClick={() => handleAddNode(selectedTag, 'root')}
-            type="button"
-          >
-            <ListTree size={14} />
-            {t('addAtRoot')}
-          </button>
-          <button
-            className="omc-btn stack-add-action-btn"
-            disabled={!selectedNode}
-            onClick={() => handleAddNode(selectedTag, 'child')}
-            type="button"
-          >
-            <Crosshair size={14} />
-            {t('addToSelected')}
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

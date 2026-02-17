@@ -21,9 +21,10 @@ export type TranslationKey =
   | 'recommendedExamplesDesc'
   | 'recommendedOutputFormatDesc'
   | 'recommendedChecklistDesc'
-  | 'currentAddTag'
   | 'addAtRoot'
   | 'addToSelected'
+  | 'defaultLabel'
+  | 'selectNodeFirst'
   | 'searchTagOrContent'
   | 'dragNode'
   | 'enableNode'
@@ -123,9 +124,10 @@ const messages: Record<AppLanguage, TranslationMap> = {
     recommendedExamplesDesc: 'Few-shot examples for style and structure.',
     recommendedOutputFormatDesc: 'Required response format or schema.',
     recommendedChecklistDesc: 'Final checks before finishing the answer.',
-    currentAddTag: 'Current tag',
     addAtRoot: 'Add At Root',
     addToSelected: 'Add To Selected',
+    defaultLabel: 'Default',
+    selectNodeFirst: 'Select a node first',
     searchTagOrContent: 'Search tag or content',
     dragNode: 'Drag node',
     enableNode: 'Enable node',
@@ -225,9 +227,10 @@ const messages: Record<AppLanguage, TranslationMap> = {
     recommendedExamplesDesc: '스타일 유도를 위한 예시',
     recommendedOutputFormatDesc: '출력 포맷 또는 스키마 요구사항',
     recommendedChecklistDesc: '최종 답변 전 확인 항목',
-    currentAddTag: '현재 추가 태그',
     addAtRoot: '루트에 추가',
     addToSelected: '선택 노드에 추가',
+    defaultLabel: '기본',
+    selectNodeFirst: '먼저 노드를 선택하세요',
     searchTagOrContent: '태그 또는 내용 검색',
     dragNode: '노드 드래그',
     enableNode: '노드 활성화',
