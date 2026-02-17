@@ -1,6 +1,14 @@
 import { nanoid } from 'nanoid';
+import {
+  cloneNodesWithNewIds,
+  deepCloneNodes,
+} from '../../../entities/prompt-node/model/tree';
 import type { PromptDocument } from '../../../entities/prompt-document/model/types';
-import { SCHEMA_VERSION, createDefaultDocument } from '../../config/defaults';
+import {
+  DEFAULT_SETTINGS,
+  SCHEMA_VERSION,
+  createDefaultDocument,
+} from '../../config/defaults';
 import {
   type AppStoreActions,
   type AppStoreGet,
@@ -19,6 +27,7 @@ export function createDocumentActions(
   | 'renameDocument'
   | 'setActiveDocument'
   | 'updateActiveDocument'
+  | 'importDocumentBundle'
 > {
   return {
     createDocument: (payload) => {
@@ -129,6 +138,71 @@ export function createDocumentActions(
         activeDocumentId: id,
         selectedNodeId: null,
         newlyCreatedNodeId: null,
+      });
+    },
+    importDocumentBundle: (payload) => {
+      set((state) => {
+        const now = Date.now();
+        const includeIdMap = new Map<string, string>();
+        const importedIncludeIds: string[] = [];
+        const nextIncludesById = { ...state.includesById };
+
+        (payload.includes ?? []).forEach((include) => {
+          const nextIncludeId = nanoid();
+          includeIdMap.set(include.id, nextIncludeId);
+          importedIncludeIds.push(nextIncludeId);
+
+          nextIncludesById[nextIncludeId] = {
+            ...include,
+            id: nextIncludeId,
+            nodes: cloneNodesWithNewIds(deepCloneNodes(include.nodes)),
+            createdAt: now,
+            updatedAt: now,
+          };
+        });
+
+        const remappedIncludeIds = payload.document.globalIncludeIds
+          .map((includeId) => {
+            const remappedId = includeIdMap.get(includeId);
+            if (remappedId) {
+              return remappedId;
+            }
+
+            return state.includesById[includeId] ? includeId : null;
+          })
+          .filter((includeId): includeId is string => includeId !== null);
+
+        const importedDocument: PromptDocument = {
+          ...payload.document,
+          id: nanoid(),
+          tags: [...payload.document.tags],
+          globalIncludeIds: remappedIncludeIds,
+          nodes: cloneNodesWithNewIds(deepCloneNodes(payload.document.nodes)),
+          createdAt: now,
+          updatedAt: now,
+          schemaVersion: SCHEMA_VERSION,
+        };
+
+        return {
+          documentsById: {
+            ...state.documentsById,
+            [importedDocument.id]: importedDocument,
+          },
+          documentOrder: [importedDocument.id, ...state.documentOrder],
+          activeDocumentId: importedDocument.id,
+          selectedNodeId: importedDocument.nodes[0]?.id ?? null,
+          includesById: nextIncludesById,
+          includeOrder: [...importedIncludeIds, ...state.includeOrder],
+          settings:
+            payload.applySettings && payload.settings
+              ? {
+                  ...DEFAULT_SETTINGS,
+                  ...state.settings,
+                  ...payload.settings,
+                }
+              : state.settings,
+          newlyCreatedNodeId: null,
+        };
       });
     },
     updateActiveDocument: (partial) => {

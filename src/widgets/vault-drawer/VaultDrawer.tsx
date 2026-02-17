@@ -1,6 +1,12 @@
-import { useMemo, useState } from 'react';
+import type { ChangeEvent } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import type { PromptKind } from '../../entities/prompt-document/model/types';
+import { downloadTextFile } from '../../shared/lib/export';
 import { useI18n } from '../../shared/lib/i18n/useI18n';
+import {
+  createDocumentTransferBundle,
+  parseDocumentTransferBundle,
+} from '../../shared/lib/json/document-transfer';
 import { useAppStore } from '../../shared/model/store';
 import { Button } from '../../shared/ui/Button';
 import { Drawer } from '../../shared/ui/Drawer';
@@ -23,12 +29,15 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
   const documentsById = useAppStore((state) => state.documentsById);
   const documentOrder = useAppStore((state) => state.documentOrder);
   const activeDocumentId = useAppStore((state) => state.activeDocumentId);
+  const includesById = useAppStore((state) => state.includesById);
   const settings = useAppStore((state) => state.settings);
   const createDocument = useAppStore((state) => state.createDocument);
+  const importDocumentBundle = useAppStore((state) => state.importDocumentBundle);
   const setActiveDocument = useAppStore((state) => state.setActiveDocument);
   const duplicateDocument = useAppStore((state) => state.duplicateDocument);
   const deleteDocument = useAppStore((state) => state.deleteDocument);
   const renameDocument = useAppStore((state) => state.renameDocument);
+  const importFileInputRef = useRef<HTMLInputElement | null>(null);
   const [search, setSearch] = useState('');
   const [kindFilter, setKindFilter] = useState<'ALL' | PromptKind>('ALL');
   const [tagFilter, setTagFilter] = useState('');
@@ -37,6 +46,10 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
   const [newTags, setNewTags] = useState('');
   const [editingNameId, setEditingNameId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
+  const [transferIncludeIncludes, setTransferIncludeIncludes] = useState(true);
+  const [transferIncludeSettings, setTransferIncludeSettings] = useState(false);
+  const [transferApplySettings, setTransferApplySettings] = useState(false);
+  const [transferNotice, setTransferNotice] = useState<string | null>(null);
 
   const kindMeta = useMemo(
     () => ({
@@ -82,6 +95,64 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
       })
       .sort((a, b) => b.updatedAt - a.updatedAt);
   }, [documentOrder, documentsById, kindFilter, search, tagFilter]);
+
+  function showTransferNotice(message: string): void {
+    setTransferNotice(message);
+    window.setTimeout(() => setTransferNotice(null), 1600);
+  }
+
+  function exportDocumentBundle(documentId: string): void {
+    const document = documentsById[documentId];
+    if (!document) {
+      return;
+    }
+
+    const bundle = createDocumentTransferBundle(document, includesById, settings, {
+      includeIncludes: transferIncludeIncludes,
+      includeSettings: transferIncludeSettings,
+    });
+
+    const safeName = document.name.trim().replaceAll(/\s+/g, '-').toLowerCase() || 'untitled';
+    downloadTextFile(
+      `${safeName}-vault.json`,
+      `${JSON.stringify(bundle, null, 2)}\n`,
+      'application/json;charset=utf-8',
+    );
+    showTransferNotice(t('vaultExported'));
+  }
+
+  function openImportFilePicker(): void {
+    importFileInputRef.current?.click();
+  }
+
+  async function handleImportFile(event: ChangeEvent<HTMLInputElement>): Promise<void> {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      const parsed = parseDocumentTransferBundle(text);
+
+      if (!parsed.ok) {
+        showTransferNotice(t('vaultImportFailed'));
+        return;
+      }
+
+      importDocumentBundle({
+        document: parsed.bundle.document,
+        includes: parsed.bundle.includes,
+        settings: parsed.bundle.settings,
+        applySettings: transferApplySettings,
+      });
+      showTransferNotice(t('vaultImported'));
+    } catch {
+      showTransferNotice(t('vaultImportFailed'));
+    }
+  }
 
   return (
     <Drawer onClose={onClose} open={open} title={t('promptVault')}>
@@ -161,6 +232,53 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
       </div>
 
       <div className="drawer-group">
+        <h4 className="omc-tooltip-hint" data-tooltip={t('hintVaultTransfer')}>
+          {t('vaultTransfer')}
+        </h4>
+        <label className="setting-label">
+          <input
+            checked={transferIncludeIncludes}
+            onChange={(event) => setTransferIncludeIncludes(event.target.checked)}
+            type="checkbox"
+          />
+          {t('includeIncludes')}
+        </label>
+        <label className="setting-label">
+          <input
+            checked={transferIncludeSettings}
+            onChange={(event) => setTransferIncludeSettings(event.target.checked)}
+            type="checkbox"
+          />
+          {t('includeSettings')}
+        </label>
+        <label className="setting-label">
+          <input
+            checked={transferApplySettings}
+            onChange={(event) => setTransferApplySettings(event.target.checked)}
+            type="checkbox"
+          />
+          {t('applySettingsOnImport')}
+        </label>
+        <div className="vault-actions">
+          <Button
+            onClick={openImportFilePicker}
+            tooltip={t('hintVaultImport')}
+            tone="ghost"
+          >
+            {t('importDocument')}
+          </Button>
+        </div>
+        <input
+          accept="application/json,.json"
+          className="sr-only"
+          onChange={(event) => void handleImportFile(event)}
+          ref={importFileInputRef}
+          type="file"
+        />
+        {transferNotice ? <p className="field-help">{transferNotice}</p> : null}
+      </div>
+
+      <div className="drawer-group">
         <h4 className="omc-tooltip-hint" data-tooltip={t('hintVaultDocuments')}>
           {t('documents')}
         </h4>
@@ -237,6 +355,13 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
                   tone="ghost"
                 >
                   {t('duplicate')}
+                </Button>
+                <Button
+                  onClick={() => exportDocumentBundle(document.id)}
+                  tooltip={t('hintVaultExport')}
+                  tone="ghost"
+                >
+                  {t('exportDocument')}
                 </Button>
                 <Button
                   onClick={() => {

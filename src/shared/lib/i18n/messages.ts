@@ -70,6 +70,13 @@ export type TranslationKey =
   | 'create'
   | 'filters'
   | 'documents'
+  | 'vaultTransfer'
+  | 'importDocument'
+  | 'exportDocument'
+  | 'applySettingsOnImport'
+  | 'vaultImported'
+  | 'vaultExported'
+  | 'vaultImportFailed'
   | 'createDocument'
   | 'searchNameOrTags'
   | 'tagFilter'
@@ -175,6 +182,9 @@ export type TranslationKey =
   | 'hintVaultOpen'
   | 'hintVaultRename'
   | 'hintVaultDuplicate'
+  | 'hintVaultTransfer'
+  | 'hintVaultImport'
+  | 'hintVaultExport'
   | 'hintVaultDelete'
   | 'close';
 
@@ -251,6 +261,13 @@ const messages: Record<AppLanguage, TranslationMap> = {
     create: 'Create',
     filters: 'Filters',
     documents: 'Documents',
+    vaultTransfer: 'Import',
+    importDocument: 'Import Document',
+    exportDocument: 'Export Document',
+    applySettingsOnImport: 'Apply settings on import',
+    vaultImported: 'Document imported.',
+    vaultExported: 'Document exported.',
+    vaultImportFailed: 'Import failed. Check JSON format.',
     createDocument: 'Create Document',
     searchNameOrTags: 'Search name or tags',
     tagFilter: 'Tag filter',
@@ -393,6 +410,11 @@ const messages: Record<AppLanguage, TranslationMap> = {
     hintVaultOpen: 'Switch this document as the active editor target.',
     hintVaultRename: 'Edit document display name.',
     hintVaultDuplicate: 'Clone this document into a new one.',
+    hintVaultTransfer:
+      'Import shared document bundles. Export is available per document row.',
+    hintVaultImport: 'Import one document bundle JSON file.',
+    hintVaultExport:
+      'Export this document as a shareable JSON bundle.',
     hintVaultDelete:
       'Delete this document. A confirmation may appear depending on settings.',
     close: 'Close',
@@ -467,6 +489,13 @@ const messages: Record<AppLanguage, TranslationMap> = {
     create: '생성',
     filters: '필터',
     documents: '문서 목록',
+    vaultTransfer: '가져오기',
+    importDocument: '문서 가져오기',
+    exportDocument: '문서 내보내기',
+    applySettingsOnImport: '가져오기 시 설정 적용',
+    vaultImported: '문서를 가져왔습니다.',
+    vaultExported: '문서를 내보냈습니다.',
+    vaultImportFailed: '가져오기에 실패했습니다. JSON 형식을 확인하세요.',
     createDocument: '문서 생성',
     searchNameOrTags: '문서 이름/태그 검색',
     tagFilter: '태그 필터',
@@ -608,6 +637,11 @@ const messages: Record<AppLanguage, TranslationMap> = {
     hintVaultOpen: '이 문서를 현재 편집 대상으로 전환합니다.',
     hintVaultRename: '문서 표시 이름을 수정합니다.',
     hintVaultDuplicate: '문서를 복제해 새 문서를 만듭니다.',
+    hintVaultTransfer:
+      '공유용 문서 번들을 가져옵니다. 내보내기는 각 문서 행에서 사용할 수 있습니다.',
+    hintVaultImport: '문서 번들 JSON 파일 1개를 가져옵니다.',
+    hintVaultExport:
+      '이 문서를 공유 가능한 JSON 번들로 내보냅니다.',
     hintVaultDelete:
       '문서를 삭제합니다. 설정에 따라 확인 창이 나타날 수 있습니다.',
     close: '닫기',

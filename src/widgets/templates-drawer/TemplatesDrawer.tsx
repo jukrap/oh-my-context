@@ -58,6 +58,23 @@ export function TemplatesDrawer({ open, onClose }: TemplatesDrawerProps) {
   const setSelectedNodeId = useAppStore((state) => state.setSelectedNodeId);
 
   const templateIds = useMemo(() => getPromptTemplateIds(), []);
+  const kindMeta = useMemo(
+    () => ({
+      XML_STACK: {
+        label: t('kindXmlStackLabel'),
+      },
+      MARKDOWN_DOC: {
+        label: t('kindMarkdownDocLabel'),
+      },
+      RAW_XML: {
+        label: t('kindRawXmlLabel'),
+      },
+      CHAT_MESSAGES_JSON: {
+        label: t('kindChatJsonLabel'),
+      },
+    }),
+    [t],
+  );
 
   const applyToActiveDocument = (templateId: PromptTemplateId): void => {
     if (!activeDocument) {
@@ -113,7 +130,7 @@ export function TemplatesDrawer({ open, onClose }: TemplatesDrawerProps) {
               <p className="vault-meta">{t(translationKeys.descriptionKey)}</p>
               <p className="vault-meta">
                 <strong>{t('templateKindLabel')}</strong>
-                {`: ${template.kind}`}
+                {`: ${kindMeta[template.kind].label} (${template.kind})`}
               </p>
               <p className="vault-meta">
                 <strong>{t('templateNodeCountLabel')}</strong>

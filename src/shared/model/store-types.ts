@@ -10,6 +10,13 @@ export interface CreateDocumentPayload {
   tags?: string[];
 }
 
+export interface ImportDocumentBundlePayload {
+  document: PromptDocument;
+  includes?: GlobalInclude[];
+  settings?: WorkspaceSettings;
+  applySettings?: boolean;
+}
+
 export interface AppStoreData {
   documentsById: Record<string, PromptDocument>;
   documentOrder: string[];
@@ -32,6 +39,7 @@ export interface AppStoreActions {
   renameDocument: (id: string, name: string) => void;
   setActiveDocument: (id: string) => void;
   updateActiveDocument: (partial: Partial<PromptDocument>) => void;
+  importDocumentBundle: (payload: ImportDocumentBundlePayload) => void;
   setSelectedNodeId: (nodeId: string | null) => void;
   setStackSearchQuery: (query: string) => void;
   setPreviewTab: (tab: PreviewTab) => void;
