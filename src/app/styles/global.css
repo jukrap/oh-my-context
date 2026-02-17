@@ -20,6 +20,16 @@
   --omc-soft: #f3f3f3;
   --omc-hover: #dfdfdf;
   --omc-danger-soft: #fff3f3;
+  --omc-danger: #d70000;
+  --omc-danger-hover: #ffdede;
+  --omc-warning-soft: #fff0d6;
+  --omc-info-soft: #e8f2ff;
+  --omc-muted-strong: #222;
+  --omc-link: #0056cf;
+  --omc-link-hover: #003f98;
+  --omc-splitter-stripe: #f0f0f0;
+  --omc-splitter-hover-a: #e3ffef;
+  --omc-splitter-hover-b: #d4fbe7;
   --omc-scroll-track: #d6d6d6;
   --omc-muted-text: #2a2a2a;
   --omc-border: 3px;
@@ -208,8 +218,8 @@ select {
 .omc-btn {
   border: var(--omc-border) solid var(--omc-fg);
   border-radius: var(--omc-radius);
-  background: #fff;
-  color: #000;
+  background: var(--omc-surface);
+  color: var(--omc-fg);
   cursor: pointer;
   padding: 6px 10px;
   min-height: 36px;
@@ -249,17 +259,17 @@ select {
 }
 
 .omc-btn-danger {
-  background: #fff;
-  color: #000;
-  border-color: #000;
+  background: var(--omc-surface);
+  color: var(--omc-fg);
+  border-color: var(--omc-fg);
 }
 
 .omc-btn-danger:hover {
-  background: #ffdede;
+  background: var(--omc-danger-hover);
 }
 
 .omc-btn-ghost {
-  background: #fff;
+  background: var(--omc-surface);
 }
 
 .omc-btn-ghost:hover {
@@ -272,13 +282,13 @@ select {
   width: 100%;
   border: var(--omc-border) solid var(--omc-fg);
   border-radius: var(--omc-radius);
-  background: #fff;
-  color: #000;
+  background: var(--omc-surface);
+  color: var(--omc-fg);
   padding: 8px;
 }
 
 .omc-input.is-invalid {
-  border-color: #d70000;
+  border-color: var(--omc-danger);
 }
 
 .omc-textarea {
@@ -318,8 +328,8 @@ select {
   width: 14px;
   height: 14px;
   border: 2px solid var(--omc-fg);
-  background: #fff;
-  color: #000;
+  background: var(--omc-surface);
+  color: var(--omc-fg);
   font-size: 9px;
   font-weight: 800;
   line-height: 1;
@@ -338,7 +348,7 @@ select {
 
 .field-error {
   margin: 4px 0 0;
-  color: #d70000;
+  color: var(--omc-danger);
   font-size: 12px;
 }
 
@@ -398,7 +408,7 @@ select {
 .empty-hint {
   margin: 0;
   font-size: 13px;
-  border: 2px dashed #000;
+  border: 2px dashed var(--omc-fg);
   padding: 8px;
 }
 
@@ -407,7 +417,7 @@ select {
   align-items: center;
   gap: 8px;
   border: 2px solid var(--omc-fg);
-  background: #fff;
+  background: var(--omc-surface);
   padding: 3px 8px;
   font-weight: 700;
   font-size: 12px;
@@ -443,8 +453,8 @@ select {
 .markdown-preview {
   margin: 0;
   white-space: pre-wrap;
-  background: #f3f3f3;
-  border: 2px solid #000;
+  background: var(--omc-soft);
+  border: 2px solid var(--omc-fg);
   padding: 8px;
 }
 
@@ -512,50 +522,50 @@ select {
 
 .md-blockquote {
   margin: 6px 0;
-  border-left: 3px solid #000;
+  border-left: 3px solid var(--omc-fg);
   padding-left: 8px;
-  color: #222;
+  color: var(--omc-muted-strong);
 }
 
 .md-code-block {
   margin: 8px 0;
-  border: 2px solid #000;
-  background: #fff;
+  border: 2px solid var(--omc-fg);
+  background: var(--omc-surface);
   padding: 8px;
   overflow-x: auto;
   white-space: pre;
 }
 
 .md-inline-code {
-  border: 1px solid #000;
-  background: #fff;
+  border: 1px solid var(--omc-fg);
+  background: var(--omc-surface);
   padding: 0 4px;
   font-size: 0.95em;
 }
 
 .md-link {
-  color: #0056cf;
+  color: var(--omc-link);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .md-link:hover {
-  color: #003f98;
+  color: var(--omc-link-hover);
 }
 
 .md-image {
   display: block;
   max-width: min(100%, 420px);
   height: auto;
-  border: 2px solid #000;
-  background: #fff;
+  border: 2px solid var(--omc-fg);
+  background: var(--omc-surface);
   margin: 8px 0;
 }
 
 .md-hr {
   margin: 10px 0;
   border: 0;
-  border-top: 2px solid #000;
+  border-top: 2px solid var(--omc-fg);
 }
 
 .md-strike {
@@ -655,12 +665,12 @@ select {
 }
 
 .stack-node-card[data-recent='true'] {
-  background: #fff0d6;
+  background: var(--omc-warning-soft);
   animation: stack-new-node-pop 1350ms ease-out 1;
 }
 
 .stack-node-card[data-drop-active='true'] {
-  outline: 3px solid #00e676;
+  outline: 3px solid var(--omc-brand);
   outline-offset: -2px;
 }
 
@@ -706,8 +716,8 @@ select {
 
 .stack-drag-handle,
 .stack-collapse-toggle {
-  border: 2px solid #000;
-  background: #fff;
+  border: 2px solid var(--omc-fg);
+  background: var(--omc-surface);
   width: 30px;
   height: 30px;
   cursor: pointer;
@@ -723,8 +733,8 @@ select {
 }
 
 .stack-enable-toggle {
-  border: 2px solid #000;
-  background: #fff;
+  border: 2px solid var(--omc-fg);
+  background: var(--omc-surface);
   min-width: 52px;
   height: 30px;
   cursor: pointer;
@@ -750,8 +760,8 @@ select {
 }
 
 .stack-node-label {
-  border: 2px solid #000;
-  background: #fff;
+  border: 2px solid var(--omc-fg);
+  background: var(--omc-surface);
   padding: 4px 8px;
   text-align: left;
   cursor: pointer;
@@ -783,8 +793,8 @@ select {
 }
 
 .stack-mini-action {
-  border: 2px solid #000;
-  background: #fff;
+  border: 2px solid var(--omc-fg);
+  background: var(--omc-surface);
   width: 32px;
   height: 30px;
   cursor: pointer;
@@ -803,7 +813,7 @@ select {
 }
 
 .stack-mini-action.danger:hover {
-  background: #ffdede;
+  background: var(--omc-danger-hover);
 }
 
 .stack-node-meta {
@@ -867,7 +877,7 @@ select {
 
 .stack-add-root-btn,
 .stack-add-selected-btn {
-  background: #fff;
+  background: var(--omc-surface);
 }
 
 .stack-add-root-btn:hover {
@@ -875,7 +885,7 @@ select {
 }
 
 .stack-add-selected-btn:hover {
-  background: #e8f2ff;
+  background: var(--omc-info-soft);
 }
 
 .stack-add-popover {
@@ -883,8 +893,8 @@ select {
   right: 0;
   top: calc(100% + 8px);
   width: min(310px, 74vw);
-  border: 3px solid #000;
-  box-shadow: 6px 6px 0 #000;
+  border: 3px solid var(--omc-fg);
+  box-shadow: var(--omc-shadow);
   background: var(--omc-surface);
   padding: 8px;
   display: flex;
@@ -926,7 +936,7 @@ select {
 }
 
 .stack-add-item[data-selected='true'] {
-  background: color-mix(in srgb, var(--omc-brand) 36%, #fff 64%);
+  background: color-mix(in srgb, var(--omc-brand) 36%, var(--omc-surface) 64%);
 }
 
 .stack-add-item-default {
@@ -948,7 +958,7 @@ select {
   border: 2px solid var(--omc-fg);
   font-size: 10px;
   font-weight: 800;
-  background: #fff;
+  background: var(--omc-surface);
 }
 
 .stack-add-popover-divider {
@@ -974,9 +984,9 @@ select {
   inline-size: max-content;
   max-inline-size: min(46ch, calc(100vw - 20px));
   border: 2px solid var(--omc-fg);
-  background: #fff;
-  color: #000;
-  box-shadow: 3px 3px 0 #000;
+  background: var(--omc-surface);
+  color: var(--omc-fg);
+  box-shadow: 3px 3px 0 var(--omc-fg);
   padding: 6px 8px;
   font-size: 12px;
   font-weight: 700;
@@ -1010,7 +1020,7 @@ select {
   left: -5px;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 5px solid #fff;
+  border-top: 5px solid var(--omc-surface);
 }
 
 .omc-floating-tooltip[data-side='bottom'] .omc-floating-tooltip-arrow {
@@ -1027,16 +1037,16 @@ select {
   left: -5px;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-bottom: 5px solid #fff;
+  border-bottom: 5px solid var(--omc-surface);
 }
 
 .panel-splitter {
-  border: 2px solid #000;
+  border: 2px solid var(--omc-fg);
   background: repeating-linear-gradient(to bottom,
-      #fff 0,
-      #fff 4px,
-      #f0f0f0 4px,
-      #f0f0f0 8px);
+      var(--omc-surface) 0,
+      var(--omc-surface) 4px,
+      var(--omc-splitter-stripe) 4px,
+      var(--omc-splitter-stripe) 8px);
   cursor: col-resize;
   width: 12px;
   min-height: 0;
@@ -1044,10 +1054,10 @@ select {
 
 .panel-splitter:hover {
   background: repeating-linear-gradient(to bottom,
-      #e3ffef 0,
-      #e3ffef 4px,
-      #d4fbe7 4px,
-      #d4fbe7 8px);
+      var(--omc-splitter-hover-a) 0,
+      var(--omc-splitter-hover-a) 4px,
+      var(--omc-splitter-hover-b) 4px,
+      var(--omc-splitter-hover-b) 8px);
 }
 
 .preview-tabs {
@@ -1056,8 +1066,8 @@ select {
 }
 
 .preview-tab-button {
-  border: 2px solid #000;
-  background: #fff;
+  border: 2px solid var(--omc-fg);
+  background: var(--omc-surface);
   padding: 6px 10px;
   cursor: pointer;
   font-weight: 700;
@@ -1088,7 +1098,7 @@ select {
 .preview-code {
   margin: 0;
   min-height: 260px;
-  border: 2px solid #000;
+  border: 2px solid var(--omc-fg);
   padding: 10px;
   white-space: pre-wrap;
   overflow: auto;
@@ -1109,7 +1119,7 @@ select {
   position: sticky;
   bottom: 0;
   align-self: flex-end;
-  border: 2px solid #000;
+  border: 2px solid var(--omc-fg);
   background: var(--omc-brand);
   padding: 6px 10px;
   font-size: 12px;
@@ -1123,7 +1133,7 @@ select {
 }
 
 .loading-state {
-  border: var(--omc-border) solid #000;
+  border: var(--omc-border) solid var(--omc-fg);
   box-shadow: var(--omc-shadow);
   padding: 20px;
   font-weight: 700;
@@ -1146,8 +1156,8 @@ select {
   top: 0;
   height: 100%;
   width: min(560px, 100%);
-  background: #fff;
-  border-left: var(--omc-border) solid #000;
+  background: var(--omc-surface);
+  border-left: var(--omc-border) solid var(--omc-fg);
   transform: translateX(100%);
   transition: transform 140ms ease-out;
   display: flex;
@@ -1160,7 +1170,7 @@ select {
 
 .omc-drawer-header {
   padding: 10px;
-  border-bottom: var(--omc-border) solid #000;
+  border-bottom: var(--omc-border) solid var(--omc-fg);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1182,7 +1192,7 @@ select {
 }
 
 .drawer-group {
-  border: 2px solid #000;
+  border: 2px solid var(--omc-fg);
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -1229,7 +1239,7 @@ select {
 
 .vault-item,
 .include-item {
-  border: 2px solid #000;
+  border: 2px solid var(--omc-fg);
   padding: 8px;
   display: flex;
   flex-direction: column;
@@ -1237,7 +1247,7 @@ select {
 }
 
 .vault-item[data-active='true'] {
-  background: #f3fff8;
+  background: color-mix(in srgb, var(--omc-brand) 10%, var(--omc-surface) 90%);
 }
 
 .vault-title {
@@ -1263,14 +1273,14 @@ select {
   top: calc(100% + 10px);
   width: 360px;
   max-width: min(92vw, 360px);
-  border: 3px solid #000;
-  box-shadow: 6px 6px 0 #000;
-  background: #fff;
+  border: 3px solid var(--omc-fg);
+  box-shadow: var(--omc-shadow);
+  background: var(--omc-surface);
   z-index: 15;
 }
 
 .docmeta-popover-header {
-  border-bottom: 3px solid #000;
+  border-bottom: 3px solid var(--omc-fg);
   padding: 8px;
   display: flex;
   align-items: center;
