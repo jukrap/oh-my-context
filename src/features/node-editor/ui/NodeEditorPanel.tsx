@@ -196,7 +196,7 @@ function renderMarkdownBlocks(source: string): ReactNode[] {
       const Heading = headingTag;
 
       blocks.push(
-        <Heading className="md-heading" key={`md-heading-${blockIndex}`}>
+        <Heading className={`md-heading md-h${level}`} key={`md-heading-${blockIndex}`}>
           {renderInlineMarkdown(content, `heading-${blockIndex}`)}
         </Heading>,
       );

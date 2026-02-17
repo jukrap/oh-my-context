@@ -462,9 +462,34 @@ select {
 }
 
 .md-heading {
-  margin: 8px 0 4px;
-  font-size: 14px;
+  margin: 10px 0 6px;
   line-height: 1.25;
+  font-weight: 800;
+}
+
+.md-h1 {
+  font-size: 24px;
+}
+
+.md-h2 {
+  font-size: 20px;
+}
+
+.md-h3 {
+  font-size: 17px;
+}
+
+.md-h4 {
+  font-size: 15px;
+}
+
+.md-h5 {
+  font-size: 13px;
+}
+
+.md-h6 {
+  font-size: 12px;
+  letter-spacing: 0.02em;
 }
 
 .md-paragraph {
