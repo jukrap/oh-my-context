@@ -3,6 +3,7 @@ import { Blocks, Files, Settings, Shapes } from 'lucide-react';
 import { NodeEditorPanel } from '../../features/node-editor/ui/NodeEditorPanel';
 import { PreviewPanel } from '../../features/preview-export/ui/PreviewPanel';
 import { PromptStackPanel } from '../../features/prompt-stack/ui/PromptStackPanel';
+import { localize } from '../../shared/lib/i18n/localize';
 import { useI18n } from '../../shared/lib/i18n/useI18n';
 import { useRuntimeStore } from '../../shared/model/runtime-store';
 import { selectActiveDocument, useAppStore } from '../../shared/model/store';
@@ -96,30 +97,29 @@ export function EditorShell({
           ? t('saveError')
           : t('saveIdle');
 
-  const leftResizeHint =
-    language === 'ko'
-      ? '좌우로 드래그해서 Context Stack 너비를 조절합니다.'
-      : 'Drag horizontally to resize Context Stack width.';
-  const rightResizeHint =
-    language === 'ko'
-      ? '좌우로 드래그해서 Preview / Export 너비를 조절합니다.'
-      : 'Drag horizontally to resize Preview / Export width.';
-  const navHints =
-    language === 'ko'
-      ? {
-          vault: '문서 생성, 검색, 분류, 전환을 관리합니다.',
-          includes: '내보내기 시 자동으로 붙는 전역 포함 블록을 관리합니다.',
-          templates: 'v1 템플릿 기능 자리입니다.',
-          settings: '언어, 미리보기, 삭제 확인 등 워크스페이스 옵션을 관리합니다.',
-          includesLabel: t('navIncludes'),
-        }
-      : {
-          vault: 'Manage documents: create, search, filter and switch.',
-          includes: 'Manage global include blocks inserted automatically at export time.',
-          templates: 'Placeholder for v1 templates.',
-          settings: 'Manage workspace options such as language and preview defaults.',
-          includesLabel: t('navIncludes'),
-        };
+  const leftResizeHint = localize(language, {
+    ko: '醫뚯슦濡??쒕옒洹명빐??Context Stack ?덈퉬瑜?議곗젅?⑸땲??',
+    en: 'Drag horizontally to resize Context Stack width.',
+  });
+  const rightResizeHint = localize(language, {
+    ko: '醫뚯슦濡??쒕옒洹명빐??Preview / Export ?덈퉬瑜?議곗젅?⑸땲??',
+    en: 'Drag horizontally to resize Preview / Export width.',
+  });
+  const navHints = localize(language, {
+    ko: {
+      vault: '臾몄꽌 ?앹꽦, 寃?? 遺꾨쪟, ?꾪솚??愿由ы빀?덈떎.',
+      includes: '?대낫?닿린 ???먮룞?쇰줈 遺숇뒗 ?꾩뿭 ?ы븿 釉붾줉??愿由ы빀?덈떎.',
+      templates: 'v1 ?쒗뵆由?湲곕뒫 ?먮━?낅땲??',
+      settings: '?몄뼱, 誘몃━蹂닿린, ??젣 ?뺤씤 ???뚰겕?ㅽ럹?댁뒪 ?듭뀡??愿由ы빀?덈떎.',
+    },
+    en: {
+      vault: 'Manage documents: create, search, filter and switch.',
+      includes:
+        'Manage global include blocks inserted automatically at export time.',
+      templates: 'Placeholder for v1 templates.',
+      settings: 'Manage workspace options such as language and preview defaults.',
+    },
+  });
 
   return (
     <div className="editor-shell">
@@ -150,7 +150,7 @@ export function EditorShell({
             tone={activeDrawer === '/includes' ? 'brand' : 'default'}
           >
             <Blocks size={14} />
-            {navHints.includesLabel}
+            {t('navIncludes')}
           </Button>
           <Button
             onClick={() =>

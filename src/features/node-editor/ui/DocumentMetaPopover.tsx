@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
 import { X } from 'lucide-react';
+import { useMemo } from 'react';
 import { isValidXmlName } from '../../../entities/prompt-node/model/validation';
+import { localize } from '../../../shared/lib/i18n/localize';
 import { useI18n } from '../../../shared/lib/i18n/useI18n';
 import { selectActiveDocument, useAppStore } from '../../../shared/model/store';
 import { Button } from '../../../shared/ui/Button';
@@ -23,23 +24,26 @@ export function DocumentMetaPopover({ open, onClose }: DocumentMetaPopoverProps)
   const document = useAppStore(selectActiveDocument);
   const updateActiveDocument = useAppStore((state) => state.updateActiveDocument);
 
-  const hints = useMemo(() => {
-    if (language === 'ko') {
-      return {
-        documentName: 'Vault에서 문서를 식별할 때 쓰는 이름입니다.',
-        documentLabels: '검색과 분류용 라벨입니다. 쉼표로 여러 개를 입력할 수 있습니다.',
-        rootTag:
-          '내보내기 시 전체 노드를 감싸는 최상위 태그입니다. XML 루트 구조가 필요할 때 사용합니다.',
-      };
-    }
-
-    return {
-      documentName: 'Used to identify this document in the vault.',
-      documentLabels: 'Labels for search and filtering. Separate multiple values with commas.',
-      rootTag:
-        'Top-level tag wrapping the exported tree. Useful when a single XML root is required.',
-    };
-  }, [language]);
+  const hints = useMemo(
+    () =>
+      localize(language, {
+        ko: {
+          documentName: 'Vault?먯꽌 臾몄꽌瑜??앸퀎?????곕뒗 ?대쫫?낅땲??',
+          documentLabels:
+            '寃?됯낵 遺꾨쪟???쇰꺼?낅땲?? ?쇳몴濡??щ윭 媛쒕? ?낅젰?????덉뒿?덈떎.',
+          rootTag:
+            '?대낫?닿린 ???꾩껜 ?몃뱶瑜?媛먯떥??理쒖긽???쒓렇?낅땲?? XML 猷⑦듃 援ъ“媛 ?꾩슂?????ъ슜?⑸땲??',
+        },
+        en: {
+          documentName: 'Used to identify this document in the vault.',
+          documentLabels:
+            'Labels for search and filtering. Separate multiple values with commas.',
+          rootTag:
+            'Top-level tag wrapping the exported tree. Useful when a single XML root is required.',
+        },
+      }),
+    [language],
+  );
 
   if (!open || !document) {
     return null;

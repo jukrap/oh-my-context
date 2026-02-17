@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { PromptKind } from '../../entities/prompt-document/model/types';
+import { localize } from '../../shared/lib/i18n/localize';
 import { useI18n } from '../../shared/lib/i18n/useI18n';
 import { useAppStore } from '../../shared/model/store';
 import { Button } from '../../shared/ui/Button';
@@ -38,61 +39,67 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
   const [editingNameId, setEditingNameId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
 
-  const kindMeta = useMemo(() => {
-    if (language === 'ko') {
-      return {
-        XML_STACK: {
-          label: 'XML 스택 프롬프트',
-          description:
-            '트리 기반 노드 편집을 중심으로 XML을 안전하게 내보내는 기본 문서 타입입니다.',
+  const kindMeta = useMemo(
+    () =>
+      localize(language, {
+        ko: {
+          XML_STACK: {
+            label: 'XML Stack Prompt',
+            description:
+              'Default tree-based prompt type optimized for safe XML export.',
+          },
+          MARKDOWN_DOC: {
+            label: 'Markdown Document',
+            description:
+              'Markdown-focused document type for structured instructions and notes.',
+          },
+          RAW_XML: {
+            label: 'Raw XML',
+            description:
+              'RawXML-oriented document type for directly managed XML fragments.',
+          },
+          CHAT_MESSAGES_JSON: {
+            label: 'Chat Messages JSON',
+            description:
+              'Best suited for role/content style message-array prompt formats.',
+          },
         },
-        MARKDOWN_DOC: {
-          label: '마크다운 문서',
-          description:
-            '본문이 마크다운 중심인 문서입니다. 구조화된 설명/지침 문서 작성에 적합합니다.',
+        en: {
+          XML_STACK: {
+            label: 'XML Stack Prompt',
+            description:
+              'Default tree-based prompt type optimized for safe XML export.',
+          },
+          MARKDOWN_DOC: {
+            label: 'Markdown Document',
+            description:
+              'Markdown-focused document type for structured instructions and notes.',
+          },
+          RAW_XML: {
+            label: 'Raw XML',
+            description:
+              'RawXML-oriented document type for directly managed XML fragments.',
+          },
+          CHAT_MESSAGES_JSON: {
+            label: 'Chat Messages JSON',
+            description:
+              'Best suited for role/content style message-array prompt formats.',
+          },
         },
-        RAW_XML: {
-          label: '원시 XML',
-          description:
-            'RawXML 중심 문서입니다. XML 조각을 직접 관리할 때 사용합니다.',
-        },
-        CHAT_MESSAGES_JSON: {
-          label: '채팅 메시지 JSON',
-          description:
-            'role/content 메시지 배열(JSON) 형태의 프롬프트 관리에 적합한 타입입니다.',
-        },
-      } as const;
-    }
+      }),
+    [language],
+  );
 
-    return {
-      XML_STACK: {
-        label: 'XML Stack Prompt',
-        description:
-          'Default tree-based prompt type optimized for safe XML export.',
-      },
-      MARKDOWN_DOC: {
-        label: 'Markdown Document',
-        description:
-          'Markdown-focused document type for structured instructions and notes.',
-      },
-      RAW_XML: {
-        label: 'Raw XML',
-        description:
-          'RawXML-oriented document type for directly managed XML fragments.',
-      },
-      CHAT_MESSAGES_JSON: {
-        label: 'Chat Messages JSON',
-        description:
-          'Best suited for role/content style message-array prompt formats.',
-      },
-    } as const;
-  }, [language]);
-
-  const allKindsLabel = language === 'ko' ? '전체 종류' : 'All Kinds';
-  const allKindsDescription =
-    language === 'ko'
-      ? '모든 문서 종류를 목록에 표시합니다.'
-      : 'Show documents of every kind in the list.';
+  const allKinds = localize(language, {
+    ko: {
+      label: 'All Kinds',
+      description: 'Show documents of every kind in the list.',
+    },
+    en: {
+      label: 'All Kinds',
+      description: 'Show documents of every kind in the list.',
+    },
+  });
 
   const filteredDocuments = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
@@ -117,54 +124,51 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
       .sort((a, b) => b.updatedAt - a.updatedAt);
   }, [documentOrder, documentsById, kindFilter, search, tagFilter]);
 
-  const hints = useMemo(() => {
-    if (language === 'ko') {
-      return {
-        create:
-          '이름, 종류, 태그를 입력해 새 프롬프트 문서를 생성합니다.',
-        filters:
-          '문서명/태그/종류로 빠르게 목록을 좁힙니다.',
-        documents:
-          '최근 수정 순으로 정렬된 문서 목록입니다.',
-        kind: '문서의 형식 분류입니다.',
-        tags: '검색과 그룹화를 위한 문서 라벨입니다.',
-        updatedAt: '문서가 마지막으로 저장된 시각입니다.',
-        open: '해당 문서를 편집 대상으로 전환합니다.',
-        rename: '문서 표시 이름을 수정합니다.',
-        duplicate: '문서를 복제해 새 문서로 만듭니다.',
-        delete: '문서를 삭제합니다. 설정에 따라 확인 창이 뜹니다.',
-      };
-    }
+  const hints = useMemo(
+    () =>
+      localize(language, {
+        ko: {
+          create: 'Create a new prompt document with name, kind and tags.',
+          filters: 'Narrow documents quickly by name, tag and kind.',
+          documents: 'Documents sorted by most recently updated.',
+          kind: 'Document format category.',
+          tags: 'Document labels used for search and grouping.',
+          updatedAt: 'Last saved timestamp of this document.',
+          open: 'Switch this document as the active editor target.',
+          rename: 'Edit document display name.',
+          duplicate: 'Clone this document into a new one.',
+          delete:
+            'Delete this document. A confirmation may appear depending on settings.',
+        },
+        en: {
+          create: 'Create a new prompt document with name, kind and tags.',
+          filters: 'Narrow documents quickly by name, tag and kind.',
+          documents: 'Documents sorted by most recently updated.',
+          kind: 'Document format category.',
+          tags: 'Document labels used for search and grouping.',
+          updatedAt: 'Last saved timestamp of this document.',
+          open: 'Switch this document as the active editor target.',
+          rename: 'Edit document display name.',
+          duplicate: 'Clone this document into a new one.',
+          delete:
+            'Delete this document. A confirmation may appear depending on settings.',
+        },
+      }),
+    [language],
+  );
 
-    return {
-      create:
-        'Create a new prompt document with name, kind and tags.',
-      filters:
-        'Narrow documents quickly by name, tag and kind.',
-      documents: 'Documents sorted by most recently updated.',
-      kind: 'Document format category.',
-      tags: 'Document labels used for search and grouping.',
-      updatedAt: 'Last saved timestamp of this document.',
-      open: 'Switch this document as the active editor target.',
-      rename: 'Edit document display name.',
-      duplicate: 'Clone this document into a new one.',
-      delete:
-        'Delete this document. A confirmation may appear depending on settings.',
-    };
-  }, [language]);
-
-  const metaLabels =
-    language === 'ko'
-      ? {
-          kind: '종류',
-          tags: '태그',
-          updatedAt: '수정됨',
-        }
-      : {
-          kind: 'Kind',
-          tags: 'Tags',
-          updatedAt: 'Updated',
-        };
+  const metaLabels = localize(language, {
+    ko: {
+      kind: 'Kind',
+      tags: 'Tags',
+      updatedAt: 'Updated',
+    },
+    en: {
+      kind: 'Kind',
+      tags: 'Tags',
+      updatedAt: 'Updated',
+    },
+  });
 
   return (
     <Drawer onClose={onClose} open={open} title={t('promptVault')}>
@@ -224,7 +228,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
           }
           value={kindFilter}
         >
-          <option value="ALL">{allKindsLabel}</option>
+          <option value="ALL">{allKinds.label}</option>
           {KIND_OPTIONS.map((kind) => (
             <option key={kind} value={kind}>
               {kindMeta[kind].label}
@@ -233,7 +237,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
         </select>
         <p className="field-help">
           {kindFilter === 'ALL'
-            ? allKindsDescription
+            ? allKinds.description
             : kindMeta[kindFilter].description}
         </p>
         <Input

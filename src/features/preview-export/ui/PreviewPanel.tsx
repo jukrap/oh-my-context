@@ -1,14 +1,15 @@
 import { Braces, Code, Copy, Download, FileText } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { toJsonView } from '../../../shared/lib/json/render';
-import { toMarkdownView } from '../../../shared/lib/markdown/render';
-import { buildXmlPreview } from '../../../shared/lib/xml/serialize';
 import {
   copyToClipboard,
   createExportFileName,
   downloadTextFile,
 } from '../../../shared/lib/export';
+import { toJsonView } from '../../../shared/lib/json/render';
+import { localize } from '../../../shared/lib/i18n/localize';
 import { useI18n } from '../../../shared/lib/i18n/useI18n';
+import { toMarkdownView } from '../../../shared/lib/markdown/render';
+import { buildXmlPreview } from '../../../shared/lib/xml/serialize';
 import { selectActiveDocument, useAppStore } from '../../../shared/model/store';
 import { Button } from '../../../shared/ui/Button';
 import { Panel } from '../../../shared/ui/Panel';
@@ -26,23 +27,24 @@ export function PreviewPanel() {
   const [jsonWithSettings, setJsonWithSettings] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
-  const jsonHints = useMemo(() => {
-    if (language === 'ko') {
-      return {
-        includeIncludes:
-          'JSON 내보내기에 전역 포함 블록 정의를 함께 포함합니다.',
-        includeSettings:
-          'JSON 내보내기에 워크스페이스 설정값을 함께 포함합니다.',
-      };
-    }
-
-    return {
-      includeIncludes:
-        'Include global include definitions in JSON export output.',
-      includeSettings:
-        'Include workspace settings in JSON export output.',
-    };
-  }, [language]);
+  const jsonHints = useMemo(
+    () =>
+      localize(language, {
+        ko: {
+          includeIncludes:
+            'JSON ?대낫?닿린???꾩뿭 ?ы븿 釉붾줉 ?뺤쓽瑜??④퍡 ?ы븿?⑸땲??',
+          includeSettings:
+            'JSON ?대낫?닿린???뚰겕?ㅽ럹?댁뒪 ?ㅼ젙媛믪쓣 ?④퍡 ?ы븿?⑸땲??',
+        },
+        en: {
+          includeIncludes:
+            'Include global include definitions in JSON export output.',
+          includeSettings:
+            'Include workspace settings in JSON export output.',
+        },
+      }),
+    [language],
+  );
 
   const xmlResult = useMemo(() => {
     if (!document) {

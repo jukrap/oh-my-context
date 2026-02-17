@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { localize } from '../../shared/lib/i18n/localize';
 import { useI18n } from '../../shared/lib/i18n/useI18n';
 import { selectActiveDocument, useAppStore } from '../../shared/model/store';
 import { Button } from '../../shared/ui/Button';
@@ -30,60 +31,59 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
     [includeOrder, includesById],
   );
 
-  const hints = useMemo(() => {
-    if (language === 'ko') {
-      return {
-        library: '내보내기 시 자동 삽입할 전역 포함 블록을 관리합니다.',
-        assignment:
-          '현재 활성 문서에 어떤 전역 포함 블록을 적용할지 선택합니다.',
-        includeName: '전역 포함 목록에서 식별하기 위한 이름입니다.',
-        includeDescription: '용도/설명을 짧게 기록해 재사용성을 높입니다.',
-        insertionRule:
-          'TOP/BOTTOM 등 삽입 위치 규칙입니다. 고급 위치는 v1 확장 대상입니다.',
-        targetTag:
-          '특정 태그 기준 삽입 시 사용할 대상 태그명입니다.',
-        includeNode:
-          '내보내기에 삽입될 실제 태그와 본문 내용입니다.',
-        delete: '해당 전역 포함 블록을 삭제합니다.',
-      };
-    }
+  const hints = useMemo(
+    () =>
+      localize(language, {
+        ko: {
+          library: '?대낫?닿린 ???먮룞 ?쎌엯???꾩뿭 ?ы븿 釉붾줉??愿由ы빀?덈떎.',
+          assignment:
+            '?꾩옱 ?쒖꽦 臾몄꽌???대뼡 ?꾩뿭 ?ы븿 釉붾줉???곸슜?좎? ?좏깮?⑸땲??',
+          includeName: '?꾩뿭 ?ы븿 紐⑸줉?먯꽌 ?앸퀎?섍린 ?꾪븳 ?대쫫?낅땲??',
+          includeDescription: '?⑸룄/?ㅻ챸??吏㏐쾶 湲곕줉???ъ궗?⑹꽦???믪엯?덈떎.',
+          insertionRule:
+            'TOP/BOTTOM ???쎌엯 ?꾩튂 洹쒖튃?낅땲?? 怨좉툒 ?꾩튂??v1 ?뺤옣 ??곸엯?덈떎.',
+          targetTag:
+            '?뱀젙 ?쒓렇 湲곗? ?쎌엯 ???ъ슜??????쒓렇紐낆엯?덈떎.',
+          includeNode:
+            '?대낫?닿린???쎌엯???ㅼ젣 ?쒓렇? 蹂몃Ц ?댁슜?낅땲??',
+          delete: '?대떦 ?꾩뿭 ?ы븿 釉붾줉????젣?⑸땲??',
+        },
+        en: {
+          library: 'Manage global include blocks that are injected during export.',
+          assignment:
+            'Choose which includes are enabled for the currently active document.',
+          includeName: 'Display name used to identify this include preset.',
+          includeDescription: 'Short purpose note to make reuse easier.',
+          insertionRule:
+            'Placement rule such as TOP/BOTTOM. Advanced positions are v1 extensions.',
+          targetTag:
+            'Target tag name used when insertion is tag-relative.',
+          includeNode:
+            'Actual tag/content node inserted during export.',
+          delete: 'Delete this include preset.',
+        },
+      }),
+    [language],
+  );
 
-    return {
-      library:
-        'Manage global include blocks that are injected during export.',
-      assignment:
-        'Choose which includes are enabled for the currently active document.',
-      includeName: 'Display name used to identify this include preset.',
-      includeDescription:
-        'Short purpose note to make reuse easier.',
-      insertionRule:
-        'Placement rule such as TOP/BOTTOM. Advanced positions are v1 extensions.',
-      targetTag:
-        'Target tag name used when insertion is tag-relative.',
-      includeNode:
-        'Actual tag/content node inserted during export.',
-      delete: 'Delete this include preset.',
-    };
-  }, [language]);
-
-  const labels =
-    language === 'ko'
-      ? {
-          library: '포함 블록',
-          assignment: '문서 적용',
-          name: '이름',
-          description: '설명',
-          insertionRule: '삽입 규칙',
-          includeNode: '삽입 노드',
-        }
-      : {
-          library: 'Include Library',
-          assignment: 'Document Assignment',
-          name: 'Name',
-          description: 'Description',
-          insertionRule: 'Insertion Rule',
-          includeNode: 'Include Node',
-        };
+  const labels = localize(language, {
+    ko: {
+      library: '?ы븿 釉붾줉',
+      assignment: '臾몄꽌 ?곸슜',
+      name: '?대쫫',
+      description: '?ㅻ챸',
+      insertionRule: '?쎌엯 洹쒖튃',
+      includeNode: '?쎌엯 ?몃뱶',
+    },
+    en: {
+      library: 'Include Library',
+      assignment: 'Document Assignment',
+      name: 'Name',
+      description: 'Description',
+      insertionRule: 'Insertion Rule',
+      includeNode: 'Include Node',
+    },
+  });
 
   return (
     <Drawer onClose={onClose} open={open} title={t('globalIncludes')}>

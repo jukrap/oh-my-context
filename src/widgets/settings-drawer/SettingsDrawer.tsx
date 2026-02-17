@@ -1,5 +1,6 @@
-import type { AppLanguage } from '../../shared/lib/i18n/messages';
 import { useMemo } from 'react';
+import type { AppLanguage } from '../../shared/lib/i18n/messages';
+import { localize } from '../../shared/lib/i18n/localize';
 import { useI18n } from '../../shared/lib/i18n/useI18n';
 import { useAppStore } from '../../shared/model/store';
 import { Button } from '../../shared/ui/Button';
@@ -20,27 +21,37 @@ export function SettingsDrawer({ open, onClose }: SettingsDrawerProps) {
     updateSettings({ language: next });
   };
 
-  const hints = useMemo(() => {
-    if (language === 'ko') {
-      return {
-        language: '앱 UI 언어를 전환합니다. 브라우저 언어는 첫 방문 시만 기본값으로 반영됩니다.',
-        confirmBeforeDelete: '문서 삭제 전에 확인 창을 표시합니다.',
-        markdownPreview: '노드 편집기에서 Markdown 모드일 때 미리보기를 함께 보여줍니다.',
-        rawXmlStrictMode: 'RawXML 유효성 검사를 강화하는 v1 준비 옵션입니다.',
-        defaultRootTagEnabled: '새 문서 생성 시 루트 태그를 기본으로 활성화합니다.',
-        defaultRootTagName: '새 문서에서 사용할 기본 루트 태그 이름입니다.',
-      };
-    }
-
-    return {
-      language: 'Switch the app UI language. Browser locale is applied only on first visit.',
-      confirmBeforeDelete: 'Show a confirmation dialog before deleting documents.',
-      markdownPreview: 'Show markdown preview in Node Editor when content mode is Markdown.',
-      rawXmlStrictMode: 'v1 placeholder option for stricter RawXML validation.',
-      defaultRootTagEnabled: 'Enable root tag by default for newly created documents.',
-      defaultRootTagName: 'Default root tag name used for new documents.',
-    };
-  }, [language]);
+  const hints = useMemo(
+    () =>
+      localize(language, {
+        ko: {
+          language:
+            '??UI ?몄뼱瑜??꾪솚?⑸땲?? 釉뚮씪?곗? ?몄뼱??泥?諛⑸Ц ?쒕쭔 湲곕낯媛믪쑝濡?諛섏쁺?⑸땲??',
+          confirmBeforeDelete: '臾몄꽌 ??젣 ?꾩뿉 ?뺤씤 李쎌쓣 ?쒖떆?⑸땲??',
+          markdownPreview:
+            '?몃뱶 ?몄쭛湲곗뿉??Markdown 紐⑤뱶????誘몃━蹂닿린瑜??④퍡 蹂댁뿬以띾땲??',
+          rawXmlStrictMode: 'RawXML ?좏슚??寃?щ? 媛뺥솕?섎뒗 v1 以鍮??듭뀡?낅땲??',
+          defaultRootTagEnabled:
+            '??臾몄꽌 ?앹꽦 ??猷⑦듃 ?쒓렇瑜?湲곕낯?쇰줈 ?쒖꽦?뷀빀?덈떎.',
+          defaultRootTagName:
+            '??臾몄꽌?먯꽌 ?ъ슜??湲곕낯 猷⑦듃 ?쒓렇 ?대쫫?낅땲??',
+        },
+        en: {
+          language:
+            'Switch the app UI language. Browser locale is applied only on first visit.',
+          confirmBeforeDelete:
+            'Show a confirmation dialog before deleting documents.',
+          markdownPreview:
+            'Show markdown preview in Node Editor when content mode is Markdown.',
+          rawXmlStrictMode: 'v1 placeholder option for stricter RawXML validation.',
+          defaultRootTagEnabled:
+            'Enable root tag by default for newly created documents.',
+          defaultRootTagName:
+            'Default root tag name used for new documents.',
+        },
+      }),
+    [language],
+  );
 
   return (
     <Drawer onClose={onClose} open={open} title={t('settings')}>
