@@ -215,31 +215,6 @@ select {
   gap: 6px;
 }
 
-.editor-collapsible {
-  border: 2px solid #000;
-  background: #f8f8f8;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.editor-collapse-toggle {
-  border: 2px solid #000;
-  background: #fff;
-  font-weight: 700;
-  cursor: pointer;
-  min-height: 34px;
-  padding: 6px 10px;
-  text-align: left;
-}
-
-.editor-collapsible-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 .editor-row {
   display: flex;
   align-items: center;
@@ -479,6 +454,46 @@ select {
 .preview-tabs {
   display: flex;
   gap: 6px;
+}
+
+.docmeta-card {
+  border: 2px solid #000;
+  background: #fbfbfb;
+}
+
+.docmeta-toggle {
+  width: 100%;
+  border: 0;
+  border-bottom: 2px solid #000;
+  background: #fff;
+  min-height: 42px;
+  padding: 8px 10px;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+}
+
+.docmeta-toggle-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.docmeta-summary {
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.docmeta-content {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .preview-tab-button {
