@@ -3,7 +3,6 @@ import { Blocks, Files, Settings, Shapes } from 'lucide-react';
 import { NodeEditorPanel } from '../../features/node-editor/ui/NodeEditorPanel';
 import { PreviewPanel } from '../../features/preview-export/ui/PreviewPanel';
 import { PromptStackPanel } from '../../features/prompt-stack/ui/PromptStackPanel';
-import { localize } from '../../shared/lib/i18n/localize';
 import { useI18n } from '../../shared/lib/i18n/useI18n';
 import { useRuntimeStore } from '../../shared/model/runtime-store';
 import { selectActiveDocument, useAppStore } from '../../shared/model/store';
@@ -22,7 +21,7 @@ export function EditorShell({
   onOpenDrawer,
   onCloseDrawer,
 }: EditorShellProps) {
-  const { language, t } = useI18n();
+  const { t } = useI18n();
   const activeDocument = useAppStore(selectActiveDocument);
   const leftPanelWidth = useAppStore((state) => state.leftPanelWidth);
   const rightPanelWidth = useAppStore((state) => state.rightPanelWidth);
@@ -97,30 +96,6 @@ export function EditorShell({
           ? t('saveError')
           : t('saveIdle');
 
-  const leftResizeHint = localize(language, {
-    ko: '醫뚯슦濡??쒕옒洹명빐??Context Stack ?덈퉬瑜?議곗젅?⑸땲??',
-    en: 'Drag horizontally to resize Context Stack width.',
-  });
-  const rightResizeHint = localize(language, {
-    ko: '醫뚯슦濡??쒕옒洹명빐??Preview / Export ?덈퉬瑜?議곗젅?⑸땲??',
-    en: 'Drag horizontally to resize Preview / Export width.',
-  });
-  const navHints = localize(language, {
-    ko: {
-      vault: '臾몄꽌 ?앹꽦, 寃?? 遺꾨쪟, ?꾪솚??愿由ы빀?덈떎.',
-      includes: '?대낫?닿린 ???먮룞?쇰줈 遺숇뒗 ?꾩뿭 ?ы븿 釉붾줉??愿由ы빀?덈떎.',
-      templates: 'v1 ?쒗뵆由?湲곕뒫 ?먮━?낅땲??',
-      settings: '?몄뼱, 誘몃━蹂닿린, ??젣 ?뺤씤 ???뚰겕?ㅽ럹?댁뒪 ?듭뀡??愿由ы빀?덈떎.',
-    },
-    en: {
-      vault: 'Manage documents: create, search, filter and switch.',
-      includes:
-        'Manage global include blocks inserted automatically at export time.',
-      templates: 'Placeholder for v1 templates.',
-      settings: 'Manage workspace options such as language and preview defaults.',
-    },
-  });
-
   return (
     <div className="editor-shell">
       <header className="editor-topbar">
@@ -134,7 +109,7 @@ export function EditorShell({
             onClick={() =>
               activeDrawer === '/vault' ? onCloseDrawer() : onOpenDrawer('/vault')
             }
-            tooltip={navHints.vault}
+            tooltip={t('hintNavVault')}
             tone={activeDrawer === '/vault' ? 'brand' : 'default'}
           >
             <Files size={14} />
@@ -146,7 +121,7 @@ export function EditorShell({
                 ? onCloseDrawer()
                 : onOpenDrawer('/includes')
             }
-            tooltip={navHints.includes}
+            tooltip={t('hintNavIncludes')}
             tone={activeDrawer === '/includes' ? 'brand' : 'default'}
           >
             <Blocks size={14} />
@@ -158,7 +133,7 @@ export function EditorShell({
                 ? onCloseDrawer()
                 : onOpenDrawer('/templates')
             }
-            tooltip={navHints.templates}
+            tooltip={t('hintNavTemplates')}
             tone={activeDrawer === '/templates' ? 'brand' : 'default'}
           >
             <Shapes size={14} />
@@ -170,7 +145,7 @@ export function EditorShell({
                 ? onCloseDrawer()
                 : onOpenDrawer('/settings')
             }
-            tooltip={navHints.settings}
+            tooltip={t('hintNavSettings')}
             tone={activeDrawer === '/settings' ? 'brand' : 'default'}
           >
             <Settings size={14} />
@@ -199,7 +174,7 @@ export function EditorShell({
           <div
             aria-label="Resize context stack panel"
             className="panel-splitter omc-tooltip-btn"
-            data-tooltip={leftResizeHint}
+            data-tooltip={t('hintResizeContextStack')}
             onMouseDown={startResize('left')}
             role="separator"
           />
@@ -207,7 +182,7 @@ export function EditorShell({
           <div
             aria-label="Resize preview panel"
             className="panel-splitter omc-tooltip-btn"
-            data-tooltip={rightResizeHint}
+            data-tooltip={t('hintResizePreviewExport')}
             onMouseDown={startResize('right')}
             role="separator"
           />

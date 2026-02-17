@@ -6,7 +6,6 @@ import {
   downloadTextFile,
 } from '../../../shared/lib/export';
 import { toJsonView } from '../../../shared/lib/json/render';
-import { localize } from '../../../shared/lib/i18n/localize';
 import { useI18n } from '../../../shared/lib/i18n/useI18n';
 import { toMarkdownView } from '../../../shared/lib/markdown/render';
 import { buildXmlPreview } from '../../../shared/lib/xml/serialize';
@@ -17,7 +16,7 @@ import { Panel } from '../../../shared/ui/Panel';
 type PreviewMode = 'XML' | 'MARKDOWN' | 'JSON';
 
 export function PreviewPanel() {
-  const { language, t } = useI18n();
+  const { t } = useI18n();
   const document = useAppStore(selectActiveDocument);
   const includesById = useAppStore((state) => state.includesById);
   const settings = useAppStore((state) => state.settings);
@@ -26,25 +25,6 @@ export function PreviewPanel() {
   const [jsonWithIncludes, setJsonWithIncludes] = useState(false);
   const [jsonWithSettings, setJsonWithSettings] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
-
-  const jsonHints = useMemo(
-    () =>
-      localize(language, {
-        ko: {
-          includeIncludes:
-            'JSON ?대낫?닿린???꾩뿭 ?ы븿 釉붾줉 ?뺤쓽瑜??④퍡 ?ы븿?⑸땲??',
-          includeSettings:
-            'JSON ?대낫?닿린???뚰겕?ㅽ럹?댁뒪 ?ㅼ젙媛믪쓣 ?④퍡 ?ы븿?⑸땲??',
-        },
-        en: {
-          includeIncludes:
-            'Include global include definitions in JSON export output.',
-          includeSettings:
-            'Include workspace settings in JSON export output.',
-        },
-      }),
-    [language],
-  );
 
   const xmlResult = useMemo(() => {
     if (!document) {
@@ -177,7 +157,7 @@ export function PreviewPanel() {
 
       {previewTab === 'JSON' ? (
         <div className="json-options">
-          <label className="omc-tooltip-hint" data-tooltip={jsonHints.includeIncludes}>
+          <label className="omc-tooltip-hint" data-tooltip={t('hintJsonIncludeIncludes')}>
             <input
               checked={jsonWithIncludes}
               onChange={(event) => setJsonWithIncludes(event.target.checked)}
@@ -185,7 +165,7 @@ export function PreviewPanel() {
             />
             {t('includeIncludes')}
           </label>
-          <label className="omc-tooltip-hint" data-tooltip={jsonHints.includeSettings}>
+          <label className="omc-tooltip-hint" data-tooltip={t('hintJsonIncludeSettings')}>
             <input
               checked={jsonWithSettings}
               onChange={(event) => setJsonWithSettings(event.target.checked)}

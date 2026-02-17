@@ -99,6 +99,67 @@ export type TranslationKey =
   | 'defaultRootTagName'
   | 'templatesV1'
   | 'templatesHint'
+  | 'hintResizeContextStack'
+  | 'hintResizePreviewExport'
+  | 'hintNavVault'
+  | 'hintNavIncludes'
+  | 'hintNavTemplates'
+  | 'hintNavSettings'
+  | 'hintFieldTagName'
+  | 'hintFieldAttributes'
+  | 'hintFieldContentMode'
+  | 'hintFieldContent'
+  | 'hintWrapSelection'
+  | 'contentModePlainDesc'
+  | 'contentModeMarkdownDesc'
+  | 'contentModeRawXmlDesc'
+  | 'hintDocumentName'
+  | 'hintDocumentLabels'
+  | 'hintRootTag'
+  | 'hintJsonIncludeIncludes'
+  | 'hintJsonIncludeSettings'
+  | 'includesLibrary'
+  | 'includesAssignment'
+  | 'includesLabelName'
+  | 'includesLabelDescription'
+  | 'includesLabelInsertionRule'
+  | 'includesLabelIncludeNode'
+  | 'hintIncludesLibrary'
+  | 'hintIncludesAssignment'
+  | 'hintIncludeName'
+  | 'hintIncludeDescription'
+  | 'hintInsertionRule'
+  | 'hintTargetTag'
+  | 'hintIncludeNode'
+  | 'hintDeleteInclude'
+  | 'hintSettingsLanguage'
+  | 'hintSettingsConfirmBeforeDelete'
+  | 'hintSettingsMarkdownPreview'
+  | 'hintSettingsRawXmlStrictMode'
+  | 'hintSettingsDefaultRootTagEnabled'
+  | 'hintSettingsDefaultRootTagName'
+  | 'kindAllLabel'
+  | 'kindAllDescription'
+  | 'kindXmlStackLabel'
+  | 'kindXmlStackDescription'
+  | 'kindMarkdownDocLabel'
+  | 'kindMarkdownDocDescription'
+  | 'kindRawXmlLabel'
+  | 'kindRawXmlDescription'
+  | 'kindChatJsonLabel'
+  | 'kindChatJsonDescription'
+  | 'vaultLabelKind'
+  | 'vaultLabelUpdated'
+  | 'hintVaultCreate'
+  | 'hintVaultFilters'
+  | 'hintVaultDocuments'
+  | 'hintVaultKind'
+  | 'hintVaultTags'
+  | 'hintVaultUpdatedAt'
+  | 'hintVaultOpen'
+  | 'hintVaultRename'
+  | 'hintVaultDuplicate'
+  | 'hintVaultDelete'
   | 'close';
 
 type TranslationMap = Record<TranslationKey, string>;
@@ -206,6 +267,95 @@ const messages: Record<AppLanguage, TranslationMap> = {
     templatesV1: 'Templates (v1)',
     templatesHint:
       'Template presets will be added in v1. Current MVP focuses on vault, stack editing, includes and export safety.',
+    hintResizeContextStack: 'Drag horizontally to resize Context Stack width.',
+    hintResizePreviewExport: 'Drag horizontally to resize Preview / Export width.',
+    hintNavVault: 'Manage documents: create, search, filter and switch.',
+    hintNavIncludes:
+      'Manage global include blocks inserted automatically at export time.',
+    hintNavTemplates: 'Placeholder for v1 templates.',
+    hintNavSettings:
+      'Manage workspace options such as language and preview defaults.',
+    hintFieldTagName: 'XML tag name. Invalid names block export.',
+    hintFieldAttributes:
+      'Attribute keys must follow XML name rules. Values are stored as strings.',
+    hintFieldContentMode:
+      'Choose how this node content is handled: Plain, Markdown or RawXML.',
+    hintFieldContent:
+      'Node body content. Special characters are safely handled during export.',
+    hintWrapSelection:
+      'Wrap currently selected text in the content area with the tag you entered.',
+    contentModePlainDesc:
+      'General text mode. Export wraps content safely with CDATA.',
+    contentModeMarkdownDesc:
+      'Markdown-aware text mode. Optional preview is shown below when enabled.',
+    contentModeRawXmlDesc:
+      'Injects raw XML fragment as-is. Invalid XML may break export output.',
+    hintDocumentName: 'Used to identify this document in the vault.',
+    hintDocumentLabels:
+      'Labels for search and filtering. Separate multiple values with commas.',
+    hintRootTag:
+      'Top-level tag wrapping the exported tree. Useful when a single XML root is required.',
+    hintJsonIncludeIncludes:
+      'Include global include definitions in JSON export output.',
+    hintJsonIncludeSettings:
+      'Include workspace settings in JSON export output.',
+    includesLibrary: 'Include Library',
+    includesAssignment: 'Document Assignment',
+    includesLabelName: 'Name',
+    includesLabelDescription: 'Description',
+    includesLabelInsertionRule: 'Insertion Rule',
+    includesLabelIncludeNode: 'Include Node',
+    hintIncludesLibrary:
+      'Manage global include blocks that are injected during export.',
+    hintIncludesAssignment:
+      'Choose which includes are enabled for the currently active document.',
+    hintIncludeName: 'Display name used to identify this include preset.',
+    hintIncludeDescription: 'Short purpose note to make reuse easier.',
+    hintInsertionRule:
+      'Placement rule such as TOP/BOTTOM. Advanced positions are v1 extensions.',
+    hintTargetTag: 'Target tag name used when insertion is tag-relative.',
+    hintIncludeNode: 'Actual tag/content node inserted during export.',
+    hintDeleteInclude: 'Delete this include preset.',
+    hintSettingsLanguage:
+      'Switch the app UI language. Browser locale is applied only on first visit.',
+    hintSettingsConfirmBeforeDelete:
+      'Show a confirmation dialog before deleting documents.',
+    hintSettingsMarkdownPreview:
+      'Show markdown preview in Node Editor when content mode is Markdown.',
+    hintSettingsRawXmlStrictMode:
+      'v1 placeholder option for stricter RawXML validation.',
+    hintSettingsDefaultRootTagEnabled:
+      'Enable root tag by default for newly created documents.',
+    hintSettingsDefaultRootTagName:
+      'Default root tag name used for new documents.',
+    kindAllLabel: 'All Kinds',
+    kindAllDescription: 'Show documents of every kind in the list.',
+    kindXmlStackLabel: 'XML Stack Prompt',
+    kindXmlStackDescription:
+      'Default tree-based prompt type optimized for safe XML export.',
+    kindMarkdownDocLabel: 'Markdown Document',
+    kindMarkdownDocDescription:
+      'Markdown-focused document type for structured instructions and notes.',
+    kindRawXmlLabel: 'Raw XML',
+    kindRawXmlDescription:
+      'RawXML-oriented document type for directly managed XML fragments.',
+    kindChatJsonLabel: 'Chat Messages JSON',
+    kindChatJsonDescription:
+      'Best suited for role/content style message-array prompt formats.',
+    vaultLabelKind: 'Kind',
+    vaultLabelUpdated: 'Updated',
+    hintVaultCreate:
+      'Create a new prompt document with name, kind and tags.',
+    hintVaultFilters: 'Narrow documents quickly by name, tag and kind.',
+    hintVaultDocuments: 'Documents sorted by most recently updated.',
+    hintVaultKind: 'Document format category.',
+    hintVaultTags: 'Document labels used for search and grouping.',
+    hintVaultUpdatedAt: 'Last saved timestamp of this document.',
+    hintVaultOpen: 'Switch this document as the active editor target.',
+    hintVaultRename: 'Edit document display name.',
+    hintVaultDuplicate: 'Clone this document into a new one.',
+    hintVaultDelete:
+      'Delete this document. A confirmation may appear depending on settings.',
     close: 'Close',
   },
   ko: {
@@ -310,6 +460,94 @@ const messages: Record<AppLanguage, TranslationMap> = {
     templatesV1: '템플릿 (v1)',
     templatesHint:
       '템플릿 프리셋은 v1에서 제공됩니다. 현재 MVP는 문서함, 스택 편집, 전역 포함, 안전한 내보내기에 집중합니다.',
+    hintResizeContextStack: '좌우로 드래그해 Context Stack 너비를 조절합니다.',
+    hintResizePreviewExport: '좌우로 드래그해 Preview / Export 너비를 조절합니다.',
+    hintNavVault: '문서 생성, 검색, 필터, 전환을 관리합니다.',
+    hintNavIncludes: '내보내기 시 자동 삽입되는 전역 Include를 관리합니다.',
+    hintNavTemplates: 'v1 템플릿 기능 자리입니다.',
+    hintNavSettings: '언어와 미리보기 기본값 등 작업 공간 설정을 관리합니다.',
+    hintFieldTagName: 'XML 태그 이름입니다. 잘못된 이름이면 내보내기가 차단됩니다.',
+    hintFieldAttributes:
+      '속성 키는 XML 이름 규칙을 따라야 하며 값은 문자열로 저장됩니다.',
+    hintFieldContentMode:
+      '노드 내용을 처리하는 방식(Plain, Markdown, RawXML)을 선택합니다.',
+    hintFieldContent:
+      '노드 본문 내용입니다. 특수문자는 내보내기 시 안전하게 처리됩니다.',
+    hintWrapSelection:
+      '내용 입력창에서 선택한 텍스트를 입력한 태그로 즉시 감쌉니다.',
+    contentModePlainDesc:
+      '일반 텍스트 모드입니다. 내보내기 시 CDATA로 안전하게 직렬화됩니다.',
+    contentModeMarkdownDesc:
+      '마크다운 문법을 사용하는 모드입니다. 설정에 따라 미리보기를 표시합니다.',
+    contentModeRawXmlDesc:
+      'Raw XML 조각을 그대로 삽입하는 모드입니다. 잘못된 XML은 출력을 깨뜨릴 수 있습니다.',
+    hintDocumentName: '문서함에서 식별하기 위한 문서 이름입니다.',
+    hintDocumentLabels:
+      '검색과 분류에 쓰는 라벨입니다. 여러 값은 쉼표로 구분해 입력합니다.',
+    hintRootTag:
+      '내보내기 결과 전체를 감싸는 최상위 태그입니다. 단일 XML 루트가 필요할 때 사용합니다.',
+    hintJsonIncludeIncludes:
+      'JSON 보기/내보내기에 전역 Include 정의를 함께 포함합니다.',
+    hintJsonIncludeSettings:
+      'JSON 보기/내보내기에 작업 공간 설정 값을 함께 포함합니다.',
+    includesLibrary: 'Include 라이브러리',
+    includesAssignment: '문서 적용',
+    includesLabelName: '이름',
+    includesLabelDescription: '설명',
+    includesLabelInsertionRule: '삽입 규칙',
+    includesLabelIncludeNode: '삽입 노드',
+    hintIncludesLibrary:
+      '내보내기 시 자동 삽입되는 전역 Include 블록을 관리합니다.',
+    hintIncludesAssignment:
+      '현재 활성 문서에 어떤 Include를 적용할지 선택합니다.',
+    hintIncludeName: 'Include 프리셋을 구분하기 위한 표시 이름입니다.',
+    hintIncludeDescription: '재사용 목적을 짧게 기록해 둡니다.',
+    hintInsertionRule:
+      'TOP/BOTTOM 같은 삽입 위치 규칙입니다. 고급 위치는 v1 확장입니다.',
+    hintTargetTag: '태그 기준 삽입에서 사용할 대상 태그 이름입니다.',
+    hintIncludeNode: '내보내기 시 삽입되는 실제 태그/내용입니다.',
+    hintDeleteInclude: '이 Include 프리셋을 삭제합니다.',
+    hintSettingsLanguage:
+      '앱 UI 언어를 전환합니다. 브라우저 언어는 첫 방문 시 기본값으로만 반영됩니다.',
+    hintSettingsConfirmBeforeDelete:
+      '문서 삭제 전에 확인 대화상자를 표시합니다.',
+    hintSettingsMarkdownPreview:
+      'Node Editor에서 Markdown 모드일 때 미리보기를 표시합니다.',
+    hintSettingsRawXmlStrictMode:
+      'RawXML 검증을 강화하는 v1 예정 옵션입니다.',
+    hintSettingsDefaultRootTagEnabled:
+      '새 문서 생성 시 루트 태그를 기본 활성화합니다.',
+    hintSettingsDefaultRootTagName:
+      '새 문서에서 사용할 기본 루트 태그 이름입니다.',
+    kindAllLabel: '전체 종류',
+    kindAllDescription: '모든 문서 종류를 목록에 표시합니다.',
+    kindXmlStackLabel: 'XML 스택 프롬프트',
+    kindXmlStackDescription:
+      '트리 기반 편집과 안전한 XML 내보내기에 최적화된 기본 문서 타입입니다.',
+    kindMarkdownDocLabel: '마크다운 문서',
+    kindMarkdownDocDescription:
+      '설명/지침 중심의 마크다운 문서 작성에 적합한 타입입니다.',
+    kindRawXmlLabel: 'Raw XML',
+    kindRawXmlDescription:
+      'XML 조각을 직접 관리해야 할 때 사용하는 타입입니다.',
+    kindChatJsonLabel: '채팅 메시지 JSON',
+    kindChatJsonDescription:
+      'role/content 배열 기반 프롬프트 관리에 적합한 타입입니다.',
+    vaultLabelKind: '종류',
+    vaultLabelUpdated: '수정',
+    hintVaultCreate:
+      '이름, 종류, 태그를 지정해 새 프롬프트 문서를 생성합니다.',
+    hintVaultFilters:
+      '이름/태그/종류 필터로 문서를 빠르게 좁혀 찾습니다.',
+    hintVaultDocuments: '최근 수정 순으로 정렬된 문서 목록입니다.',
+    hintVaultKind: '문서 형식 분류입니다.',
+    hintVaultTags: '검색과 그룹화에 쓰는 문서 라벨입니다.',
+    hintVaultUpdatedAt: '문서가 마지막으로 저장된 시각입니다.',
+    hintVaultOpen: '이 문서를 현재 편집 대상으로 전환합니다.',
+    hintVaultRename: '문서 표시 이름을 수정합니다.',
+    hintVaultDuplicate: '문서를 복제해 새 문서를 만듭니다.',
+    hintVaultDelete:
+      '문서를 삭제합니다. 설정에 따라 확인 창이 나타날 수 있습니다.',
     close: '닫기',
   },
 };

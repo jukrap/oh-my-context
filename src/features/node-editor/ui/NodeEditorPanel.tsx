@@ -1,7 +1,6 @@
 import { FileCog, Plus, Sparkles, Trash2 } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 import { isValidXmlName } from '../../../entities/prompt-node/model/validation';
-import { localize } from '../../../shared/lib/i18n/localize';
 import { useI18n } from '../../../shared/lib/i18n/useI18n';
 import { renderMarkdownBlocks } from '../../../shared/lib/markdown/preview';
 import { selectActiveDocument, selectSelectedNode, useAppStore } from '../../../shared/model/store';
@@ -11,7 +10,7 @@ import { Panel } from '../../../shared/ui/Panel';
 import { DocumentMetaPopover } from './DocumentMetaPopover';
 
 export function NodeEditorPanel() {
-  const { language, t } = useI18n();
+  const { t } = useI18n();
   const document = useAppStore(selectActiveDocument);
   const selectedNode = useAppStore(selectSelectedNode);
   const updateNode = useAppStore((state) => state.updateNode);
@@ -28,76 +27,20 @@ export function NodeEditorPanel() {
     return Math.ceil(selectedNode.content.length / 4);
   }, [selectedNode]);
 
-  const fieldHints = useMemo(
-    () =>
-      localize(language, {
-        ko: {
-          tagName:
-            'XML ?쒓렇 ?대쫫?낅땲?? 洹쒖튃??留욎? ?딆쑝硫??대낫?닿린媛 李⑤떒?⑸땲??',
-          attributes:
-            '?띿꽦 ?ㅻ뒗 XML ?대쫫 洹쒖튃???곕씪???⑸땲?? 媛믪? 臾몄옄?대줈 ??λ맗?덈떎.',
-          contentMode:
-            'Plain/Markdown/RawXML 以?肄섑뀗痢?泥섎━ 諛⑹떇???좏깮?⑸땲??',
-          content:
-            '?몃뱶 蹂몃Ц?낅땲?? ?뱀닔臾몄옄???대낫?닿린 ???덉쟾?섍쾶 泥섎━?⑸땲??',
-          wrap:
-            '肄섑뀗痢좎뿉???좏깮???띿뒪?몃? ?낅젰???쒓렇濡?利됱떆 媛먯뙃?덈떎.',
-        },
-        en: {
-          tagName: 'XML tag name. Invalid names block export.',
-          attributes:
-            'Attribute keys must follow XML name rules. Values are stored as strings.',
-          contentMode:
-            'Choose how this node content is handled: Plain, Markdown or RawXML.',
-          content:
-            'Node body content. Special characters are safely handled during export.',
-          wrap:
-            'Wrap currently selected text in the content area with the tag you entered.',
-        },
-      }),
-    [language],
-  );
-
-  const contentModeMeta = useMemo(
-    () =>
-      localize(language, {
-        ko: {
-          Plain: {
-            label: 'Plain',
-            description:
-              '?쇰컲 ?띿뒪??紐⑤뱶?낅땲?? ?대낫?닿린 ??CDATA濡?媛먯떥 ?덉쟾?섍쾶 吏곷젹?붾맗?덈떎.',
-          },
-          Markdown: {
-            label: 'Markdown',
-            description:
-              '留덊겕?ㅼ슫 臾몃쾿???좎??섎뒗 ?띿뒪??紐⑤뱶?낅땲?? ?ㅼ젙???곕씪 ?섎떒 誘몃━蹂닿린瑜?蹂????덉뒿?덈떎.',
-          },
-          RawXML: {
-            label: 'RawXML',
-            description:
-              'XML 議곌컖??洹몃?濡??ｋ뒗 紐⑤뱶?낅땲?? ?섎せ??XML?대㈃ 異쒕젰??源⑥쭏 ???덉쑝??二쇱쓽?섏꽭??',
-          },
-        },
-        en: {
-          Plain: {
-            label: 'Plain',
-            description:
-              'General text mode. Export wraps content safely with CDATA.',
-          },
-          Markdown: {
-            label: 'Markdown',
-            description:
-              'Markdown-aware text mode. Optional preview is shown below when enabled.',
-          },
-          RawXML: {
-            label: 'RawXML',
-            description:
-              'Injects raw XML fragment as-is. Invalid XML may break export output.',
-          },
-        },
-      }),
-    [language],
-  );
+  const contentModeMeta = {
+    Plain: {
+      label: 'Plain',
+      description: t('contentModePlainDesc'),
+    },
+    Markdown: {
+      label: 'Markdown',
+      description: t('contentModeMarkdownDesc'),
+    },
+    RawXML: {
+      label: 'RawXML',
+      description: t('contentModeRawXmlDesc'),
+    },
+  } as const;
 
   const markdownPreviewNodes = useMemo(() => {
     if (!selectedNode || selectedNode.contentMode !== 'Markdown') {
@@ -140,7 +83,7 @@ export function NodeEditorPanel() {
           <div className="editor-section">
             <label
               className="field-label omc-tooltip-btn"
-              data-tooltip={fieldHints.tagName}
+              data-tooltip={t('hintFieldTagName')}
               htmlFor="node-tag"
             >
               {t('tagName')}
@@ -163,7 +106,7 @@ export function NodeEditorPanel() {
 
           <div className="editor-section">
             <div className="editor-row">
-              <span className="field-label omc-tooltip-btn" data-tooltip={fieldHints.attributes}>
+              <span className="field-label omc-tooltip-btn" data-tooltip={t('hintFieldAttributes')}>
                 {t('attributes')}
               </span>
               <Button
@@ -242,7 +185,7 @@ export function NodeEditorPanel() {
           <div className="editor-section">
             <label
               className="field-label omc-tooltip-btn"
-              data-tooltip={fieldHints.contentMode}
+              data-tooltip={t('hintFieldContentMode')}
               htmlFor="content-mode"
             >
               {t('contentMode')}
@@ -271,7 +214,7 @@ export function NodeEditorPanel() {
             <div className="editor-row">
               <label
                 className="field-label omc-tooltip-btn"
-                data-tooltip={fieldHints.content}
+                data-tooltip={t('hintFieldContent')}
                 htmlFor="node-content"
               >
                 {t('content')}
@@ -326,7 +269,7 @@ export function NodeEditorPanel() {
                     content: nextValue,
                   }));
                 }}
-                title={fieldHints.wrap}
+                title={t('hintWrapSelection')}
                 tone="default"
               >
                 <Sparkles size={14} />

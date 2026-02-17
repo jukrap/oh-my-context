@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { localize } from '../../shared/lib/i18n/localize';
 import { useI18n } from '../../shared/lib/i18n/useI18n';
 import { selectActiveDocument, useAppStore } from '../../shared/model/store';
 import { Button } from '../../shared/ui/Button';
@@ -12,7 +11,7 @@ interface IncludesDrawerProps {
 }
 
 export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
-  const { language, t } = useI18n();
+  const { t } = useI18n();
   const activeDocument = useAppStore(selectActiveDocument);
   const includesById = useAppStore((state) => state.includesById);
   const includeOrder = useAppStore((state) => state.includeOrder);
@@ -31,65 +30,11 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
     [includeOrder, includesById],
   );
 
-  const hints = useMemo(
-    () =>
-      localize(language, {
-        ko: {
-          library: '?대낫?닿린 ???먮룞 ?쎌엯???꾩뿭 ?ы븿 釉붾줉??愿由ы빀?덈떎.',
-          assignment:
-            '?꾩옱 ?쒖꽦 臾몄꽌???대뼡 ?꾩뿭 ?ы븿 釉붾줉???곸슜?좎? ?좏깮?⑸땲??',
-          includeName: '?꾩뿭 ?ы븿 紐⑸줉?먯꽌 ?앸퀎?섍린 ?꾪븳 ?대쫫?낅땲??',
-          includeDescription: '?⑸룄/?ㅻ챸??吏㏐쾶 湲곕줉???ъ궗?⑹꽦???믪엯?덈떎.',
-          insertionRule:
-            'TOP/BOTTOM ???쎌엯 ?꾩튂 洹쒖튃?낅땲?? 怨좉툒 ?꾩튂??v1 ?뺤옣 ??곸엯?덈떎.',
-          targetTag:
-            '?뱀젙 ?쒓렇 湲곗? ?쎌엯 ???ъ슜??????쒓렇紐낆엯?덈떎.',
-          includeNode:
-            '?대낫?닿린???쎌엯???ㅼ젣 ?쒓렇? 蹂몃Ц ?댁슜?낅땲??',
-          delete: '?대떦 ?꾩뿭 ?ы븿 釉붾줉????젣?⑸땲??',
-        },
-        en: {
-          library: 'Manage global include blocks that are injected during export.',
-          assignment:
-            'Choose which includes are enabled for the currently active document.',
-          includeName: 'Display name used to identify this include preset.',
-          includeDescription: 'Short purpose note to make reuse easier.',
-          insertionRule:
-            'Placement rule such as TOP/BOTTOM. Advanced positions are v1 extensions.',
-          targetTag:
-            'Target tag name used when insertion is tag-relative.',
-          includeNode:
-            'Actual tag/content node inserted during export.',
-          delete: 'Delete this include preset.',
-        },
-      }),
-    [language],
-  );
-
-  const labels = localize(language, {
-    ko: {
-      library: '?ы븿 釉붾줉',
-      assignment: '臾몄꽌 ?곸슜',
-      name: '?대쫫',
-      description: '?ㅻ챸',
-      insertionRule: '?쎌엯 洹쒖튃',
-      includeNode: '?쎌엯 ?몃뱶',
-    },
-    en: {
-      library: 'Include Library',
-      assignment: 'Document Assignment',
-      name: 'Name',
-      description: 'Description',
-      insertionRule: 'Insertion Rule',
-      includeNode: 'Include Node',
-    },
-  });
-
   return (
     <Drawer onClose={onClose} open={open} title={t('globalIncludes')}>
       <div className="drawer-group">
-        <h4 className="omc-tooltip-hint" data-tooltip={hints.library}>
-          {labels.library}
+        <h4 className="omc-tooltip-hint" data-tooltip={t('hintIncludesLibrary')}>
+          {t('includesLibrary')}
         </h4>
         <Button onClick={createInclude} tone="brand">
           {t('addInclude')}
@@ -100,8 +45,8 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
       </div>
 
       <div className="drawer-group">
-        <h4 className="omc-tooltip-hint" data-tooltip={hints.assignment}>
-          {labels.assignment}
+        <h4 className="omc-tooltip-hint" data-tooltip={t('hintIncludesAssignment')}>
+          {t('includesAssignment')}
         </h4>
         {includes.map((includeItem) => {
           const selected =
@@ -111,7 +56,7 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
           return (
             <article className="include-item" key={includeItem.id}>
               <div className="editor-row">
-                <label className="omc-tooltip-hint" data-tooltip={hints.assignment}>
+                <label className="omc-tooltip-hint" data-tooltip={t('hintIncludesAssignment')}>
                   <input
                     checked={selected}
                     onChange={() => toggleIncludeForActiveDocument(includeItem.id)}
@@ -121,15 +66,15 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
                 </label>
                 <Button
                   onClick={() => deleteInclude(includeItem.id)}
-                  tooltip={hints.delete}
+                  tooltip={t('hintDeleteInclude')}
                   tone="danger"
                 >
                   {t('delete')}
                 </Button>
               </div>
 
-              <label className="field-label omc-tooltip-hint" data-tooltip={hints.includeName}>
-                {labels.name}
+              <label className="field-label omc-tooltip-hint" data-tooltip={t('hintIncludeName')}>
+                {t('includesLabelName')}
               </label>
               <Input
                 onChange={(event) =>
@@ -137,8 +82,8 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
                 }
                 value={includeItem.name}
               />
-              <label className="field-label omc-tooltip-hint" data-tooltip={hints.includeDescription}>
-                {labels.description}
+              <label className="field-label omc-tooltip-hint" data-tooltip={t('hintIncludeDescription')}>
+                {t('includesLabelDescription')}
               </label>
               <Input
                 onChange={(event) =>
@@ -148,8 +93,8 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
                 value={includeItem.description}
               />
 
-              <label className="field-label omc-tooltip-hint" data-tooltip={hints.insertionRule}>
-                {labels.insertionRule}
+              <label className="field-label omc-tooltip-hint" data-tooltip={t('hintInsertionRule')}>
+                {t('includesLabelInsertionRule')}
               </label>
               <div className="editor-row">
                 <select
@@ -178,7 +123,7 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
 
                 <Input
                   className="omc-tooltip-btn"
-                  data-tooltip={hints.targetTag}
+                  data-tooltip={t('hintTargetTag')}
                   onChange={(event) =>
                     updateInclude(includeItem.id, {
                       insertion: {
@@ -192,8 +137,8 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
                 />
               </div>
 
-              <label className="field-label omc-tooltip-hint" data-tooltip={hints.includeNode}>
-                {labels.includeNode}
+              <label className="field-label omc-tooltip-hint" data-tooltip={t('hintIncludeNode')}>
+                {t('includesLabelIncludeNode')}
               </label>
               <div className="editor-row">
                 <Input

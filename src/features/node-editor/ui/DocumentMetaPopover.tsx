@@ -1,7 +1,5 @@
 import { X } from 'lucide-react';
-import { useMemo } from 'react';
 import { isValidXmlName } from '../../../entities/prompt-node/model/validation';
-import { localize } from '../../../shared/lib/i18n/localize';
 import { useI18n } from '../../../shared/lib/i18n/useI18n';
 import { selectActiveDocument, useAppStore } from '../../../shared/model/store';
 import { Button } from '../../../shared/ui/Button';
@@ -20,30 +18,9 @@ function parseTags(value: string): string[] {
 }
 
 export function DocumentMetaPopover({ open, onClose }: DocumentMetaPopoverProps) {
-  const { language, t } = useI18n();
+  const { t } = useI18n();
   const document = useAppStore(selectActiveDocument);
   const updateActiveDocument = useAppStore((state) => state.updateActiveDocument);
-
-  const hints = useMemo(
-    () =>
-      localize(language, {
-        ko: {
-          documentName: 'Vault?먯꽌 臾몄꽌瑜??앸퀎?????곕뒗 ?대쫫?낅땲??',
-          documentLabels:
-            '寃?됯낵 遺꾨쪟???쇰꺼?낅땲?? ?쇳몴濡??щ윭 媛쒕? ?낅젰?????덉뒿?덈떎.',
-          rootTag:
-            '?대낫?닿린 ???꾩껜 ?몃뱶瑜?媛먯떥??理쒖긽???쒓렇?낅땲?? XML 猷⑦듃 援ъ“媛 ?꾩슂?????ъ슜?⑸땲??',
-        },
-        en: {
-          documentName: 'Used to identify this document in the vault.',
-          documentLabels:
-            'Labels for search and filtering. Separate multiple values with commas.',
-          rootTag:
-            'Top-level tag wrapping the exported tree. Useful when a single XML root is required.',
-        },
-      }),
-    [language],
-  );
 
   if (!open || !document) {
     return null;
@@ -62,7 +39,7 @@ export function DocumentMetaPopover({ open, onClose }: DocumentMetaPopoverProps)
         <div className="editor-section">
           <label
             className="field-label omc-tooltip-hint"
-            data-tooltip={hints.documentName}
+            data-tooltip={t('hintDocumentName')}
             htmlFor="popover-doc-name"
           >
             {t('documentName')}
@@ -81,7 +58,7 @@ export function DocumentMetaPopover({ open, onClose }: DocumentMetaPopoverProps)
         <div className="editor-section">
           <label
             className="field-label omc-tooltip-hint"
-            data-tooltip={hints.documentLabels}
+            data-tooltip={t('hintDocumentLabels')}
             htmlFor="popover-doc-tags"
           >
             {t('documentLabels')}
@@ -99,7 +76,7 @@ export function DocumentMetaPopover({ open, onClose }: DocumentMetaPopoverProps)
         </div>
 
         <div className="editor-section inline-grid">
-          <label className="field-label omc-tooltip-hint" data-tooltip={hints.rootTag}>
+          <label className="field-label omc-tooltip-hint" data-tooltip={t('hintRootTag')}>
             <input
               checked={document.rootTagEnabled}
               onChange={(event) =>

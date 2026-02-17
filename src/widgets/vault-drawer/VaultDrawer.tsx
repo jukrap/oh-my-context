@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import type { PromptKind } from '../../entities/prompt-document/model/types';
-import { localize } from '../../shared/lib/i18n/localize';
 import { useI18n } from '../../shared/lib/i18n/useI18n';
 import { useAppStore } from '../../shared/model/store';
 import { Button } from '../../shared/ui/Button';
@@ -20,7 +19,7 @@ interface VaultDrawerProps {
 }
 
 export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
-  const { language, t } = useI18n();
+  const { t } = useI18n();
   const documentsById = useAppStore((state) => state.documentsById);
   const documentOrder = useAppStore((state) => state.documentOrder);
   const activeDocumentId = useAppStore((state) => state.activeDocumentId);
@@ -40,66 +39,26 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
   const [editingName, setEditingName] = useState('');
 
   const kindMeta = useMemo(
-    () =>
-      localize(language, {
-        ko: {
-          XML_STACK: {
-            label: 'XML Stack Prompt',
-            description:
-              'Default tree-based prompt type optimized for safe XML export.',
-          },
-          MARKDOWN_DOC: {
-            label: 'Markdown Document',
-            description:
-              'Markdown-focused document type for structured instructions and notes.',
-          },
-          RAW_XML: {
-            label: 'Raw XML',
-            description:
-              'RawXML-oriented document type for directly managed XML fragments.',
-          },
-          CHAT_MESSAGES_JSON: {
-            label: 'Chat Messages JSON',
-            description:
-              'Best suited for role/content style message-array prompt formats.',
-          },
-        },
-        en: {
-          XML_STACK: {
-            label: 'XML Stack Prompt',
-            description:
-              'Default tree-based prompt type optimized for safe XML export.',
-          },
-          MARKDOWN_DOC: {
-            label: 'Markdown Document',
-            description:
-              'Markdown-focused document type for structured instructions and notes.',
-          },
-          RAW_XML: {
-            label: 'Raw XML',
-            description:
-              'RawXML-oriented document type for directly managed XML fragments.',
-          },
-          CHAT_MESSAGES_JSON: {
-            label: 'Chat Messages JSON',
-            description:
-              'Best suited for role/content style message-array prompt formats.',
-          },
-        },
-      }),
-    [language],
+    () => ({
+      XML_STACK: {
+        label: t('kindXmlStackLabel'),
+        description: t('kindXmlStackDescription'),
+      },
+      MARKDOWN_DOC: {
+        label: t('kindMarkdownDocLabel'),
+        description: t('kindMarkdownDocDescription'),
+      },
+      RAW_XML: {
+        label: t('kindRawXmlLabel'),
+        description: t('kindRawXmlDescription'),
+      },
+      CHAT_MESSAGES_JSON: {
+        label: t('kindChatJsonLabel'),
+        description: t('kindChatJsonDescription'),
+      },
+    }),
+    [t],
   );
-
-  const allKinds = localize(language, {
-    ko: {
-      label: 'All Kinds',
-      description: 'Show documents of every kind in the list.',
-    },
-    en: {
-      label: 'All Kinds',
-      description: 'Show documents of every kind in the list.',
-    },
-  });
 
   const filteredDocuments = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
@@ -124,56 +83,10 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
       .sort((a, b) => b.updatedAt - a.updatedAt);
   }, [documentOrder, documentsById, kindFilter, search, tagFilter]);
 
-  const hints = useMemo(
-    () =>
-      localize(language, {
-        ko: {
-          create: 'Create a new prompt document with name, kind and tags.',
-          filters: 'Narrow documents quickly by name, tag and kind.',
-          documents: 'Documents sorted by most recently updated.',
-          kind: 'Document format category.',
-          tags: 'Document labels used for search and grouping.',
-          updatedAt: 'Last saved timestamp of this document.',
-          open: 'Switch this document as the active editor target.',
-          rename: 'Edit document display name.',
-          duplicate: 'Clone this document into a new one.',
-          delete:
-            'Delete this document. A confirmation may appear depending on settings.',
-        },
-        en: {
-          create: 'Create a new prompt document with name, kind and tags.',
-          filters: 'Narrow documents quickly by name, tag and kind.',
-          documents: 'Documents sorted by most recently updated.',
-          kind: 'Document format category.',
-          tags: 'Document labels used for search and grouping.',
-          updatedAt: 'Last saved timestamp of this document.',
-          open: 'Switch this document as the active editor target.',
-          rename: 'Edit document display name.',
-          duplicate: 'Clone this document into a new one.',
-          delete:
-            'Delete this document. A confirmation may appear depending on settings.',
-        },
-      }),
-    [language],
-  );
-
-  const metaLabels = localize(language, {
-    ko: {
-      kind: 'Kind',
-      tags: 'Tags',
-      updatedAt: 'Updated',
-    },
-    en: {
-      kind: 'Kind',
-      tags: 'Tags',
-      updatedAt: 'Updated',
-    },
-  });
-
   return (
     <Drawer onClose={onClose} open={open} title={t('promptVault')}>
       <div className="drawer-group">
-        <h4 className="omc-tooltip-hint" data-tooltip={hints.create}>
+        <h4 className="omc-tooltip-hint" data-tooltip={t('hintVaultCreate')}>
           {t('create')}
         </h4>
         <Input onChange={(event) => setNewName(event.target.value)} value={newName} />
@@ -213,7 +126,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
       </div>
 
       <div className="drawer-group">
-        <h4 className="omc-tooltip-hint" data-tooltip={hints.filters}>
+        <h4 className="omc-tooltip-hint" data-tooltip={t('hintVaultFilters')}>
           {t('filters')}
         </h4>
         <Input
@@ -228,7 +141,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
           }
           value={kindFilter}
         >
-          <option value="ALL">{allKinds.label}</option>
+          <option value="ALL">{t('kindAllLabel')}</option>
           {KIND_OPTIONS.map((kind) => (
             <option key={kind} value={kind}>
               {kindMeta[kind].label}
@@ -237,7 +150,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
         </select>
         <p className="field-help">
           {kindFilter === 'ALL'
-            ? allKinds.description
+            ? t('kindAllDescription')
             : kindMeta[kindFilter].description}
         </p>
         <Input
@@ -248,7 +161,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
       </div>
 
       <div className="drawer-group">
-        <h4 className="omc-tooltip-hint" data-tooltip={hints.documents}>
+        <h4 className="omc-tooltip-hint" data-tooltip={t('hintVaultDocuments')}>
           {t('documents')}
         </h4>
         <div className="vault-list">
@@ -276,20 +189,20 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
               )}
 
               <p className="vault-meta">
-                <strong className="omc-tooltip-hint" data-tooltip={hints.kind}>
-                  {metaLabels.kind}
+                <strong className="omc-tooltip-hint" data-tooltip={t('hintVaultKind')}>
+                  {t('vaultLabelKind')}
                 </strong>
                 {`: ${kindMeta[document.kind].label} (${document.kind})`}
               </p>
               <p className="vault-meta">
-                <strong className="omc-tooltip-hint" data-tooltip={hints.tags}>
-                  {metaLabels.tags}
+                <strong className="omc-tooltip-hint" data-tooltip={t('hintVaultTags')}>
+                  {t('tags')}
                 </strong>
                 {`: ${document.tags.join(', ') || t('noTags')}`}
               </p>
               <p className="vault-meta">
-                <strong className="omc-tooltip-hint" data-tooltip={hints.updatedAt}>
-                  {metaLabels.updatedAt}
+                <strong className="omc-tooltip-hint" data-tooltip={t('hintVaultUpdatedAt')}>
+                  {t('vaultLabelUpdated')}
                 </strong>
                 {': '}
                 {t('updatedAt', {
@@ -303,7 +216,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
                     setActiveDocument(document.id);
                     onClose();
                   }}
-                  tooltip={hints.open}
+                  tooltip={t('hintVaultOpen')}
                   tone="brand"
                 >
                   {t('open')}
@@ -313,14 +226,14 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
                     setEditingNameId(document.id);
                     setEditingName(document.name);
                   }}
-                  tooltip={hints.rename}
+                  tooltip={t('hintVaultRename')}
                   tone="ghost"
                 >
                   {t('rename')}
                 </Button>
                 <Button
                   onClick={() => duplicateDocument(document.id)}
-                  tooltip={hints.duplicate}
+                  tooltip={t('hintVaultDuplicate')}
                   tone="ghost"
                 >
                   {t('duplicate')}
@@ -337,7 +250,7 @@ export function VaultDrawer({ open, onClose }: VaultDrawerProps) {
                     }
                     deleteDocument(document.id);
                   }}
-                  tooltip={hints.delete}
+                  tooltip={t('hintVaultDelete')}
                   tone="danger"
                 >
                   {t('delete')}
