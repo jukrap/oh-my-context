@@ -14,6 +14,9 @@ export type TranslationKey =
   | 'loadingWorkspace'
   | 'contextStack'
   | 'addNode'
+  | 'quickAddContext'
+  | 'recommendedTag'
+  | 'addRecommendedTag'
   | 'searchTagOrContent'
   | 'dragNode'
   | 'enableNode'
@@ -106,6 +109,9 @@ const messages: Record<AppLanguage, TranslationMap> = {
     loadingWorkspace: 'Loading workspace...',
     contextStack: 'Context Stack',
     addNode: 'Add Node',
+    quickAddContext: 'Quick Add <context>',
+    recommendedTag: 'Recommended Tag',
+    addRecommendedTag: 'Add Recommended',
     searchTagOrContent: 'Search tag or content',
     dragNode: 'Drag node',
     enableNode: 'Enable node',
@@ -185,7 +191,7 @@ const messages: Record<AppLanguage, TranslationMap> = {
     close: 'Close',
   },
   ko: {
-    appTagline: 'XML 프롬프트용 컨텍스트 스택 편집기',
+    appTagline: 'XML 프롬프트용 컨텍스트 스택 에디터',
     navVault: '문서함',
     navIncludes: '포함 규칙',
     navTemplates: '템플릿',
@@ -195,9 +201,12 @@ const messages: Record<AppLanguage, TranslationMap> = {
     saveError: '저장 오류',
     saveIdle: '대기',
     noActiveDocument: '활성 문서 없음',
-    loadingWorkspace: '작업공간 불러오는 중...',
+    loadingWorkspace: '작업 공간 불러오는 중...',
     contextStack: '컨텍스트 스택',
     addNode: '노드 추가',
+    quickAddContext: '빠른 추가 <context>',
+    recommendedTag: '권장 태그',
+    addRecommendedTag: '권장 태그 추가',
     searchTagOrContent: '태그 또는 내용 검색',
     dragNode: '노드 드래그',
     enableNode: '노드 활성화',
@@ -210,9 +219,9 @@ const messages: Record<AppLanguage, TranslationMap> = {
     duplicate: '복제',
     delete: '삭제',
     nodeEditor: '노드 편집기',
-    documentMeta: '문서 메타 설정',
+    documentMeta: '문서 메타',
     showDocumentMeta: '문서 메타 설정 펼치기',
-    hideDocumentMeta: '문서 메타 설정 접기',
+    hideDocumentMeta: '문서 메타 설정 닫기',
     documentName: '문서 이름',
     tags: '태그',
     tagsPlaceholder: 'prompt, policy, baseline',
@@ -222,11 +231,11 @@ const messages: Record<AppLanguage, TranslationMap> = {
     xmlNameValidation: '태그 이름은 XML 이름 규칙을 따라야 합니다.',
     attributes: '속성',
     addAttribute: '속성 추가',
-    removeAttribute: '제거',
+    removeAttribute: '삭제',
     contentMode: '내용 모드',
     content: '내용',
-    tokenEstimate: '약 {count} 토큰 (chars/4 기반의 대략치)',
-    wrapSelection: '선택 영역 태그 감싸기',
+    tokenEstimate: '약 {count} 토큰 (chars/4 기반 추정)',
+    wrapSelection: '선택 영역 태그로 감싸기',
     markdownPreview: '마크다운 미리보기 (raw)',
     previewExport: '미리보기 / 내보내기',
     copyXml: 'XML 복사',
@@ -254,7 +263,7 @@ const messages: Record<AppLanguage, TranslationMap> = {
     addInclude: 'Include 추가',
     includeHint:
       'Include는 내보내기 단계에서만 삽입되며 원본 노드를 변경하지 않습니다.',
-    useInActiveDocument: '활성 문서에 사용',
+    useInActiveDocument: '활성 문서에서 사용',
     description: '설명',
     targetTagName: 'targetTagName',
     includeTag: 'Include 태그',
@@ -262,11 +271,11 @@ const messages: Record<AppLanguage, TranslationMap> = {
     settings: '설정',
     language: '언어',
     languageHint:
-      '기본 언어는 영어이며, 최초 접속 시 한국어 브라우저 환경을 자동 감지합니다.',
+      '기본 언어는 영어이며, 첫 접속 시 브라우저 언어를 자동 감지합니다.',
     korean: '한국어',
     english: '영어',
     brandColor: '브랜드 색상',
-    confirmBeforeDelete: '삭제 전에 확인',
+    confirmBeforeDelete: '삭제 전 확인',
     showMarkdownPreview: '마크다운 미리보기 표시',
     rawXmlStrictMode: 'RawXML 엄격 모드 (v1 예정)',
     defaultRootTagEnabled: '기본 루트 태그 사용',

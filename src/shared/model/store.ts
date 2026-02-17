@@ -5,6 +5,7 @@ import type { GlobalInclude, WorkspaceSettings } from '../../entities/include/mo
 import type { PromptDocument, PromptKind } from '../../entities/prompt-document/model/types';
 import { createNode, addChildNodeInTree, duplicateNodeInTree, findNodeById, moveNodeByDrop, moveNodeToRootEnd, removeNodeFromTree, updateNodeInTree } from '../../entities/prompt-node/model/tree';
 import type { PromptNode } from '../../entities/prompt-node/model/types';
+import { isValidXmlName } from '../../entities/prompt-node/model/validation';
 import { DEFAULT_LEFT_PANEL_WIDTH, DEFAULT_RIGHT_PANEL_WIDTH, DEFAULT_SETTINGS, SCHEMA_VERSION, createDefaultDocument, createInitialSettings } from '../config/defaults';
 import { indexedDbStateStorage } from '../lib/storage/indexeddb-storage';
 
@@ -39,8 +40,8 @@ interface AppStoreState {
   setPreviewTab: (tab: PreviewTab) => void;
   setLeftPanelWidth: (width: number) => void;
   setRightPanelWidth: (width: number) => void;
-  addRootNode: () => void;
-  addChildNode: (parentId: string) => void;
+  addRootNode: (tagName?: string) => void;
+  addChildNode: (parentId: string, tagName?: string) => void;
   updateNode: (nodeId: string, updater: (node: PromptNode) => PromptNode) => void;
   deleteNode: (nodeId: string) => void;
   duplicateNode: (nodeId: string) => void;
@@ -66,6 +67,15 @@ function touchDocument(document: PromptDocument): PromptDocument {
     ...document,
     updatedAt: Date.now(),
   };
+}
+
+function resolveNodeTagName(tagName?: string): string {
+  if (!tagName) {
+    return 'context';
+  }
+
+  const candidate = tagName.trim();
+  return isValidXmlName(candidate) ? candidate : 'context';
 }
 
 function withActiveDocument(
@@ -267,20 +277,26 @@ export const useAppStore = create<AppStoreState>()(
       setRightPanelWidth: (width) => {
         set({ rightPanelWidth: width });
       },
-      addRootNode: () => {
+      addRootNode: (tagName) => {
         set((state) => {
+          const nextTagName = resolveNodeTagName(tagName);
           const patched = withActiveDocument(state, (document) => ({
             ...document,
-            nodes: [...document.nodes, createNode()],
+            nodes: [...document.nodes, createNode({ tagName: nextTagName })],
           }));
           return patched;
         });
       },
-      addChildNode: (parentId) => {
+      addChildNode: (parentId, tagName) => {
         set((state) => {
+          const nextTagName = resolveNodeTagName(tagName);
           const patched = withActiveDocument(state, (document) => ({
             ...document,
-            nodes: addChildNodeInTree(document.nodes, parentId, createNode()),
+            nodes: addChildNodeInTree(
+              document.nodes,
+              parentId,
+              createNode({ tagName: nextTagName }),
+            ),
           }));
           return patched;
         });

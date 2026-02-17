@@ -15,9 +15,10 @@ import {
   Copy,
   GripVertical,
   Plus,
+  Sparkles,
   Trash2,
 } from 'lucide-react';
-import { type KeyboardEvent, useMemo, useState } from 'react';
+import { type CSSProperties, type KeyboardEvent, useMemo, useState } from 'react';
 import { buildNodeVisibilitySet, flattenVisibleNodeIds } from '../../../entities/prompt-node/model/tree';
 import type { PromptNode } from '../../../entities/prompt-node/model/types';
 import { useI18n } from '../../../shared/lib/i18n/useI18n';
@@ -28,6 +29,7 @@ import { selectActiveDocument, useAppStore } from '../../../shared/model/store';
 interface TreeListProps {
   nodes: PromptNode[];
   depth: number;
+  ancestorLines: boolean[];
   visibleNodeIds: Set<string>;
   activeDropId: string | null;
 }
@@ -35,6 +37,24 @@ interface TreeListProps {
 type DropPosition = 'before' | 'inside' | 'after';
 
 type DropTarget = { kind: 'node'; nodeId: string; position: DropPosition };
+
+const STACK_DEPTH_COLORS = [
+  'var(--stack-depth-0)',
+  'var(--stack-depth-1)',
+  'var(--stack-depth-2)',
+  'var(--stack-depth-3)',
+  'var(--stack-depth-4)',
+  'var(--stack-depth-5)',
+];
+
+const RECOMMENDED_NODE_TAGS = [
+  { value: 'instruction', description: 'Task and expected outcome' },
+  { value: 'constraints', description: 'Safety and style constraints' },
+  { value: 'context', description: 'Background context input' },
+  { value: 'examples', description: 'Few-shot examples' },
+  { value: 'output_format', description: 'Output schema or format' },
+  { value: 'checklist', description: 'Final quality checklist' },
+];
 
 function buildNodeDropId(nodeId: string, position: DropPosition): string {
   return `node:${nodeId}:${position}`;
@@ -67,22 +87,43 @@ function parseDropTarget(dropId: string | null): DropTarget | null {
   };
 }
 
-function DepthGuides({ depth }: { depth: number }) {
+function getDepthColor(depth: number): string {
+  return STACK_DEPTH_COLORS[depth % STACK_DEPTH_COLORS.length] ?? 'var(--stack-depth-0)';
+}
+
+function BranchGuides({
+  depth,
+  ancestorLines,
+  isLast,
+}: {
+  depth: number;
+  ancestorLines: boolean[];
+  isLast: boolean;
+}) {
   if (depth === 0) {
-    return <div className="stack-depth-guides" />;
+    return <div aria-hidden className="stack-branch-guides" />;
   }
 
+  const parentDepth = Math.max(depth - 1, 0);
+  const connectorColor = getDepthColor(parentDepth);
+
   return (
-    <div aria-hidden className="stack-depth-guides">
-      {Array.from({ length: depth }).map((_, index) => (
+    <div aria-hidden className="stack-branch-guides">
+      {ancestorLines.map((hasLine, index) => (
         <span
-          className="stack-depth-guide"
+          className="stack-branch-column"
+          data-active={hasLine}
           key={`${depth}-${index}`}
-          style={{
-            opacity: Math.min(0.32 + index * 0.1, 0.75),
-          }}
+          style={{ ['--branch-color' as string]: getDepthColor(index) } as CSSProperties}
         />
       ))}
+      <span
+        className="stack-branch-connector"
+        data-last={isLast}
+        style={{ ['--branch-color' as string]: connectorColor } as CSSProperties}
+      >
+        <span className="stack-branch-horizontal" />
+      </span>
     </div>
   );
 }
@@ -119,10 +160,14 @@ function DraggableNodeRow({
   node,
   depth,
   activeDropId,
+  ancestorLines,
+  isLast,
 }: {
   node: PromptNode;
   depth: number;
   activeDropId: string | null;
+  ancestorLines: boolean[];
+  isLast: boolean;
 }) {
   const { t } = useI18n();
   const selectedNodeId = useAppStore((state) => state.selectedNodeId);
@@ -138,7 +183,7 @@ function DraggableNodeRow({
     listeners,
     setNodeRef: setDraggableRef,
     transform,
-    isDragging
+    isDragging,
   } = useDraggable({
     id: node.id,
   });
@@ -158,21 +203,22 @@ function DraggableNodeRow({
     state: node.enabled ? t('stateEnabled') : t('stateDisabled'),
   });
 
+  const cardStyle: CSSProperties = {
+    opacity: isDragging ? 0.45 : 1,
+    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    ['--stack-node-accent' as string]: getDepthColor(depth),
+  };
+
   return (
     <div className="stack-node-row" data-selected={selectedNodeId === node.id}>
-      <DepthGuides depth={depth} />
+      <BranchGuides ancestorLines={ancestorLines} depth={depth} isLast={isLast} />
       <article
         className="stack-node-card"
         data-disabled={!node.enabled}
         data-drop-active={activeDropId === buildNodeDropId(node.id, 'inside')}
         data-selected={selectedNodeId === node.id}
         ref={setCardRef}
-        style={{
-          opacity: isDragging ? 0.45 : 1,
-          transform: transform
-            ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-            : undefined,
-        }}
+        style={cardStyle}
       >
         <div className="stack-node-main">
           <div className="stack-node-main-left">
@@ -184,16 +230,6 @@ function DraggableNodeRow({
               {...listeners}
             >
               <GripVertical size={14} />
-            </button>
-
-            <button
-              className="stack-enable-toggle"
-              aria-label={t('enableNode')}
-              data-enabled={node.enabled}
-              onClick={() => toggleNodeEnabled(node.id)}
-              type="button"
-            >
-              {node.enabled ? 'ON' : 'OFF'}
             </button>
 
             {node.children.length > 0 ? (
@@ -221,6 +257,16 @@ function DraggableNodeRow({
           </div>
 
           <div className="stack-node-actions">
+            <button
+              aria-label={t('enableNode')}
+              className="stack-enable-toggle"
+              data-enabled={node.enabled}
+              onClick={() => toggleNodeEnabled(node.id)}
+              title={t('enableNode')}
+              type="button"
+            >
+              {node.enabled ? 'ON' : 'OFF'}
+            </button>
             <button
               aria-label={t('addChild')}
               className="stack-mini-action"
@@ -257,7 +303,13 @@ function DraggableNodeRow({
   );
 }
 
-function TreeList({ nodes, depth, visibleNodeIds, activeDropId }: TreeListProps) {
+function TreeList({
+  nodes,
+  depth,
+  ancestorLines,
+  visibleNodeIds,
+  activeDropId,
+}: TreeListProps) {
   const visibleNodes = nodes.filter((node) => visibleNodeIds.has(node.id));
   if (visibleNodes.length === 0) {
     return null;
@@ -270,29 +322,37 @@ function TreeList({ nodes, depth, visibleNodeIds, activeDropId }: TreeListProps)
 
   return (
     <>
-      {visibleNodes.map((node) => (
-        <div className="stack-node-wrap" key={node.id}>
-          <DropSlot
-            activeDropId={activeDropId}
-            depth={depth}
-            dropId={buildNodeDropId(node.id, 'before')}
-            variant="before"
-          />
-          <DraggableNodeRow
-            activeDropId={activeDropId}
-            depth={depth}
-            node={node}
-          />
-          {!node.collapsed ? (
-            <TreeList
+      {visibleNodes.map((node, index) => {
+        const isLast = index === visibleNodes.length - 1;
+        const nextAncestorLines = [...ancestorLines, !isLast];
+
+        return (
+          <div className="stack-node-wrap" key={node.id}>
+            <DropSlot
               activeDropId={activeDropId}
-              depth={depth + 1}
-              nodes={node.children}
-              visibleNodeIds={visibleNodeIds}
+              depth={depth}
+              dropId={buildNodeDropId(node.id, 'before')}
+              variant="before"
             />
-          ) : null}
-        </div>
-      ))}
+            <DraggableNodeRow
+              activeDropId={activeDropId}
+              ancestorLines={ancestorLines}
+              depth={depth}
+              isLast={isLast}
+              node={node}
+            />
+            {!node.collapsed ? (
+              <TreeList
+                activeDropId={activeDropId}
+                ancestorLines={nextAncestorLines}
+                depth={depth + 1}
+                nodes={node.children}
+                visibleNodeIds={visibleNodeIds}
+              />
+            ) : null}
+          </div>
+        );
+      })}
       <DropSlot
         activeDropId={activeDropId}
         depth={depth}
@@ -313,6 +373,9 @@ export function PromptStackPanel() {
   const selectedNodeId = useAppStore((state) => state.selectedNodeId);
   const setSelectedNodeId = useAppStore((state) => state.setSelectedNodeId);
   const [activeDropId, setActiveDropId] = useState<string | null>(null);
+  const [recommendedTag, setRecommendedTag] = useState(
+    RECOMMENDED_NODE_TAGS[0]?.value ?? 'instruction',
+  );
 
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -383,13 +446,41 @@ export function PromptStackPanel() {
   return (
     <Panel
       rightSlot={
-        <button
-          className="omc-btn omc-btn-brand"
-          type="button"
-          onClick={addRootNode}
-        >
-          {t('addNode')}
-        </button>
+        <div className="stack-header-actions">
+          <button className="omc-btn omc-btn-brand" type="button" onClick={() => addRootNode()}>
+            <Plus size={14} />
+            {t('quickAddContext')}
+          </button>
+
+          <div className="stack-preset-add">
+            <label className="sr-only" htmlFor="recommended-node-tag">
+              {t('recommendedTag')}
+            </label>
+            <select
+              className="omc-select stack-preset-select"
+              id="recommended-node-tag"
+              onChange={(event) => setRecommendedTag(event.target.value)}
+              value={recommendedTag}
+            >
+              {RECOMMENDED_NODE_TAGS.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {'<'}
+                  {item.value}
+                  {'> '}
+                  {item.description}
+                </option>
+              ))}
+            </select>
+            <button
+              className="omc-btn"
+              type="button"
+              onClick={() => addRootNode(recommendedTag)}
+            >
+              <Sparkles size={14} />
+              {t('addRecommendedTag')}
+            </button>
+          </div>
+        </div>
       }
       title={t('contextStack')}
     >
@@ -408,6 +499,7 @@ export function PromptStackPanel() {
         >
           <TreeList
             activeDropId={activeDropId}
+            ancestorLines={[]}
             depth={0}
             nodes={document.nodes}
             visibleNodeIds={visibleNodeIds}
