@@ -115,7 +115,7 @@ export function PreviewPanel() {
         type="button"
       >
         {icon}
-        {tab}
+        <span className="preview-tab-label">{tab}</span>
       </button>
     );
   }
@@ -137,15 +137,17 @@ export function PreviewPanel() {
             tone="brand"
           >
             <Copy size={14} />
-            {previewTab === 'XML'
-              ? t('copyXml')
-              : previewTab === 'MARKDOWN'
-                ? t('copyMarkdown')
-                : t('copyJson')}
+            <span className="preview-action-label">
+              {previewTab === 'XML'
+                ? t('copyXml')
+                : previewTab === 'MARKDOWN'
+                  ? t('copyMarkdown')
+                  : t('copyJson')}
+            </span>
           </Button>
           <Button disabled={!canExport} onClick={handleDownload} title={t('download')}>
             <Download size={14} />
-            {t('download')}
+            <span className="preview-action-label">{t('download')}</span>
           </Button>
         </div>
       }

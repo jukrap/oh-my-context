@@ -46,11 +46,17 @@ function getTooltipTargetFromNode(node: EventTarget | null): TooltipTarget | nul
   };
 }
 
+function isTouchTooltipDisabled(target: HTMLElement): boolean {
+  return target.getAttribute('data-tooltip-touch') === 'off';
+}
+
 export function TooltipLayer() {
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const targetRef = useRef<TooltipTarget | null>(null);
   const pendingTargetRef = useRef<TooltipTarget | null>(null);
   const showTimerRef = useRef<number | null>(null);
+  const visibleRef = useRef(false);
+  const suppressClickUntilRef = useRef(0);
   const [visible, setVisible] = useState(false);
   const [text, setText] = useState('');
   const [layout, setLayout] = useState<TooltipLayout>({
@@ -156,7 +162,15 @@ export function TooltipLayer() {
   }, [hideTooltip]);
 
   useEffect(() => {
+    visibleRef.current = visible;
+  }, [visible]);
+
+  useEffect(() => {
     const handlePointerOver = (event: PointerEvent): void => {
+      if (event.pointerType !== 'mouse') {
+        return;
+      }
+
       if (event.buttons !== 0) {
         hideTooltip();
         return;
@@ -181,13 +195,45 @@ export function TooltipLayer() {
       scheduleShow(nextTarget, HOVER_SHOW_DELAY_MS);
     };
 
-    const handlePointerDown = (): void => {
-      hideTooltip();
+    const handlePointerDown = (event: PointerEvent): void => {
+      const isTouchLike = event.pointerType === 'touch' || event.pointerType === 'pen';
+      const nextTarget = getTooltipTargetFromNode(event.target);
+
+      if (!isTouchLike) {
+        hideTooltip();
+        return;
+      }
+
+      suppressClickUntilRef.current = performance.now() + 500;
+      if (!nextTarget) {
+        hideTooltip();
+        return;
+      }
+
+      if (isTouchTooltipDisabled(nextTarget.element)) {
+        hideTooltip();
+        return;
+      }
+
+      if (targetRef.current?.element === nextTarget.element && visibleRef.current) {
+        hideTooltip();
+        return;
+      }
+
+      showTooltip(nextTarget);
     };
 
     const handleClick = (event: MouseEvent): void => {
+      if (performance.now() < suppressClickUntilRef.current) {
+        return;
+      }
+
       const nextTarget = getTooltipTargetFromNode(event.target);
       if (!nextTarget) {
+        return;
+      }
+
+      if (isTouchTooltipDisabled(nextTarget.element)) {
         return;
       }
 

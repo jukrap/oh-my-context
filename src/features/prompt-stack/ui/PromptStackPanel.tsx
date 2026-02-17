@@ -1,18 +1,35 @@
 import {
   DndContext,
+  type DragStartEvent,
   type DragEndEvent,
   type DragOverEvent,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   closestCenter,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { type KeyboardEvent as ReactKeyboardEvent, useMemo, useState } from 'react';
+import {
+  type KeyboardEvent as ReactKeyboardEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { buildNodeVisibilitySet, flattenVisibleNodeIds } from '../../../entities/prompt-node/model/tree';
 import { useI18n } from '../../../shared/lib/i18n/useI18n';
 import { selectActiveDocument, useAppStore } from '../../../shared/model/store';
 import { Input } from '../../../shared/ui/Input';
 import { Panel } from '../../../shared/ui/Panel';
+import { computeAutoScrollDelta } from '../model/auto-scroll';
+import {
+  STACK_DRAG_AUTOSCROLL_EDGE_PX,
+  STACK_DRAG_AUTOSCROLL_MAX_STEP_PX,
+  STACK_MOUSE_DRAG_DISTANCE_PX,
+  STACK_TOUCH_DRAG_DELAY_MS,
+  STACK_TOUCH_DRAG_TOLERANCE_PX,
+} from '../model/constants';
 import { parseDropTarget } from '../model/dnd';
 import { AddNodeMenu } from './AddNodeMenu';
 import { StackTree } from './StackTree';
@@ -26,8 +43,24 @@ export function PromptStackPanel() {
   const selectedNodeId = useAppStore((state) => state.selectedNodeId);
   const setSelectedNodeId = useAppStore((state) => state.setSelectedNodeId);
   const [activeDropId, setActiveDropId] = useState<string | null>(null);
+  const stackRootRef = useRef<HTMLDivElement | null>(null);
+  const isDraggingRef = useRef(false);
+  const pointerYRef = useRef<number | null>(null);
+  const autoScrollTimerRef = useRef<number | null>(null);
 
-  const sensors = useSensors(useSensor(PointerSensor));
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: STACK_MOUSE_DRAG_DISTANCE_PX,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: STACK_TOUCH_DRAG_DELAY_MS,
+        tolerance: STACK_TOUCH_DRAG_TOLERANCE_PX,
+      },
+    }),
+  );
 
   const visibleNodeIds = useMemo(() => {
     if (!document) {
@@ -45,11 +78,84 @@ export function PromptStackPanel() {
     return flattenVisibleNodeIds(document.nodes).filter((id) => visibleNodeIds.has(id));
   }, [document, visibleNodeIds]);
 
+  const stopAutoScroll = useCallback((): void => {
+    isDraggingRef.current = false;
+    pointerYRef.current = null;
+    if (autoScrollTimerRef.current !== null) {
+      window.clearInterval(autoScrollTimerRef.current);
+      autoScrollTimerRef.current = null;
+    }
+  }, []);
+
+  const runAutoScrollStep = useCallback((): void => {
+    const root = stackRootRef.current;
+    const pointerY = pointerYRef.current;
+    if (!root || !isDraggingRef.current || pointerY === null) {
+      return;
+    }
+
+    const delta = computeAutoScrollDelta(
+      pointerY,
+      root.getBoundingClientRect(),
+      STACK_DRAG_AUTOSCROLL_EDGE_PX,
+      STACK_DRAG_AUTOSCROLL_MAX_STEP_PX,
+    );
+
+    if (delta !== 0) {
+      const nextTop = Math.min(
+        Math.max(root.scrollTop + delta, 0),
+        Math.max(root.scrollHeight - root.clientHeight, 0),
+      );
+      root.scrollTop = nextTop;
+    }
+  }, []);
+
+  const startAutoScroll = useCallback((clientY: number): void => {
+    pointerYRef.current = clientY;
+    if (autoScrollTimerRef.current !== null) {
+      return;
+    }
+    autoScrollTimerRef.current = window.setInterval(runAutoScrollStep, 16);
+  }, [runAutoScrollStep]);
+
+  useEffect(() => {
+    const handlePointerMove = (event: PointerEvent): void => {
+      if (!isDraggingRef.current) {
+        return;
+      }
+      startAutoScroll(event.clientY);
+    };
+
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      stopAutoScroll();
+    };
+  }, [startAutoScroll, stopAutoScroll]);
+
+  const onDragStart = (event: DragStartEvent): void => {
+    isDraggingRef.current = true;
+    const activator = event.activatorEvent;
+
+    if (activator instanceof MouseEvent) {
+      startAutoScroll(activator.clientY);
+      return;
+    }
+
+    if (activator instanceof TouchEvent) {
+      const touch = activator.touches[0] ?? activator.changedTouches[0];
+      if (touch) {
+        startAutoScroll(touch.clientY);
+      }
+    }
+  };
+
   const onDragEnd = (event: DragEndEvent): void => {
     const activeId = String(event.active.id);
     const overId = event.over ? String(event.over.id) : null;
     const target = parseDropTarget(overId);
     setActiveDropId(null);
+    stopAutoScroll();
 
     if (!target) {
       return;
@@ -61,6 +167,11 @@ export function PromptStackPanel() {
   const onDragOver = (event: DragOverEvent): void => {
     const overId = event.over ? String(event.over.id) : null;
     setActiveDropId(overId);
+  };
+
+  const onDragCancel = (): void => {
+    setActiveDropId(null);
+    stopAutoScroll();
   };
 
   const onKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>): void => {
@@ -101,11 +212,14 @@ export function PromptStackPanel() {
         value={stackSearchQuery}
       />
 
-      <div className="stack-tree-root" onKeyDown={onKeyDown} tabIndex={0}>
+      <div className="stack-tree-root" onKeyDown={onKeyDown} ref={stackRootRef} tabIndex={0}>
         <DndContext
+          autoScroll={false}
           collisionDetection={closestCenter}
+          onDragCancel={onDragCancel}
           onDragEnd={onDragEnd}
           onDragOver={onDragOver}
+          onDragStart={onDragStart}
           sensors={sensors}
         >
           <StackTree

@@ -1,5 +1,7 @@
 import { type CSSProperties } from 'react';
 import {
+  CircleOff,
+  CirclePower,
   ChevronDown,
   ChevronRight,
   Copy,
@@ -12,7 +14,7 @@ import type { PromptNode } from '../../../entities/prompt-node/model/types';
 import { useI18n } from '../../../shared/lib/i18n/useI18n';
 import { useAppStore } from '../../../shared/model/store';
 import { buildNodeDropId } from '../model/dnd';
-import { getDepthColor } from '../model/constants';
+import { STACK_MAX_VISIBLE_GUIDE_DEPTH, getDepthColor } from '../model/constants';
 
 interface TreeListProps {
   nodes: PromptNode[];
@@ -41,17 +43,23 @@ function BranchGuides({
     return <div aria-hidden className="stack-branch-guides" />;
   }
 
+  const visibleAncestorLines = ancestorLines.slice(-STACK_MAX_VISIBLE_GUIDE_DEPTH);
+  const startDepth = Math.max(depth - visibleAncestorLines.length, 0);
   const parentDepth = Math.max(depth - 1, 0);
   const connectorColor = getDepthColor(parentDepth);
 
   return (
     <div aria-hidden className="stack-branch-guides">
-      {ancestorLines.map((hasLine, index) => (
+      {visibleAncestorLines.map((hasLine, index) => (
         <span
           className="stack-branch-column"
           data-active={index > 0 ? hasLine : false}
           key={`${depth}-${index}`}
-          style={{ ['--branch-color' as string]: getDepthColor(index) } as CSSProperties}
+          style={
+            {
+              ['--branch-color' as string]: getDepthColor(startDepth + index),
+            } as CSSProperties
+          }
         />
       ))}
       <span
@@ -79,6 +87,7 @@ function DropSlot({
   const { setNodeRef } = useDroppable({
     id: dropId,
   });
+  const clampedDepth = Math.min(depth, STACK_MAX_VISIBLE_GUIDE_DEPTH);
 
   return (
     <div
@@ -87,7 +96,7 @@ function DropSlot({
       data-active={activeDropId === dropId}
       data-variant={variant}
       style={{
-        marginLeft: depth * 14 + (depth > 0 ? 15 : 18),
+        marginLeft: clampedDepth * 14 + (clampedDepth > 0 ? 15 : 18),
       }}
     />
   );
@@ -143,7 +152,7 @@ function DraggableNodeRow({
 
   const cardStyle: CSSProperties = {
     opacity: isDragging ? 0.45 : 1,
-    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    transform: transform ? `translate3d(0, ${transform.y}px, 0)` : undefined,
     marginLeft: depth > 0 ? '-5px' : undefined,
   };
   const isRecentlyCreated = newlyCreatedNodeId === node.id;
@@ -167,6 +176,7 @@ function DraggableNodeRow({
               type="button"
               aria-label={t('dragNode')}
               data-tooltip={t('dragNode')}
+              data-tooltip-touch="off"
               {...attributes}
               {...listeners}
             >
@@ -203,11 +213,12 @@ function DraggableNodeRow({
               aria-label={t('enableNode')}
               className="stack-enable-toggle omc-tooltip-btn"
               data-enabled={node.enabled}
-              data-tooltip={t('enableNode')}
+              data-tooltip={`${t('enableNode')}: ${node.enabled ? t('stateEnabled') : t('stateDisabled')}`}
               onClick={() => toggleNodeEnabled(node.id)}
               type="button"
             >
-              {node.enabled ? 'ON' : 'OFF'}
+              {node.enabled ? <CirclePower size={14} /> : <CircleOff size={14} />}
+              <span className="sr-only">{node.enabled ? t('stateEnabled') : t('stateDisabled')}</span>
             </button>
             <button
               aria-label={t('addChild')}
