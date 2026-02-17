@@ -211,7 +211,7 @@ const messages: Record<AppLanguage, TranslationMap> = {
   ko: {
     appTagline: 'XML 프롬프트용 컨텍스트 스택 에디터',
     navVault: '문서함',
-    navIncludes: '포함 규칙',
+    navIncludes: '전역 포함',
     navTemplates: '템플릿',
     navSettings: '설정',
     saveSaving: '저장 중...',
@@ -270,7 +270,7 @@ const messages: Record<AppLanguage, TranslationMap> = {
     copyMarkdown: 'Markdown 복사',
     copyJson: 'JSON 복사',
     download: '다운로드',
-    includeIncludes: 'Include 데이터 포함',
+    includeIncludes: '전역 포함 데이터 포함',
     includeSettings: '설정 포함',
     copied: '복사됨.',
     copyFailed: '복사 실패.',
@@ -287,15 +287,15 @@ const messages: Record<AppLanguage, TranslationMap> = {
     save: '저장',
     noTags: '태그 없음',
     confirmDeleteDocument: '"{name}" 문서를 삭제할까요?',
-    globalIncludes: '전역 Include',
-    addInclude: 'Include 추가',
+    globalIncludes: '전역 포함 블록',
+    addInclude: '포함 블록 추가',
     includeHint:
-      'Include는 내보내기 단계에서만 삽입되며 원본 노드를 변경하지 않습니다.',
+      '전역 포함 블록은 내보내기 단계에서만 삽입되며 원본 노드를 변경하지 않습니다.',
     useInActiveDocument: '활성 문서에서 사용',
     description: '설명',
     targetTagName: 'targetTagName',
-    includeTag: 'Include 태그',
-    includeContent: 'Include 내용',
+    includeTag: '포함 블록 태그',
+    includeContent: '포함 블록 내용',
     settings: '설정',
     language: '언어',
     languageHint:
@@ -309,7 +309,7 @@ const messages: Record<AppLanguage, TranslationMap> = {
     defaultRootTagName: '기본 루트 태그 이름',
     templatesV1: '템플릿 (v1)',
     templatesHint:
-      '템플릿 프리셋은 v1에서 제공됩니다. 현재 MVP는 문서함, 스택 편집, includes, 안전한 내보내기에 집중합니다.',
+      '템플릿 프리셋은 v1에서 제공됩니다. 현재 MVP는 문서함, 스택 편집, 전역 포함, 안전한 내보내기에 집중합니다.',
     close: '닫기',
   },
 };

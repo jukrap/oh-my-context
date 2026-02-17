@@ -30,7 +30,7 @@ export function PreviewPanel() {
     if (language === 'ko') {
       return {
         includeIncludes:
-          'JSON 내보내기에 전역 Include 정의를 함께 포함합니다.',
+          'JSON 내보내기에 전역 포함 블록 정의를 함께 포함합니다.',
         includeSettings:
           'JSON 내보내기에 워크스페이스 설정값을 함께 포함합니다.',
       };

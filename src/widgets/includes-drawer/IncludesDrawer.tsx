@@ -33,10 +33,10 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
   const hints = useMemo(() => {
     if (language === 'ko') {
       return {
-        library: '내보내기 시 자동 삽입할 전역 Include 블록을 관리합니다.',
+        library: '내보내기 시 자동 삽입할 전역 포함 블록을 관리합니다.',
         assignment:
-          '현재 활성 문서에 어떤 Include를 적용할지 선택합니다.',
-        includeName: 'Include 목록에서 식별하기 위한 이름입니다.',
+          '현재 활성 문서에 어떤 전역 포함 블록을 적용할지 선택합니다.',
+        includeName: '전역 포함 목록에서 식별하기 위한 이름입니다.',
         includeDescription: '용도/설명을 짧게 기록해 재사용성을 높입니다.',
         insertionRule:
           'TOP/BOTTOM 등 삽입 위치 규칙입니다. 고급 위치는 v1 확장 대상입니다.',
@@ -44,7 +44,7 @@ export function IncludesDrawer({ open, onClose }: IncludesDrawerProps) {
           '특정 태그 기준 삽입 시 사용할 대상 태그명입니다.',
         includeNode:
           '내보내기에 삽입될 실제 태그와 본문 내용입니다.',
-        delete: '해당 Include를 삭제합니다.',
+        delete: '해당 전역 포함 블록을 삭제합니다.',
       };
     }
 

@@ -107,10 +107,10 @@ export function EditorShell({
     language === 'ko'
       ? {
           vault: '문서 생성, 검색, 분류, 전환을 관리합니다.',
-          includes: '내보내기 시 자동으로 붙는 전역 Include 블록을 관리합니다.',
+          includes: '내보내기 시 자동으로 붙는 전역 포함 블록을 관리합니다.',
           templates: 'v1 템플릿 기능 자리입니다.',
           settings: '언어, 미리보기, 삭제 확인 등 워크스페이스 옵션을 관리합니다.',
-          includesLabel: '전역 포함',
+          includesLabel: t('navIncludes'),
         }
       : {
           vault: 'Manage documents: create, search, filter and switch.',
