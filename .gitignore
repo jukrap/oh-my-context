@@ -29,3 +29,5 @@ yarn.lock
 
 # Local planning docs (private)
 docs/plans/
+.ai-playbook/
+ai-playbook/
